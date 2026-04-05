@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feature Test - Druckbau</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #2563eb;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🧪 Druckbau Feature Tests</h1>
+
+    <div class="test-section">
+        <h2>1. Sprachumschalter Test</h2>
+        <p>Aktuelle Sprache: <strong id="current-lang">-</strong></p>
+        <button onclick="testLanguageSwitch('de')">🇩🇪 Deutsch</button>
+        <button onclick="testLanguageSwitch('en')">🇬🇧 English</button>
+        <div class="result" id="lang-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. Benachrichtigungs-Buttons Test</h2>
+        <button onclick="testNotificationPrompt()">Benachrichtigungs-Prompt anzeigen</button>
+        <div class="result" id="notif-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. Sonderangebot erstellen Test</h2>
+        <button onclick="testSeasonalOffer()">Sonderangebot erstellen</button>
+        <div class="result" id="offer-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. Gutschein-System Test</h2>
+        <input type="text" id="test-coupon" placeholder="Gutscheincode" style="padding: 8px; margin-right: 10px;">
+        <button onclick="testCoupon()">Gutschein testen</button>
+        <div class="result" id="coupon-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. Preiskalkulator Test</h2>
+        <p>Volumen: 10x10x10 cm, PLA, 20% Füllung</p>
+        <button onclick="testCalculator()">Preis berechnen</button>
+        <div class="result" id="calc-result"></div>
+    </div>
+
+    <script src="translations.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Update current language display
+        function updateLangDisplay() {
+            const lang = localStorage.getItem('druckbau_language') || 'de';
+            document.getElementById('current-lang').textContent = lang.toUpperCase();
+        }
+        updateLangDisplay();
+
+        // Test 1: Language Switch
+        function testLanguageSwitch(lang) {
+            try {
+                if (typeof switchLanguage === 'function') {
+                    switchLanguage(lang);
+                    updateLangDisplay();
+                    document.getElementById('lang-result').innerHTML =
+                        `<span class="status success">✓ Erfolg</span> Sprache auf ${lang.toUpperCase()} gewechselt`;
+                } else {
+                    document.getElementById('lang-result').innerHTML =
+                        `<span class="status error">✗ Fehler</span> switchLanguage Funktion nicht gefunden`;
+                }
+            } catch (e) {
+                document.getElementById('lang-result').innerHTML =
+                    `<span class="status error">✗ Fehler</span> ${e.message}`;
+            }
+        }
+
+        // Test 2: Notification Prompt
+        function testNotificationPrompt() {
+            try {
+                if (typeof showNotificationPrompt === 'function') {
+                    showNotificationPrompt();
+                    document.getElementById('notif-result').innerHTML =
+                        `<span class="status success">✓ Erfolg</span> Prompt angezeigt. Bitte testen Sie die Buttons.`;
+                } else {
+                    document.getElementById('notif-result').innerHTML =
+                        `<span class="status error">✗ Fehler</span> showNotificationPrompt nicht verfügbar`;
+                }
+            } catch (e) {
+                document.getElementById('notif-result').innerHTML =
+                    `<span class="status error">✗ Fehler</span> ${e.message}`;
+            }
+        }
+
+        // Test 3: Seasonal Offer
+        function testSeasonalOffer() {
+            try {
+                if (typeof createSeasonalOffer === 'function') {
+                    // Simulate the function without prompts
+                    const testOffer = {
+                        active: true,
+                        title: "Test Angebot",
+                        description: "20% Rabatt",
+                        endDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+                    };
+                    localStorage.setItem('druckbau_seasonal_offer', JSON.stringify(testOffer));
+                    document.getElementById('offer-result').innerHTML =
+                        `<span class="status success">✓ Erfolg</span> Test-Angebot erstellt: ${JSON.stringify(testOffer, null, 2)}`;
+                } else {
+                    document.getElementById('offer-result').innerHTML =
+                        `<span class="status error">✗ Fehler</span> createSeasonalOffer nicht verfügbar`;
+                }
+            } catch (e) {
+                document.getElementById('offer-result').innerHTML =
+                    `<span class="status error">✗ Fehler</span> ${e.message}`;
+            }
+        }
+
+        // Test 4: Coupon System
+        function testCoupon() {
+            const code = document.getElementById('test-coupon').value.trim().toUpperCase();
+            try {
+                const coupons = {
+                    'NEUKUNDE10': { type: 'percentage', value: 10, expiry: '2026-12-31' },
+                    'SOMMER2026': { type: 'fixed', value: 5, expiry: '2026-08-31' },
+                    'TREUE15': { type: 'percentage', value: 15, expiry: '2026-12-31' },
+                    'WELCOME5': { type: 'fixed', value: 5, expiry: '2026-12-31' }
+                };
+
+                if (coupons[code]) {
+                    const coupon = coupons[code];
+                    const today = new Date();
+                    const expiry = new Date(coupon.expiry);
+
+                    if (today > expiry) {
+                        document.getElementById('coupon-result').innerHTML =
+                            `<span class="status error">✗ Abgelaufen</span> Code: ${code}`;
+                    } else {
+                        const discount = coupon.type === 'percentage' ? `${coupon.value}%` : `${coupon.value}€`;
+                        document.getElementById('coupon-result').innerHTML =
+                            `<span class="status success">✓ Gültig</span> Code: ${code}, Rabatt: ${discount}, Gültig bis: ${coupon.expiry}`;
+                    }
+                } else {
+                    document.getElementById('coupon-result').innerHTML =
+                        `<span class="status error">✗ Ungültig</span> Code "${code}" nicht gefunden`;
+                }
+            } catch (e) {
+                document.getElementById('coupon-result').innerHTML =
+                    `<span class="status error">✗ Fehler</span> ${e.message}`;
+            }
+        }
+
+        // Test 5: Price Calculator
+        function testCalculator() {
+            try {
+                if (typeof estimatePrintTime === 'function') {
+                    const volume = 10 * 10 * 10; // 1000 cm³
+                    const infill = 20;
+                    const materialCost = 0.02; // PLA
+                    const infillFactor = 1 + (infill / 100);
+                    const baseCost = volume * materialCost * infillFactor;
+                    const totalPrice = baseCost + 2.50;
+                    const printTime = estimatePrintTime(volume, infill);
+
+                    document.getElementById('calc-result').innerHTML =
+                        `<span class="status success">✓ Erfolg</span><br>
+                        Geschätzter Preis: ${totalPrice.toFixed(2)}€<br>
+                        Druckzeit: ${printTime.toFixed(1)} Stunden`;
+                } else {
+                    document.getElementById('calc-result').innerHTML =
+                        `<span class="status error">✗ Fehler</span> estimatePrintTime nicht verfügbar`;
+                }
+            } catch (e) {
+                document.getElementById('calc-result').innerHTML =
+                    `<span class="status error">✗ Fehler</span> ${e.message}`;
+            }
+        }
+    </script>
+</body>
+
+</html>

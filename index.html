@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Druckbau - 3D Druck Service</title>
+    <!-- Social Media Tags -->
+    <meta property="og:title" content="Druckbau - Premium 3D Druck Service">
+    <meta property="og:description"
+        content="Ihr Partner für professionellen 3D Druck. Individuelle Anfertigungen, hochwertige Materialien und schnelle Lieferung.">
+    <meta property="og:image" content="https://druckbau.de/logo.jpg">
+    <meta property="og:url" content="https://druckbau.de">
+    <meta property="og:type" content="website">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Druckbau - 3D Druck Service">
+    <meta name="twitter:description" content="Professioneller 3D Druck Service für Ihre Ideen.">
+    <meta name="twitter:image" content="https://druckbau.de/logo.jpg">
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net https://ajax.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <!-- 3D Model Viewer Script -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"
+        integrity="sha384-NxrHiuPcsJaRbXc9EoFTt5OZ6WPVqKeDgcnykGs3spXmq0J7hbbGGlyUkrGuoJoA"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-left">
+            <img src="logo.jpg" alt="Druckbau Logo" class="logo" width="150" height="80">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-link active" data-target="home" data-i18n="nav_home">Home</a></li>
+            <li class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-target="products" data-i18n="nav_products">Produkte
+                    <span class="arrow">▼</span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" class="nav-link" data-target="products" data-i18n="nav_products">Alle Produkte</a>
+                    </li>
+                    <li><a href="#" class="nav-link" data-target="process" data-i18n="process_title">Ablauf</a></li>
+                    <li><a href="#" class="nav-link" data-target="showcase">Showcase</a></li>
+                    <li><a href="#" class="nav-link" data-target="preview-3d" data-i18n="preview_title">3D Vorschau</a>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="#" class="nav-link" data-target="news" data-i18n="nav_news">Neuigkeiten</a></li>
+            <li><a href="#" class="nav-link" data-target="contact" data-i18n="nav_contact">Kontakt</a></li>
+            <li class="dropdown">
+                <a href="#" class="nav-link dropdown-toggle" id="more-dropdown" data-i18n="nav_more">Mehr <span
+                        class="arrow">▼</span></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" class="nav-link" data-target="material" data-i18n="nav_material">Material</a></li>
+                    <li><a href="#" class="nav-link" data-target="faq" data-i18n="nav_faq">FAQ</a></li>
+                    <li><a href="#" class="nav-link" data-target="comparison"
+                            data-i18n="nav_comparison">Material-Vergleich</a></li>
+                    <li id="admin-nav-item" style="display: none;"><a href="#" class="nav-link" data-target="admin"
+                            style="color: #d9534f; font-weight: bold;">Admin</a></li>
+                </ul>
+            </li>
+            <li class="cart-icon-container" data-target="cart">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Zm12.75 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0Z" />
+                </svg>
+                <span class="cart-count" id="cart-count">0</span>
+            </li>
+            <li class="wishlist-icon-container" data-target="wishlist">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                </svg>
+                <span class="wishlist-count" id="wishlist-count">0</span>
+            </li>
+            <li>
+                <button id="theme-toggle" class="theme-toggle" aria-label="Dark Mode umschalten">
+                    <svg class="sun-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" width="20">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 5a7 7 0 100 14 7 7 0 000-14z" />
+                    </svg>
+                    <svg class="moon-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" width="20" style="display:none;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>
+                </button>
+            </li>
+            <li>
+                <div class="language-switcher">
+                    <button class="lang-btn active" data-lang="de" title="Deutsch">🇩🇪</button>
+                    <button class="lang-btn" data-lang="en" title="English">🇬🇧</button>
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- Seasonal Offer Banner (if active) -->
+        <div id="seasonal-offer-banner" class="seasonal-offer-banner" style="display: none;">
+            <div class="offer-title" id="offer-title-text">Sonderangebot!</div>
+            <div class="offer-description" id="offer-description-text">20% Rabatt auf alle Vasen</div>
+            <div class="countdown-timer">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="countdown-days">0</span>
+                    <span class="countdown-label">Tage</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="countdown-hours">0</span>
+                    <span class="countdown-label">Std</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="countdown-minutes">0</span>
+                    <span class="countdown-label">Min</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="countdown-seconds">0</span>
+                    <span class="countdown-label">Sek</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home Section -->
+        <section id="home" class="active" style="display: flex;">
+            <div class="hero-content">
+                <h1 class="hero-title" data-i18n="home_title">Willkommen bei Druckbau</h1>
+                <p class="hero-subtitle" data-i18n="home_subtitle">Ihr Partner für professionellen 3D-Druck</p>
+                <p class="hero-description" data-i18n="home_hero_desc">
+                    Von individuellen Prototypen bis hin zu Serienproduktionen – wir bringen Ihre Ideen in die dritte
+                    Dimension.
+                </p>
+
+                <!-- Social Proof Counter -->
+
+
+                <div class="hero-buttons">
+                    <a href="#" class="hero-btn primary nav-link" data-target="products"
+                        data-i18n="nav_products">Produkte ansehen</a>
+                    <a href="#" class="hero-btn secondary nav-link" data-target="contact"
+                        data-i18n="nav_contact">Kontakt aufnehmen</a>
+                </div>
+            </div>
+
+            <a href="https://www.youtube.com/@Druckbau" target="_blank" rel="noopener noreferrer" class="youtube-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1-1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
+                </svg>
+                <span data-i18n="home_youtube">Folgen Sie uns auf YouTube</span>
+            </a>
+
+            <!-- Order Status Check -->
+            <div class="order-tracker"
+                style="margin-top: 3rem; padding: 1.5rem; background: var(--bg-light); border-radius: 12px; border: 1px solid #eee; width: 100%; max-width: 400px; text-align: center;">
+                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-blue);"
+                    data-i18n="home_order_status">Bestellstatus prüfen
+                </h3>
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                    <input type="text" id="status-order-id" placeholder="Bestellnummer (z.B. #123456)"
+                        data-i18n="home_order_placeholder"
+                        style="flex: 1; padding: 0.6rem; border-radius: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">
+                    <button id="check-status-btn" class="nav-trigger" data-i18n="home_check_btn"
+                        style="padding: 0.6rem 1rem; background: var(--primary-blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">Prüfen</button>
+                </div>
+                <div id="status-result" style="display: none; padding-top: 0.5rem; font-size: 0.9rem;">
+                    <p style="color: #666; margin-bottom: 0.2rem;">Status Ihrer Bestellung:</p>
+                    <div id="status-badge"
+                        style="display: inline-block; padding: 0.3rem 1rem; border-radius: 20px; font-weight: bold; background: #eee; color: #333;">
+                        -
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Process Section -->
+        <section id="process" class="process-section">
+            <h2 class="section-title" data-i18n="process_title">Wie es funktioniert</h2>
+            <div class="process-grid">
+                <div class="process-step">
+                    <div class="process-icon">📤</div>
+                    <h3 data-i18n="process_step1_title">1. Anfrage senden</h3>
+                    <p data-i18n="process_step1_text">Laden Sie Ihre Datei hoch oder beschreiben Sie Ihre Idee im
+                        Kontaktformular.</p>
+                </div>
+                <div class="process-arrow">➝</div>
+                <div class="process-step">
+                    <div class="process-icon">🔍</div>
+                    <h3 data-i18n="process_step2_title">2. Prüfung & Angebot</h3>
+                    <p data-i18n="process_step2_text">Wir prüfen die Machbarkeit und senden Ihnen ein unverbindliches
+                        Angebot.</p>
+                </div>
+                <div class="process-arrow">➝</div>
+                <div class="process-step">
+                    <div class="process-icon">📦</div>
+                    <h3 data-i18n="process_step3_title">3. Druck & Versand</h3>
+                    <p data-i18n="process_step3_text">Nach Bestätigung starten wir den Druck und versenden Ihr Teil
+                        versichert.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Material & Technik Section -->
+        <section id="material">
+            <h2 class="section-title" data-i18n="material_title">Material & Technik</h2>
+            <div class="material-grid">
+                <div class="material-card">
+                    <div class="material-icon">🍃</div>
+                    <h3 data-i18n="material_pla_title">PLA (Polylactid)</h3>
+                    <p data-i18n="material_pla_text">Unser Standardmaterial. Biologisch abbaubar, geruchsneutral und in
+                        einer riesigen Farbpalette
+                        verfügbar. Ideal für Deko, Fidget Toys und Prototypen.</p>
+                </div>
+                <div class="material-card">
+                    <div class="material-icon">🦾</div>
+                    <h3 data-i18n="material_petg_title">PETG</h3>
+                    <p data-i18n="material_petg_text">Die robuste Alternative. Hitzebeständiger (bis ca. 80°C) und
+                        stabiler als PLA. Perfekt für
+                        Funktionsteile im Außenbereich oder im Auto.</p>
+                </div>
+                <div class="material-card">
+                    <div class="material-icon">⚙️</div>
+                    <h3 data-i18n="material_quality_title">Druckqualität</h3>
+                    <p data-i18n="material_quality_text">Wir drucken standardmäßig mit einer Schichthöhe von 0.2mm für
+                        die optimale Balance aus
+                        Detailreichtum und Stabilität.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials-section">
+            <h2 class="section-title" data-i18n="testimonials_title">Was unsere Kunden sagen</h2>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="quote" data-i18n="testimonial_sarah_quote">"Unglaubliche Qualität! Die Vase sieht in echt
+                        noch besser aus als auf den Bildern.
+                        Schneller Versand, gerne wieder."</p>
+                    <p class="author" data-i18n="testimonial_sarah_author">- Sarah M.</p>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="quote" data-i18n="testimonial_thomas_quote">"Habe ein Ersatzteil für meinen Oldtimer
+                        drucken lassen. Passt perfekt! Danke für
+                        die tolle Beratung."</p>
+                    <p class="author" data-i18n="testimonial_thomas_author">- Thomas K.</p>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    <p class="quote" data-i18n="testimonial_julia_quote">"Super netter Kontakt und das personalisierte
+                        Geschenk kam mega gut an. Die Farben
+                        leuchten richtig."</p>
+                    <p class="author" data-i18n="testimonial_julia_author">- Julia & Ben</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Showcase Section -->
+        <section id="showcase">
+            <h2 class="section-title">Customer Showcase</h2>
+            <p style="text-align:center; margin-bottom:2rem; color: var(--text-light);">Echte Ergebnisse von echten
+                Kundenprojekten.</p>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <img src="vase_1.jpg" alt="Individuelle Vase aus dem 3D Drucker" loading="lazy" width="400"
+                        height="300" style="width:100%; height:auto;">
+                    <div class="showcase-overlay">Individuelle Vase</div>
+                </div>
+                <div class="showcase-item">
+                    <img src="vase_2.jpg" alt="Technisches Bauteil 3D Druck" loading="lazy" width="400" height="300"
+                        style="width:100%; height:auto;">
+                    <div class="showcase-overlay">Technisches Bauteil</div>
+                </div>
+                <div class="showcase-item">
+                    <img src="hund_1.jpg" alt="Deko Hund 3D Druck" loading="lazy" width="400" height="300"
+                        style="width:100%; height:auto;">
+                    <div class="showcase-overlay">Deko-Hund</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3D Preview Section -->
+        <section id="preview-3d">
+            <h2 class="section-title" data-i18n="preview_title">Interaktive 3D-Vorschau</h2>
+            <div class="preview-container">
+                <p style="text-align:center; margin-bottom:1rem; color: var(--text-light);">Erleben Sie unsere Modelle
+                    hautnah.</p>
+                <div class="model-viewer-wrapper">
+                    <model-viewer src="" alt="Ein 3D-Modell von Druckbau" auto-rotate camera-controls
+                        shadow-intensity="1" poster="logo.jpg">
+                        <div class="model-placeholder">
+                            <p>Hier wird Ihr 3D-Modell geladen...</p>
+                        </div>
+                    </model-viewer>
+                </div>
+            </div>
+        </section>
+
+        <!-- About / Werkstatt Section -->
+        <section id="about" class="about-section">
+            <h2 class="section-title" data-i18n="workshop_title">Die Werkstatt</h2>
+            <div class="about-container">
+                <div class="about-text">
+                    <h3>Mit Leidenschaft gedruckt</h3>
+                    <p>Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine
+                        kleine Manufaktur für individuelle 3D-Druck-Lösungen.</p>
+                    <p>In meiner Werkstatt setze ich auf moderne Drucker und hochwertige Materialien, um Ihre Ideen
+                        bestmöglich umzusetzen – egal ob Einzelstück oder Kleinserie.</p>
+                    <a href="#" class="btn contact-trigger" data-target="contact"
+                        style="margin-top: 1rem; display:inline-block;">Projekt anfragen</a>
+                </div>
+                <!-- Placeholder for Image - User can replace src later -->
+                <div class="about-image">
+                    <div class="image-placeholder-box">
+                        <span>Hier könnte Ihr Foto stehen</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq">
+            <h2 class="section-title" data-i18n="faq_title">FAQ - Häufig gestellte Fragen</h2>
+            <div class="faq-accordion">
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q1">Wie lange dauert ein Druck?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a1">
+                        <p>Das hängt stark von der Größe und Komplexität ab. Kleine Teile sind in wenigen Stunden
+                            fertig, große Projekte können 1-3 Tage dauern. Wir geben Ihnen bei der Anfrage immer eine
+                            Schätzung ab.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q2">Kann ich eigene Dateien (STL) schicken?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a2">
+                        <p>Ja, absolut! Laden Sie Ihre .stl oder .obj Dateien einfach bei der "Auftragsarbeit" hoch. Wir
+                            prüfen die Druckbarkeit kostenlos für Sie.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q3">Welche Farben sind möglich?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a3">
+                        <p>Wir haben ständig viele Farben auf Lager (siehe Produktoptionen). Sollte Ihre Wunschfarbe
+                            nicht dabei sein, bestellen wir diese gerne für Ihren Auftrag.</p>
+                    </div>
+                </div>
+                <!-- New FAQs -->
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q4">Welche Zahlungsmethoden werden
+                        akzeptiert?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a4">
+                        <p>Aktuell bieten wir Zahlung per Vorkasse und PayPal an. Die Details erhalten Sie direkt mit
+                            Ihrem Angebot oder der Bestellbestätigung.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q5">Wie hoch sind die Versandkosten?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a5">
+                        <p>Der Standardversand innerhalb Deutschlands beträgt 4,90 €. Ab einem Bestellwert von 50 €
+                            versenden wir versandkostenfrei.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q6">Kann ich personalisierte Artikel
+                        zurückgeben?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a6">
+                        <p>Bitte haben Sie Verständnis, dass individuell angefertigte Produkte (Custom Orders) vom
+                            Umtausch ausgeschlossen sind, es sei denn, sie weisen Mängel auf.</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question" data-i18n="faq_acc_q7">Bieten Sie auch Mengenrabatte an?</button>
+                    <div class="faq-answer" data-i18n="faq_acc_a7">
+                        <p>Ja, für größere Stückzahlen oder Serienfertigungen (z.B. für Vereine oder Firmen) erstellen
+                            wir Ihnen gerne ein individuelles Angebot.</p>
+                    </div>
+                </div>
+
+                <!-- Wiki Section -->
+                <div class="wiki-section" style="margin-top: 3rem;">
+                    <h3 style="text-align: center; color: var(--primary-blue); margin-bottom: 1.5rem;">3D-Druck Wiki &
+                        Tipps</h3>
+
+                    <div class="faq-item">
+                        <button class="faq-question">Was ist eine STL-Datei und wie bereite ich sie vor?</button>
+                        <div class="faq-answer">
+                            <p>STL ist das Standardformat für den 3D-Druck.
+                                <strong>Tipp:</strong> Achten Sie bei Funktionsteilen auf Toleranzen von ca. 0.2mm,
+                                damit Teile später zusammenpassen. Wir prüfen jede Datei vor dem Druck auf Fehler!
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">Materialkunde: Welches Filament ist das richtige?</button>
+                        <div class="faq-answer">
+                            <p><strong>PLA:</strong> Perfekt für Deko, sehr detailreich, umweltfreundlich. (Bis ca. 55°C
+                                stabil)<br>
+                                <strong>PETG:</strong> Ideal für Funktionsteile, hitzebeständiger (bis 80°C) und sehr
+                                stabil.<br>
+                                <strong>TPU:</strong> Flexibel wie Gummi, perfekt für Handyhüllen oder Dichtungen.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <button class="faq-question">Was bedeuten Infill und Layerhöhe?</button>
+                        <div class="faq-answer">
+                            <p><strong>Infill:</strong> Die innere Füllstruktur. 15-20% reichen meistens. 100% macht das
+                                Teil extrem massiv.<br>
+                                <strong>Layerhöhe:</strong> Die Dicke der einzelnen Schichten. 0.2mm ist unser Standard
+                                für ein sauberes Ergebnis.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-blue); font-size: 2.5rem;"
+                data-i18n="products_title">Unsere
+                Produkte</h2>
+            <div class="products-grid" id="products-grid">
+                <!-- Javascript populates this -->
+            </div>
+        </section>
+
+        <!-- Cart Section -->
+        <section id="cart">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--primary-blue); font-size: 2.5rem;"
+                data-i18n="cart_title">
+                Warenkorb</h2>
+            <div class="cart-container">
+                <div id="cart-items-container" class="cart-items">
+                    <!-- Javascript populates this -->
+                </div>
+
+                <div id="cart-summary" class="cart-summary" style="display:none;">
+                    <div class="summary-row">
+                        <span data-i18n="cart_subtotal">Zwischensumme:</span>
+                        <span id="subtotal">0.00 €</span>
+                    </div>
+                    <div class="summary-row">
+                        <span data-i18n="cart_shipping">Versandkosten:</span>
+                        <span id="shipping">4.90 €</span>
+                    </div>
+                    <div class="summary-row" id="discount-row" style="display: none;">
+                        <span data-i18n="cart_discount">Rabatt:</span>
+                        <span id="discount" style="color: #10b981;">0.00 €</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span data-i18n="cart_total">Gesamt:</span>
+                        <span id="total-sum">0.00 €</span>
+                    </div>
+                    <div id="coupon-section" class="coupon-section">
+                        <div class="coupon-input-group">
+                            <input type="text" id="coupon-input" class="coupon-input" placeholder="Gutscheincode"
+                                data-i18n="cart_coupon">
+                            <button id="apply-coupon-btn" class="coupon-apply-btn"
+                                data-i18n="cart_apply">Anwenden</button>
+                        </div>
+                    </div>
+                    <button type="button" class="checkout-btn" id="checkout-btn" data-i18n="cart_checkout">Jetzt
+                        kaufen</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Guarantee Section -->
+        <section id="guarantee" class="guarantee-section">
+            <div class="guarantee-icon">✓</div>
+            <div class="guarantee-title">100% Zufriedenheitsgarantie</div>
+            <div class="guarantee-text">Kostenloser Nachdruck bei Druckfehlern</div>
+        </section>
+
+
+        <!-- Material Comparison Section -->
+        <section id="comparison">
+            <h2 class="section-title" data-i18n="comparison_title">Material-Vergleich</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--text-light);">
+                Welches Material ist das richtige für Ihr Projekt?
+            </p>
+
+            <div class="comparison-table-container">
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Eigenschaft</th>
+                            <th>PLA</th>
+                            <th>PETG</th>
+                            <th>TPU</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Temperaturbeständigkeit</td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 40%;"></div>
+                                </div>
+                                <br><small>bis 55°C</small>
+                            </td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 80%;"></div>
+                                </div>
+                                <br><small>bis 80°C</small>
+                            </td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 60%;"></div>
+                                </div>
+                                <br><small>bis 70°C</small>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Festigkeit</td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 70%;"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 90%;"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 50%;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Flexibilität</td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 20%;"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 40%;"></div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="rating-bar">
+                                    <div class="rating-fill" style="width: 100%;"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Kosten</td>
+                            <td>€</td>
+                            <td>€€</td>
+                            <td>€€€</td>
+                        </tr>
+                        <tr>
+                            <td>Anwendungsfälle</td>
+                            <td>Deko, Prototypen, Spielzeug</td>
+                            <td>Funktionsteile, Outdoor, Mechanik</td>
+                            <td>Handyhüllen, Dichtungen, flexible Teile</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2 class="section-title" data-i18n="contact_title">Kontaktieren Sie uns</h2>
+            <div class="contact-container">
+                <p data-i18n="contact_subtitle">Haben Sie eine Idee oder ein fertiges Modell? Senden Sie uns eine
+                    Nachricht!</p>
+                <form class="contact-form" onsubmit="sendEmail(event)">
+                    <input type="text" id="contact-name" placeholder="Name" required class="qty-input"
+                        data-i18n="contact_name">
+                    <input type="email" id="contact-email" placeholder="E-Mail" required class="qty-input"
+                        data-i18n="contact_email">
+                    <textarea id="contact-message" placeholder="Ihre Nachricht oder Modell-Beschreibung..." required
+                        class="qty-input" data-i18n="contact_message"></textarea>
+
+                    <div class="form-group hp-field">
+                        <label for="hp_name">Bitte dieses Feld leer lassen</label>
+                        <input type="text" id="hp_name" name="hp_name" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <div class="form-group gdpr-group" style="text-align: left; margin-bottom: 1rem;">
+                        <input type="checkbox" id="contact-gdpr" required style="width: auto; margin-right: 0.5rem;">
+                        <label for="contact-gdpr" style="display: inline; font-size: 0.85rem;">
+                            Ich stimme der Verarbeitung meiner Daten gemäß der <a href="datenschutz.html"
+                                target="_blank">Datenschutzerklärung</a> zu.
+                        </label>
+                    </div>
+                    <button type="submit" class="contact-btn" data-i18n="contact_send">Absenden</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Wishlist Section -->
+        <section id="wishlist">
+            <h2 class="section-title" data-i18n="wishlist_title">Meine Wunschliste</h2>
+            <div class="cart-container">
+                <div id="wishlist-items" class="cart-items">
+                    <!-- Wishlist items will be rendered here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq-common">
+            <h2 class="section-title" data-i18n="faq_title">Häufig gestellte Fragen</h2>
+            <div class="faq-container" style="max-width: 800px; margin: 0 auto;">
+                <div class="faq-item"
+                    style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;" data-i18n="faq_q1">Wie lange dauert
+                        der Versand?</h3>
+                    <p data-i18n="faq_a1">In der Regel versenden wir innerhalb von 2-3 Werktagen. Bei individuellen
+                        Aufträgen kann es je
+                        nach Aufwand etwas länger dauern.</p>
+                </div>
+                <div class="faq-item"
+                    style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;" data-i18n="faq_q2">Welche Materialien
+                        nutzen Sie?</h3>
+                    <p data-i18n="faq_a2">Wir nutzen hauptsächlich PLA (biologisch abbaubar), PETG (robust) und TPU
+                        (flexibel). Mehr
+                        Details finden Sie im Material-Vergleich.</p>
+                </div>
+                <div class="faq-item"
+                    style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <h3 style="color: var(--primary-blue); margin-bottom: 0.5rem;" data-i18n="faq_q3">Kann ich eigene
+                        Modelle drucken
+                        lassen?</h3>
+                    <p data-i18n="faq_a3">Ja! Nutzen Sie unser Kontaktformular für eine Anfrage.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- News & Admin Section -->
+        <!-- News Section -->
+        <section id="news" class="news-section"
+            style="display: none; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;">
+            <h2 class="section-title" data-i18n="news_title">Neuigkeiten & Status</h2>
+
+            <div id="public-news-banner" class="news-banner">
+                <p id="news-text" data-i18n="news_loading">Lade Neuigkeiten...</p>
+                <p id="news-date" style="font-size: 0.8rem; margin-top: 0.5rem; color: #666;"></p>
+            </div>
+        </section>
+
+        <!-- Admin Section (Hidden by default) -->
+        <section id="admin" class="admin-section"
+            style="display: none; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;">
+            <h2 class="section-title" style="color: #d9534f;">Admin Dashboard</h2>
+
+            <div id="admin-panel" style="border: 1px solid var(--primary-blue); padding: 1.5rem; border-radius: 8px;">
+                <div class="admin-group">
+                    <h4>Neuen Status erstellen</h4>
+                    <textarea id="admin-news-input"
+                        style="width: 100%; min-height: 100px; padding: 0.5rem; margin-bottom: 0.5rem;"
+                        placeholder="Was gibt es Neues?"></textarea>
+                    <button id="save-news-btn" class="contact-btn">Status speichern</button>
+                    <button id="delete-news-btn"
+                        style="color: #999; border: 1px solid #999; background: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; margin-left: 0.5rem; font-size: 0.85rem;">Verlauf
+                        löschen</button>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <h4>Neuigkeiten Verlauf</h4>
+                    <div id="admin-news-history"
+                        style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 0.5rem; margin-top: 1rem; border-radius: 4px;">
+                        <!-- News history items inserted here -->
+                    </div>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="margin: 0;">Analytics & Statistiken</h4>
+                        <select id="admin-chart-range" class="qty-input"
+                            style="width: auto; padding: 5px 10px; font-size: 0.85rem;">
+                            <option value="all">Alle</option>
+                            <option value="5m">5 Monate</option>
+                            <option value="1m">1 Monat</option>
+                            <option value="1w" selected>1 Woche</option>
+                            <option value="day">Letzter Tag</option>
+                        </select>
+                    </div>
+                    <div
+                        style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #eee; margin-top: 1rem;">
+                        <canvas id="admin-orders-chart" height="250"></canvas>
+                        <canvas id="admin-revenue-chart" height="250" style="margin-top: 3rem;"></canvas>
+                    </div>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <h4>Statistiken (Käufe & Umsatz)</h4>
+                    <div style="overflow-x: auto;">
+                        <table id="stats-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead>
+                                <tr style="background: var(--bg-light); text-align: left;">
+                                    <th style="padding: 0.5rem;">Produkt / Kanal</th>
+                                    <th style="padding: 0.5rem;">Käufe (Menge)</th>
+                                    <th style="padding: 0.5rem;">Umsatz (€)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Stats inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <h4>Newsletter Abonnenten</h4>
+                    <div class="table-container" style="overflow-x: auto; margin-top: 1rem;">
+                        <table id="newsletter-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--bg-light); text-align: left;">
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Datum</th>
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">E-Mail</th>
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Aktion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Emails inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="margin: 0;">Bestellungen / Anfragen (Kontaktformular)</h4>
+                        <button class="contact-btn admin-export-btn"
+                            style="padding: 0.5rem 1rem; background: #5cb85c; border-color: #4cae4c;">CSV
+                            Export</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="orders-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
+                            <thead>
+                                <tr style="background: var(--bg-light); text-align: left;">
+                                    <th style="padding: 0.5rem;">Datum</th>
+                                    <th style="padding: 0.5rem;">Name</th>
+                                    <th style="padding: 0.5rem;">Bestell-Nr.</th>
+                                    <th style="padding: 0.5rem;">Email</th>
+                                    <th style="padding: 0.5rem;">Nachricht</th>
+                                    <th style="padding: 0.5rem;">Produkte</th>
+                                    <th style="padding: 0.5rem;">Gesamtpreis</th>
+                                    <th style="padding: 0.5rem;">Gutschein</th>
+                                    <th style="padding: 0.5rem;">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Orders inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="clear-orders-btn"
+                        style="margin-top: 1rem; color: #d9534f; border: 1px solid #d9534f; background: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Alle
+                        löschen</button>
+                    <button id="delete-completed-orders-btn"
+                        style="margin-top: 1rem; margin-left: 0.5rem; color: #d9534f; border: 1px solid #d9534f; background: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Erledigte
+                        löschen</button>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <h4>Gutschein-Verwaltung</h4>
+                    <div style="overflow-x: auto; margin-top: 1rem;">
+                        <table id="admin-coupons-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: var(--bg-light); text-align: left;">
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Code</th>
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Typ</th>
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Wert</th>
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Ablauf</th>
+                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Aktion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Coupons inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: 1rem; padding: 1rem; border: 1px solid #eee; border-radius: 4px;">
+                        <h5>Neuen Gutschein hinzufügen</h5>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <input type="text" id="admin-coupon-code" placeholder="CODE" class="qty-input"
+                                style="flex: 1; min-width: 100px;">
+                            <select id="admin-coupon-type" class="qty-input" style="flex: 1; min-width: 100px;">
+                                <option value="percentage">Prozent (%)</option>
+                                <option value="fixed">Festbetrag (€)</option>
+                            </select>
+                            <input type="number" id="admin-coupon-value" placeholder="Wert" class="qty-input"
+                                style="flex: 1; min-width: 80px;">
+                            <input type="text" id="admin-coupon-expiry" placeholder="TT.MM.JJJJ" class="qty-input"
+                                style="flex: 1; min-width: 120px;">
+                            <button id="add-coupon-btn" class="contact-btn"
+                                style="padding: 0.5rem 1rem;">Hinzufügen</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <h4>Sonderangebot erstellen</h4>
+                    <button class="contact-btn seasonal-offer-btn">Neues Angebot erstellen</button>
+                </div>
+
+                <div class="admin-group" style="margin-top: 2rem;">
+                    <h4>Erweiterte Analytics</h4>
+                    <div id="enhanced-analytics-container">
+                        <!-- Enhanced analytics will be rendered here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-col">
+                <h3>Druckbau</h3>
+                <p data-i18n="footer_desc">Ihr Partner für professionellen 3D Druck. Qualität, Schnelligkeit und
+                    individuelle Lösungen.</p>
+            </div>
+            <div class="footer-col">
+                <h3 data-i18n="footer_navigation">Navigation</h3>
+                <a href="#" class="footer-link nav-trigger" data-target="home" data-i18n="nav_home">Home</a>
+                <a href="#" class="footer-link nav-trigger" data-target="products" data-i18n="nav_products">Produkte</a>
+                <a href="#" class="footer-link nav-trigger" data-target="material" data-i18n="nav_material">Material</a>
+                <a href="#" class="footer-link nav-trigger" data-target="faq" data-i18n="nav_faq">FAQ</a>
+                <a href="#" class="footer-link nav-trigger" data-target="news" data-i18n="nav_news">Neuigkeiten</a>
+                <a href="#" class="nav-link nav-trigger" data-target="reviews" data-i18n="nav_reviews">Bewertungen</a>
+            </div>
+            <div class="footer-col">
+                <h3 data-i18n="footer_legal">Rechtliches</h3>
+                <a href="impressum.html" class="footer-link" data-i18n="footer_impressum">Impressum</a>
+                <a href="datenschutz.html" class="footer-link" data-i18n="footer_privacy">Datenschutz</a>
+                <a href="widerruf.html" class="footer-link" data-i18n="footer_returns">Widerrufsbelehrung</a>
+                <a href="javascript:void(0);" id="admin-trigger" class="footer-link"
+                    style="color: var(--text-light); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; margin-top: 5px;">Admin
+                    Login</a>
+            </div>
+            <div class="footer-col">
+                <h3 data-i18n="footer_newsletter">Newsletter</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 0.5rem;" data-i18n="footer_newsletter_text">Bleiben Sie
+                    up-to-date bei neuen Produkten!</p>
+                <form id="newsletter-form" class="newsletter-form">
+                    <input type="email" id="newsletter-email" placeholder="Deine E-Mail" required class="qty-input"
+                        style="margin-bottom: 0.5rem; padding: 0.5rem;" data-i18n="footer_newsletter_placeholder">
+                    <div style="display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="checkbox" id="newsletter-gdpr" required style="width: auto; margin-top: 3px;">
+                        <label for="newsletter-gdpr" style="font-size: 0.7rem; line-height: 1.2;"
+                            data-i18n="footer_newsletter_gdpr">Ich stimme zu,
+                            Neuigkeiten zu erhalten.</label>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button type="submit" class="contact-btn" style="flex: 1; padding: 0.5rem;"
+                            data-i18n="footer_newsletter_submit">Anmelden</button>
+                        <button type="button" id="newsletter-unsubscribe-btn" class="contact-btn"
+                            style="flex: 1; padding: 0.5rem; background-color: var(--text-light);"
+                            data-i18n="footer_newsletter_unsubscribe">Abmelden</button>
+                    </div>
+                </form>
+            </div>
+            <div class="footer-col">
+                <h3 data-i18n="footer_contact">Kontakt</h3>
+                <p>E-Mail: <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a></p>
+                <div class="social-icons">
+                    <!-- Platzhalter für Social Media Icons -->
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">&copy; 2026 Druckbau. Alle Rechte vorbehalten.</p>
+        </div>
+    </footer>
+
+    <!-- Cookie Modal -->
+    <div id="cookie-overlay" class="cookie-overlay">
+        <div class="cookie-modal">
+            <div class="cookie-icon">🍪</div>
+            <h3>Wir verwenden Cookies</h3>
+            <p>
+                Um Ihnen das bestmögliche Erlebnis auf unserer Webseite zu bieten (z.B. Warenkorb merken, schöne
+                Schriftarten), nutzen wir Technologien wie Cookies.
+                <br><br>
+                Sind Sie damit einverstanden?
+            </p>
+            <div class="cookie-actions">
+                <button id="accept-cookies" class="cookie-btn-primary">Alles klar!</button>
+                <button id="decline-cookies" class="cookie-btn-secondary"
+                    style="border: 1px solid var(--text-light); background: transparent; color: var(--text-light);">Ablehnen</button>
+                <a href="datenschutz.html" class="cookie-btn-secondary"
+                    style="text-decoration:none; display:flex; align-items:center; justify-content:center;">Infos</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div id="review-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h3 id="review-product-name" data-i18n="review_modal_title">Produkt bewerten</h3>
+            <form id="review-form">
+                <input type="hidden" id="review-product-id">
+
+                <div class="form-group" id="review-name-group">
+                    <label for="review-author" data-i18n="review_name_label">Dein Name (öffentlich sichtbar,
+                        Künstlernamen erlaubt):</label>
+                    <input type="text" id="review-author" class="qty-input" required placeholder="Max Mustermann">
+                </div>
+
+                <div class="form-group">
+                    <label data-i18n="review_rating_label">Bewertung:</label>
+                    <div class="star-rating">
+                        <input type="radio" id="star5" name="rating" value="5" /><label for="star5"
+                            title="5 Sterne">★</label>
+                        <input type="radio" id="star4" name="rating" value="4" /><label for="star4"
+                            title="4 Sterne">★</label>
+                        <input type="radio" id="star3" name="rating" value="3" /><label for="star3"
+                            title="3 Sterne">★</label>
+                        <input type="radio" id="star2" name="rating" value="2" /><label for="star2"
+                            title="2 Sterne">★</label>
+                        <input type="radio" id="star1" name="rating" value="1" /><label for="star1"
+                            title="1 Stern">★</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="review-text" data-i18n="review_text_label">Deine Meinung:</label>
+                    <textarea id="review-text" class="qty-input" placeholder="Was hat dir gut gefallen?" required
+                        style="min-height: 100px;" data-i18n="review_text_placeholder"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="review-image" data-i18n="review_image_label">Foto hinzufügen (optional, max.
+                        500KB):</label>
+                    <input type="file" id="review-image" accept="image/*" class="qty-input" style="padding: 0.5rem;">
+                </div>
+
+                <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 1rem; line-height: 1.4;"
+                    data-i18n="review_policy">
+                    Hinweis: Wir behalten uns das Recht vor, Bewertungen mit falschem, beleidigendem oder anstößigem
+                    Inhalt ohne Vorankündigung zu löschen.
+                </p>
+
+                <button type="submit" class="contact-btn" style="width: 100%;" data-i18n="review_submit">Bewertung
+                    absenden</button>
+            </form>
+
+            <div class="existing-reviews-section"
+                style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                <h4 style="margin-bottom: 1rem; color: var(--text-dark);" data-i18n="review_previous">Bisherige
+                    Bewertungen</h4>
+                <div id="reviews-list-container" class="reviews-list">
+                    <!-- Reviews will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chat-widget" class="chat-widget">
+        <button id="chat-toggle" class="chat-toggle">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M2.678 11.894a1 1 0 0 1 .287.801 10.97 10.97 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8.06 8.06 0 0 0 8 14c3.996 0 7-2.807 7-6 0-3.192-3.004-6-7-6S1 4.808 1 8c0 1.468.617 2.83 1.678 3.894zm-.493 3.905a21.682 21.682 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a9.68 9.68 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9.06 9.06 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105z" />
+            </svg>
+            <span id="chat-badge" class="chat-badge" style="display: none;">1</span>
+        </button>
+
+        <div id="chat-window" class="chat-window" style="display: none;">
+            <div class="chat-header">
+                <div>
+                    <h3 data-i18n="chat_header">Druckbau Support</h3>
+                    <p style="font-size: 0.85rem; opacity: 0.9; margin: 0;" data-i18n="chat_subtitle">Wir helfen Ihnen
+                        gerne!</p>
+                </div>
+                <button class="chat-close-btn">×</button>
+            </div>
+
+            <div id="chat-messages" class="chat-messages">
+                <div class="chat-message bot">
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble" data-i18n="chat_bot_greeting">
+                        Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen?
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-quick-replies" id="chat-quick-replies">
+                <button class="quick-reply-btn" data-topic="Lieferzeit" data-i18n="chat_reply_shipping">⏱️
+                    Lieferzeit</button>
+                <button class="quick-reply-btn" data-topic="Preise" data-i18n="chat_reply_pricing">💰 Preise</button>
+                <button class="quick-reply-btn" data-topic="Materialien" data-i18n="chat_reply_materials">🎨
+                    Materialien</button>
+                <button class="quick-reply-btn" data-topic="Kontakt" data-i18n="chat_reply_contact">📞 Kontakt</button>
+            </div>
+
+            <div class="chat-input-container">
+                <input type="text" id="chat-input" class="chat-input" placeholder="Nachricht eingeben..."
+                    data-i18n="chat_placeholder">
+                <button class="chat-send-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path
+                            d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 600px;">
+            <button class="close-modal" id="close-checkout">&times;</button>
+            <h2 id="checkout-title" style="color: var(--primary-blue); margin-bottom: 1.5rem;"
+                data-i18n="checkout_title">Kasse</h2>
+
+            <!-- Progress Bar -->
+            <div class="checkout-progress"
+                style="display: flex; justify-content: space-between; margin-bottom: 2rem; position: relative;">
+                <div class="progress-step active" data-step="1">
+                    <span class="step-number">1</span>
+                    <span class="step-label" data-i18n="checkout_step_1">Daten</span>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-label" data-i18n="checkout_step_2">Versand</span>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-label" data-i18n="checkout_step_3">Vorschau</span>
+                </div>
+            </div>
+
+            <!-- Step 1: Personal Info -->
+            <div class="checkout-step active" id="checkout-step-1">
+                <div class="form-group">
+                    <label for="checkout-name" data-i18n="checkout_name_label">Vollständiger Name</label>
+                    <input type="text" id="checkout-name" class="form-input" placeholder="Max Mustermann" required>
+                    <span class="form-error"></span>
+                </div>
+                <div class="form-group">
+                    <label for="checkout-email" data-i18n="checkout_email_label">E-Mail-Adresse</label>
+                    <input type="email" id="checkout-email" class="form-input" placeholder="max@beispiel.de" required>
+                    <span class="form-error"></span>
+                </div>
+                <div class="checkout-actions">
+                    <button class="contact-btn" style="width: 100%;" data-i18n="checkout_next_shipping">Weiter zu
+                        Versand</button>
+                </div>
+            </div>
+
+            <!-- Step 2: Shipping -->
+            <div class="checkout-step" id="checkout-step-2" style="display: none;">
+                <div class="form-group">
+                    <label for="checkout-address" data-i18n="checkout_address_label">Straße und Hausnummer</label>
+                    <input type="text" id="checkout-address" class="form-input" placeholder="Musterstraße 1" required>
+                    <span class="form-error"></span>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="checkout-zip" data-i18n="checkout_zip_label">PLZ</label>
+                        <input type="text" id="checkout-zip" class="form-input" placeholder="12345" required>
+                        <span class="form-error"></span>
+                    </div>
+                    <div class="form-group half">
+                        <label for="checkout-city" data-i18n="checkout_city_label">Ort</label>
+                        <input type="text" id="checkout-city" class="form-input" placeholder="Musterstadt" required>
+                        <span class="form-error"></span>
+                    </div>
+                </div>
+                <div class="checkout-actions" style="display: flex; gap: 1rem;">
+                    <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
+                        data-i18n="checkout_back">Zurück</button>
+                    <button class="contact-btn next-step-btn" style="flex: 2;" data-i18n="checkout_next_preview">Weiter
+                        zur
+                        Übersicht</button>
+                </div>
+            </div>
+
+            <!-- Step 3: Review -->
+            <div class="checkout-step" id="checkout-step-3" style="display: none;">
+                <div id="checkout-summary"
+                    style="margin-bottom: 2rem; background: var(--bg-light); padding: 1rem; border-radius: 8px;">
+                    <!-- Populated by JS -->
+                </div>
+                <div class="checkout-actions" style="display: flex; gap: 1rem;">
+                    <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
+                        data-i18n="checkout_back">Zurück</button>
+                    <button class="contact-btn" style="flex: 2;" id="final-checkout-btn"
+                        data-i18n="checkout_submit">Bestellung abschließen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
+        integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS"
+        crossorigin="anonymous"></script>
+    <script src="translations.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>

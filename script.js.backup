@@ -1,0 +1,3385 @@
+// Product Data
+const products = [
+    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
+    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
+    { id: 'c', nameKey: 'catalog_vase_name', price: 11.99, descKey: 'catalog_vase_desc', images: ['vase_1.jpg', 'vase_2.jpg'] },
+    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
+    { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
+];
+
+const colors = [
+    { name: 'Cyan-Blau (PLA)', value: 'blue' },
+    { name: 'Weiss (PLA)', value: 'white' },
+    { name: 'Schwarz (PLA)', value: 'black' },
+    { name: 'Grün (PLA)', value: 'green' },
+    { name: 'Grün (PETG)', value: 'petg-green' },
+    { name: 'Orange (PLA)', value: 'orange' },
+    { name: 'Grau (PLA)', value: 'grey' },
+    { name: 'Braun (PLA)', value: 'brown' },
+    { name: 'Transparent Blau (PLA)', value: 'trans-blue' },
+    { name: 'Transparent Grün (PLA)', value: 'trans-green' },
+    { name: 'Transparent Gelb (PLA)', value: 'trans-yellow' },
+    { name: 'Transparent Rot (PLA)', value: 'trans-red' },
+    { name: 'Eigene (Wunschfarbe)', value: 'custom' }
+];
+
+// Cart State
+let cart = [];
+let wishlist = [];
+let coupons = {};
+let appliedCoupon = null;
+window.products = products; // Make products globally available
+const SHIPPING_COST = 4.90;
+
+// Escape HTML utility to prevent XSS and ReferenceErrors
+function escapeHtml(text) {
+    if (typeof text !== 'string') return text;
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Helper for safe JSON parsing
+function safeJSONParse(key, fallback) {
+    try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : fallback;
+    } catch (e) {
+        console.error(`Error parsing localStorage key "${key}":`, e);
+        return fallback;
+    }
+}
+
+// Resilient initialization wrapper
+function resilientInit(fn, name) {
+    try {
+        fn();
+    } catch (e) {
+        console.error(`Initialization error in ${name || 'unknown'}:`, e);
+    }
+}
+
+// Initializes the application
+function init() {
+    // ALWAYS setup navigation first, as early as possible
+    resilientInit(setupNavigation, "setupNavigation");
+
+    resilientInit(initTheme, "initTheme");
+
+    // Check if we are on the gallery page
+    if (document.getElementById('gallery-app')) {
+        resilientInit(loadGallery, "loadGallery");
+        return;
+    }
+
+    // Normal page initialization
+    if (document.getElementById('products-grid')) {
+        resilientInit(loadCartFromStorage, "loadCartFromStorage");
+        resilientInit(loadWishlistFromStorage, "loadWishlistFromStorage");
+        resilientInit(renderProducts, "renderProducts");
+        resilientInit(updateCartIcon, "updateCartIcon");
+        resilientInit(updateWishlistIcon, "updateWishlistIcon");
+        resilientInit(initFAQ, "initFAQ");
+        resilientInit(initOrderStatusChecker, "initOrderStatusChecker");
+        resilientInit(initNewsletterSystem, "initNewsletterSystem");
+        resilientInit(initUrgencyNotifications, "initUrgencyNotifications");
+    }
+    resilientInit(initCookieBanner, "initCookieBanner");
+
+    // Initialize new features
+    resilientInit(initNewFeatures, "initNewFeatures");
+    resilientInit(attachEventListeners, "attachEventListeners");
+}
+
+function attachEventListeners() {
+    document.body.addEventListener('click', (e) => {
+        const target = e.target;
+
+        // Checkout Modal Navigation
+        if (target.closest('#close-checkout') || target.closest('.close-modal')) {
+            if (target.closest('#checkout-modal')) {
+                closeCheckoutModal();
+            }
+        }
+
+        // Buttons with specific ids or classes (robust for internationalization)
+        if (target.id === 'final-checkout-btn' || target.closest('#final-checkout-btn')) {
+            console.log('Final checkout button triggered via ID');
+            submitCheckout();
+            return; // Exit delegation for this hit
+        }
+
+        if (target.closest('.contact-btn')) {
+            const btn = target.closest('.contact-btn');
+            const text = btn.innerText.toLowerCase();
+
+            if (text.includes('weiter') || text.includes('next')) {
+                nextCheckoutStep();
+            } else if (text === 'zurück' || text === 'back') {
+                prevCheckoutStep();
+            }
+        }
+
+        if (target.id === 'checkout-btn') {
+            checkout();
+        }
+
+        // Chat
+        if (target.closest('#chat-toggle')) {
+            toggleChat();
+        }
+        if (target.closest('.chat-close-btn')) {
+            toggleChat();
+        }
+        if (target.closest('.chat-send-btn')) {
+            sendChatMessage();
+        }
+        if (target.classList.contains('quick-reply-btn')) {
+            const topic = target.getAttribute('data-topic') || target.innerText.replace(/[^\w\s]/g, '').trim();
+            sendQuickReply(topic);
+        }
+
+        // Language Switcher
+        if (target.classList.contains('lang-btn') || target.closest('.lang-btn')) {
+            const btn = target.classList.contains('lang-btn') ? target : target.closest('.lang-btn');
+            const lang = btn.getAttribute('data-lang');
+            if (lang && typeof window.switchLanguage === 'function') {
+                window.switchLanguage(lang);
+
+                // Update active button UI
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+
+        // Admin (delegated)
+        if (target.innerText.includes('Export') && target.classList.contains('contact-btn')) {
+            exportOrdersToCSV();
+        }
+        if (target.innerText.includes('Angebot') && target.classList.contains('contact-btn')) {
+            createSeasonalOffer();
+        }
+
+        // Remove from cart (delegated for dynamic items)
+        const removeBtn = target.closest('.remove-btn');
+        if (removeBtn && removeBtn.hasAttribute('data-index')) {
+            removeFromCart(parseInt(removeBtn.getAttribute('data-index')));
+        }
+    });
+
+    const chatInput = document.getElementById('chat-input');
+    if (chatInput) {
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        });
+    }
+}
+
+// Toast Notification System
+function showToast(message, type = 'info', duration = 4000) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+
+    const icons = {
+        success: '✓',
+        error: '✕',
+        warning: '⚠',
+        info: 'ℹ'
+    };
+
+    toast.innerHTML = `
+        <div class="toast-icon">${icons[type] || icons.info}</div>
+        <div class="toast-content">${message}</div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    `;
+
+    container.appendChild(toast);
+
+    // Auto-remove after duration
+    if (duration > 0) {
+        setTimeout(() => {
+            toast.classList.add('removing');
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+}
+
+// Convenience functions
+function showSuccess(message, duration) {
+    showToast(message, 'success', duration);
+}
+
+function showError(message, duration) {
+    showToast(message, 'error', duration);
+}
+
+function showWarning(message, duration) {
+    showToast(message, 'warning', duration);
+}
+
+function showInfo(message, duration) {
+    showToast(message, 'info', duration);
+}
+
+// Chat Widget System
+const chatFAQ = {
+    'Lieferzeit': 'Unsere Standard-Lieferzeit beträgt 3-5 Werktage. Express-Versand ist auf Anfrage möglich! 🚚',
+    'Preise': 'Unsere Preise variieren je nach Produkt und Menge. Schauen Sie sich unsere Produktseite an oder kontaktieren Sie uns für ein individuelles Angebot! 💰',
+    'Materialien': 'Wir verwenden hochwertige Materialien wie PLA, PETG, ABS und TPU. Jedes Material hat seine eigenen Eigenschaften - fragen Sie uns gerne! 🎨',
+    'Kontakt': 'Sie erreichen uns per E-Mail unter druckbau.info@gmail.com oder nutzen Sie unser Kontaktformular. Wir antworten innerhalb von 24 Stunden! 📞',
+    'Versand': 'Wir versenden deutschlandweit für 4,90€. Ab 50€ Bestellwert ist der Versand kostenlos! 📦',
+    'Zahlung': 'Aktuell bieten wir Zahlung per Überweisung an. Nach Bestelleingang erhalten Sie unsere Bankdaten per E-Mail. 💳',
+    'Rückgabe': 'Individuelle 3D-Drucke sind vom Umtausch ausgeschlossen. Bei Mängeln kontaktieren Sie uns bitte innerhalb von 14 Tagen. 🔄'
+};
+
+function toggleChat() {
+    const chatWindow = document.getElementById('chat-window');
+    const chatBadge = document.getElementById('chat-badge');
+
+    if (chatWindow.style.display === 'none') {
+        chatWindow.style.display = 'flex';
+        chatBadge.style.display = 'none';
+        scrollChatToBottom();
+    } else {
+        chatWindow.style.display = 'none';
+    }
+}
+
+function sendChatMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+
+    if (!message) return;
+
+    addChatMessage(message, 'user');
+    input.value = '';
+
+    // Simulate bot response
+    setTimeout(() => {
+        const response = getBotResponse(message);
+        addChatMessage(response, 'bot');
+    }, 500);
+}
+
+function sendQuickReply(topic) {
+    addChatMessage(topic, 'user');
+
+    setTimeout(() => {
+        // Look up translated response based on topic/key
+        const responseKey = `chat_reply_${topic.toLowerCase()}_response`;
+        const response = (typeof t === 'function' ? t(responseKey) : null) || 'Entschuldigung, dazu habe ich keine Information. Bitte kontaktieren Sie uns direkt!';
+        addChatMessage(response, 'bot');
+    }, 500);
+}
+
+function addChatMessage(text, sender) {
+    const messagesContainer = document.getElementById('chat-messages');
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `chat-message ${sender}`;
+
+    const avatar = sender === 'bot' ? '🤖' : '👤';
+
+    messageDiv.innerHTML = `
+        <div class="chat-avatar">${avatar}</div>
+        <div class="chat-bubble">${text}</div>
+    `;
+
+    messagesContainer.appendChild(messageDiv);
+    scrollChatToBottom();
+}
+
+function getBotResponse(message) {
+    const lowerMessage = message.toLowerCase();
+
+    // Simple keyword matching
+    if (lowerMessage.includes('liefer') || lowerMessage.includes('dauer') || lowerMessage.includes('schnell')) {
+        return chatFAQ['Lieferzeit'];
+    } else if (lowerMessage.includes('preis') || lowerMessage.includes('kosten') || lowerMessage.includes('euro')) {
+        return chatFAQ['Preise'];
+    } else if (lowerMessage.includes('material') || lowerMessage.includes('pla') || lowerMessage.includes('petg')) {
+        return chatFAQ['Materialien'];
+    } else if (lowerMessage.includes('kontakt') || lowerMessage.includes('email') || lowerMessage.includes('telefon')) {
+        return chatFAQ['Kontakt'];
+    } else if (lowerMessage.includes('versand') || lowerMessage.includes('shipping')) {
+        return chatFAQ['Versand'];
+    } else if (lowerMessage.includes('zahlung') || lowerMessage.includes('bezahl')) {
+        return chatFAQ['Zahlung'];
+    } else if (lowerMessage.includes('rückgabe') || lowerMessage.includes('umtausch') || lowerMessage.includes('reklamation')) {
+        return chatFAQ['Rückgabe'];
+    } else if (lowerMessage.includes('hallo') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+        return 'Hallo! 👋 Wie kann ich Ihnen helfen? Nutzen Sie gerne die Quick-Reply-Buttons unten!';
+    } else {
+        return 'Danke für Ihre Nachricht! Für spezifische Fragen kontaktieren Sie uns bitte direkt unter druckbau.info@gmail.com oder nutzen Sie unser Kontaktformular. 📧';
+    }
+}
+
+function scrollChatToBottom() {
+    const messagesContainer = document.getElementById('chat-messages');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+}
+
+// Social Proof & Urgency System
+function showUrgencyNotification(productName, location, minutesAgo) {
+    const container = document.getElementById('urgency-notifications');
+    if (!container) return;
+
+    const notification = document.createElement('div');
+    notification.className = 'urgency-notification';
+
+    notification.innerHTML = `
+        <div class="urgency-icon">🔥</div>
+        <div class="urgency-content">
+            <div class="urgency-title">${productName}</div>
+            <div class="urgency-text">Vor ${minutesAgo} Min. in ${location} gekauft</div>
+        </div>
+    `;
+
+    container.appendChild(notification);
+
+    // Auto-remove after 5 seconds
+    setTimeout(() => {
+        notification.classList.add('removing');
+        setTimeout(() => notification.remove(), 300);
+    }, 5000);
+}
+
+function initUrgencyNotifications() {
+    const locations = ['Berlin', 'München', 'Hamburg', 'Köln', 'Frankfurt', 'Stuttgart', 'Düsseldorf', 'Leipzig'];
+    const productNames = products.filter(p => !p.isCustom).map(p => p.name);
+
+    // Show first notification after 5 seconds
+    setTimeout(() => {
+        const randomProduct = productNames[Math.floor(Math.random() * productNames.length)];
+        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+        const randomMinutes = Math.floor(Math.random() * 45) + 5;
+
+        showUrgencyNotification(randomProduct, randomLocation, randomMinutes);
+    }, 5000);
+
+    // Show notifications every 20-40 seconds
+    setInterval(() => {
+        const randomProduct = productNames[Math.floor(Math.random() * productNames.length)];
+        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+        const randomMinutes = Math.floor(Math.random() * 45) + 5;
+
+        showUrgencyNotification(randomProduct, randomLocation, randomMinutes);
+    }, 30000); // Every 30 seconds
+}
+
+// Order Status Checker Logic
+function initOrderStatusChecker() {
+    const btn = document.getElementById('check-status-btn');
+    const input = document.getElementById('status-order-id');
+    const resultDiv = document.getElementById('status-result');
+    const badge = document.getElementById('status-badge');
+
+    if (!btn || !input) return;
+
+    btn.addEventListener('click', () => {
+        let orderId = input.value.trim();
+        if (!orderId) {
+            showError("Bitte geben Sie eine Bestellnummer ein.");
+            return;
+        }
+
+        // Clean ID (strip # if present)
+        const cleanId = orderId.replace('#', '').toUpperCase();
+
+        const orders = safeJSONParse('druckbau_orders', []);
+        const order = orders.find(o => o.orderId === cleanId);
+
+        resultDiv.style.display = 'block';
+        if (order) {
+            const status = order.status || 'Eingegangen';
+            badge.textContent = status;
+
+            // Coloring
+            if (status === 'Eingegangen') {
+                badge.style.background = '#e9ecef';
+                badge.style.color = '#495057';
+            } else if (status === 'In Bearbeitung') {
+                badge.style.background = '#fff3cd';
+                badge.style.color = '#856404';
+            } else if (status === 'Gedruckt') {
+                badge.style.background = '#d1ecf1';
+                badge.style.color = '#0c5460';
+            } else if (status === 'Versendet') {
+                badge.style.background = '#d4edda';
+                badge.style.color = '#155724';
+            }
+        } else {
+            badge.textContent = "Nicht gefunden";
+            badge.style.background = '#f8d7da';
+            badge.style.color = '#721c24';
+        }
+    });
+}
+
+// Cookie Banner Logic
+function initCookieBanner() {
+    const overlay = document.getElementById('cookie-overlay');
+
+    // Debugging: Log if element is found
+    if (!overlay) {
+        console.warn('Cookie overlay element not found');
+        return;
+    }
+
+    // Check session storage (persists on reload, clears on close)
+    if (!sessionStorage.getItem('cookiesAccepted_session')) {
+        console.log('Showing cookie banner (New Session)');
+        overlay.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+
+    const acceptBtn = document.getElementById('accept-cookies');
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+            console.log('Cookies accepted by user');
+            sessionStorage.setItem('cookiesAccepted_session', 'true');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+    }
+
+    const declineBtn = document.getElementById('decline-cookies');
+    if (declineBtn) {
+        declineBtn.addEventListener('click', () => {
+            console.log('Cookies declined by user');
+            overlay.classList.remove('show');
+            document.body.style.overflow = '';
+        });
+    }
+}
+
+// Persistence Helpers
+function saveCartToStorage() {
+    localStorage.setItem('druckbau_cart', JSON.stringify(cart));
+}
+
+function loadCartFromStorage() {
+    const saved = localStorage.getItem('druckbau_cart');
+    if (saved) {
+        try {
+            cart = JSON.parse(saved);
+        } catch (e) {
+            console.error('Failed to load cart', e);
+            cart = [];
+        }
+    }
+}
+
+// FAQ Accordion
+function initFAQ() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+        const question = item.querySelector('.faq-question');
+        if (question) {
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                faqItems.forEach(i => i.classList.remove('active'));
+                if (!isActive) item.classList.add('active');
+            });
+        }
+    });
+}
+
+// Theme Management
+function initTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    updateThemeIcon(currentTheme);
+
+    themeToggle.addEventListener('click', () => {
+        const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+        updateThemeIcon(theme);
+    });
+}
+
+function updateThemeIcon(theme) {
+    const sunIcon = document.querySelector('.sun-icon');
+    const moonIcon = document.querySelector('.moon-icon');
+    if (!sunIcon || !moonIcon) return;
+
+    if (theme === 'dark') {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+    } else {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+    }
+}
+
+// Gallery Standalone Logic
+function loadGallery() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('id');
+    const startImg = params.get('img');
+
+    const product = products.find(p => p.id === productId);
+
+    if (!product || !product.images) {
+        document.body.innerHTML = '<h1 style="color:white; text-align:center;">Produkt nicht gefunden</h1>';
+        return;
+    }
+
+    const titleElement = document.getElementById('product-title');
+    if (titleElement) titleElement.innerText = product.name;
+
+    const mainImg = document.getElementById('main-display');
+    const thumbsContainer = document.getElementById('thumbs-container');
+
+    // Set initial image
+    let currentImg = startImg || product.images[0];
+    if (mainImg) mainImg.src = currentImg;
+
+    // Render thumbnails
+    if (thumbsContainer) {
+        thumbsContainer.innerHTML = product.images.map(img => `
+            <img src="${img}" class="thumbnail ${img === currentImg ? 'active' : ''}" data-src="${img}">
+        `).join('');
+    }
+}
+
+function switchGalleryImage(src, thumb) {
+    const mainImg = document.getElementById('main-display');
+    if (mainImg) mainImg.src = src;
+    document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+    if (thumb) thumb.classList.add('active');
+}
+
+// Render Products to DOM
+// Render Products to DOM
+function renderProducts() {
+    const grid = document.getElementById('products-grid');
+    grid.innerHTML = products.map(product => {
+        const isWishlisted = wishlist.includes(product.id);
+
+        // Shared Rating Logic
+        let avgRating = 0;
+        let reviewCount = 0;
+        let starsDisplay = '☆☆☆☆☆';
+
+        if (typeof getAverageRating === 'function' && typeof loadReviews === 'function') {
+            avgRating = getAverageRating(product.id);
+            const reviews = loadReviews()[product.id] || [];
+            reviewCount = reviews.length;
+            starsDisplay = renderStars(avgRating);
+        }
+
+        const ratingHtml = `
+            <div class="product-rating-summary" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.8rem;">
+                <div style="display:flex; gap:0.5rem; width:100%;">
+                    <button class="rate-btn" data-id="${product.id}" data-name="${escapeHtml(product.name)}" 
+                        style="flex:1; background:var(--primary-blue); border:1px solid var(--primary-blue); color:white; padding:5px; border-radius:4px; font-size:0.85rem; cursor:pointer; transition: opacity 0.2s;">
+                        ${t('product_rate')}
+                    </button>
+                    <button class="view-reviews-btn" data-id="${product.id}" data-name="${escapeHtml(product.name)}" 
+                        style="flex:1; background:white; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:5px; border-radius:4px; font-size:0.85rem; cursor:pointer; transition: background 0.2s;">
+                        ${t('product_view_reviews')} (${reviewCount})
+                    </button>
+                </div>
+            </div>
+        `;
+
+        if (product.isCustom) {
+            return `
+            <div class="product-card" onclick="trackProductView('${product.id}')" style="position: relative;">
+                <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                </button>
+                <h3>${t(product.nameKey)}</h3>
+                ${ratingHtml}
+                <span class="price">${t('product_indiv')}</span>
+                
+                <div class="product-options">
+                    <div class="option-group">
+                        <label>${t('product_order_custom_from')}</label>
+                        <input type="text" id="custom-from-${product.id}" placeholder="${t('product_custom_from_placeholder')}" class="qty-input">
+                    </div>
+                    <div class="option-group">
+                        <label>${t('product_order_custom_to')}</label>
+                        <input type="text" id="custom-to-${product.id}" placeholder="${t('product_custom_to_placeholder')}" class="qty-input">
+                    </div>
+                    <div class="option-group">
+                        <label>${t('product_order_custom_desc')}</label>
+                        <textarea id="custom-desc-${product.id}" placeholder="${t('product_custom_desc_placeholder')}" class="qty-input" style="min-height: 60px;"></textarea>
+                    </div>
+                    <div class="option-group">
+                        <label>${t('product_order_custom_files')}</label>
+                        <input type="file" id="custom-files-${product.id}" multiple class="qty-input file-input-trigger" data-id="${product.id}" style="padding: 5px;">
+                        <span style="font-size: 0.75rem; color: var(--text-light);">${t('product_order_custom_files_tip')}</span>
+                        <ul id="file-list-${product.id}" class="selected-files-list"></ul>
+                        <div class="file-warning-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                            </svg>
+                            <span>${t('product_order_custom_files_warning')}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-btn add-custom-btn" data-id="${product.id}">
+                    Auftrag hinzufügen
+                </button>
+            </div>
+            `;
+        }
+
+        if (product.images && product.images.length > 0) {
+            return `
+            <div class="product-card" onclick="trackProductView('${product.id}')" style="position: relative;">
+                <button class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="Auf die Wunschliste">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                </button>
+                <h3>${product.name}</h3>
+                <div class="gallery-container">
+                    <div class="gallery-slide" id="gallery-${product.id}">
+                        ${product.images.map((img, i) => `
+                        <div class="gallery-item" data-lightbox-src="${img}">
+                            <img src="${img}" class="gallery-img">
+                            <a href="gallery.html?id=${product.id}&img=${img}" target="_blank" class="maximize-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path fill-rule="evenodd" d="M5.828 10.172a.5.5 0 0 0-.707 0l-4.096 4.096V11.5a.5.5 0 0 0-1 0v3.975a.5.5 0 0 0 .5.5H4.5a.5.5 0 0 0 0-1H1.732l4.096-4.096a.5.5 0 0 0 0-.707zm4.344 0a.5.5 0 0 1 .707 0l4.096 4.096V11.5a.5.5 0 1 1 1 0v3.975a.5.5 0 0 1-.5.5H11.5a.5.5 0 0 1 0-1h2.768l-4.096-4.096a.5.5 0 0 1 0-.707zm0-4.344a.5.5 0 0 0 .707 0l4.096-4.096V4.5a.5.5 0 1 0 1 0V.525a.5.5 0 0 0-.5-.5H11.5a.5.5 0 0 0 0 1h2.768l-4.096 4.096a.5.5 0 0 0 0 .707zm-4.344 0a.5.5 0 0 1-.707 0L1.025 1.732V4.5a.5.5 0 0 1-1 0V.525a.5.5 0 0 1 .5-.5H4.5a.5.5 0 0 1 0 1H1.732l4.096 4.096a.5.5 0 0 1 0 .707z"/>
+                                </svg>
+                            </a>
+                        </div>
+`).join('')}
+                    </div>
+                </div>
+                ${ratingHtml}
+                ${product.description ? `<p style="color: #666; font-size: 0.9rem; margin-bottom: 0.5rem;">${product.description}</p>` : ''}
+                <span class="price">${product.price.toFixed(2)} €</span>
+                
+                <div class="product-options">
+                    <div class="option-group">
+                        <label>${t('product_quantity')}</label>
+                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>${t('product_color')}</label>
+                        <div class="color-preview-container">
+                            <select id="color-${product.id}" class="color-select" data-id="${product.id}" onchange="updateColorPreview(this, '${product.id}')">
+                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                            <div id="preview-${product.id}" class="color-preview preview-blue"></div>
+                        </div>
+                    </div>
+
+                    <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none;">
+                        <label style="color: var(--primary-blue);">Ihre Wunschfarbe:</label>
+                        <input type="text" id="custom-color-input-${product.id}" placeholder="Welche Farbe möchten Sie?" class="qty-input">
+                        <div class="warning-msg">
+                            <strong>Hinweis:</strong> Diese Farbe muss ggf. extra bestellt werden. Dadurch können zusätzliche Kosten und Wartezeiten entstehen.
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-btn add-to-cart-btn" data-id="${product.id}">
+                    In den Warenkorb
+                </button>
+            </div>
+            `;
+        }
+
+        return `
+        <div class="product-card">
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    <div id="tint-layer-${product.id}" class="tint-layer"></div>
+                    <img src="${product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg'}" alt="${product.name}" class="product-img main-img" id="main-img-${product.id}">
+                </div>
+                 ${product.images && product.images.length > 1 ? `
+                <div class="thumbnail-row">
+                    ${product.images.map((img, index) => `
+                        <img src="${img}" class="thumbnail ${index === 0 ? 'active' : ''}" 
+                             onclick="switchGalleryImage('${img}', this)">
+                    `).join('')}
+                </div>` : ''}
+            </div>
+
+            <div class="product-info">
+                <h3>${t(product.nameKey)}</h3>
+                ${ratingHtml}
+                ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
+                <div class="price">${product.price.toFixed(2)} €</div>
+                
+                <div class="product-options">
+                    <div class="option-group">
+                        <label>${t('product_quantity')}</label>
+                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input">
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>${t('product_color')}</label>
+                        <div class="color-preview-container">
+                            <select id="color-${product.id}" class="color-select" data-id="${product.id}" onchange="updateColorPreview(this, '${product.id}')">
+                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                            <div id="preview-${product.id}" class="color-preview preview-blue"></div>
+                        </div>
+                    </div>
+
+                    <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none;">
+                        <label style="color: var(--primary-blue);">${t('product_custom_color_label')}</label>
+                        <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input">
+                        <div class="warning-msg">
+                            <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
+                        </div>
+                    </div>
+                </div>
+
+                <button class="add-btn add-to-cart-btn" data-id="${product.id}">
+                    ${t('product_add_cart')}
+                </button>
+                <!-- Cart Icon Animation Container -->
+                <div id="cart-animation-${product.id}" style="position: absolute; right: 20px; bottom: 80px; pointer-events: none;"></div>
+            </div>
+        </div>
+    `}).join('');
+}
+
+// Update the little color circle when selection changes
+// Update the little color circle and tint the product image
+function updateColorPreview(select, id) {
+    const preview = document.getElementById(`preview-${id}`);
+    const customWrapper = document.getElementById(`custom-color-wrapper-${id}`);
+
+    if (preview) preview.className = `color-preview preview-${select.value}`;
+
+    if (select.value === 'custom') {
+        if (customWrapper) customWrapper.style.display = 'block';
+    } else {
+        if (customWrapper) customWrapper.style.display = 'none';
+    }
+}
+
+// Navigation Logic (SPA)
+function setupNavigation() {
+    // We use event delegation on document body to catch ALL navigation triggers
+    document.body.addEventListener('click', (e) => {
+        const link = e.target.closest('.nav-link, .cart-icon-container, .wishlist-icon-container, .footer-link.nav-trigger, .contact-trigger, .nav-trigger');
+
+        if (!link) return;
+
+        // Special check: Don't navigate if it's the dropdown toggle itself
+        if (link.classList.contains('dropdown-toggle')) return;
+
+        const targetId = link.getAttribute('data-target');
+
+        if (targetId) {
+            e.preventDefault();
+            console.log('Navigating to:', targetId);
+            showSection(targetId);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            // Fallback classes if data-target is missing for some reason
+            if (link.classList.contains('cart-icon-container')) {
+                e.preventDefault();
+                showSection('cart');
+            } else if (link.classList.contains('wishlist-icon-container')) {
+                e.preventDefault();
+                showSection('wishlist');
+            }
+        }
+    });
+}
+
+// Bot Protection State
+const SECTION_STATS = {
+    contactShownAt: 0
+};
+
+function showSection(id) {
+    if (id === 'contact') SECTION_STATS.contactShownAt = Date.now();
+    // Hide all sections
+    document.querySelectorAll('section').forEach(sec => {
+        sec.classList.remove('active');
+        if (sec.style.display !== 'none') sec.style.display = 'none'; // Ensure hidden
+    });
+
+    // Show target section(s)
+    // Note: Home is special, it's a section.
+    const target = document.getElementById(id);
+    if (target) {
+        target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
+        setTimeout(() => target.classList.add('active'), 10); // Small delay for fade in
+    }
+
+    // Update active nav link
+    const triggers = '.nav-link, .cart-icon-container, .wishlist-icon-container, .footer-link.nav-trigger, .contact-trigger, .nav-trigger';
+    document.querySelectorAll(triggers).forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-target') === id) {
+            link.classList.add('active');
+        }
+    });
+
+    if (id === 'cart') renderCart();
+    if (id === 'wishlist') renderWishlist();
+}
+
+// Cart Logic for Normal Items
+function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const qtyInput = document.getElementById(`qty-${productId}`);
+    let qty = parseInt(qtyInput.value);
+
+    if (isNaN(qty) || qty < 1) {
+        showError(t('alert_error_qty'));
+        return;
+    }
+
+    const colorSelect = document.getElementById(`color-${productId}`);
+    let colorVal = colorSelect.value;
+    let colorName = colors.find(c => c.value === colorVal).name;
+
+    // Handle Custom Color
+    if (colorVal === 'custom') {
+        const customInput = document.getElementById(`custom-color-input-${productId}`);
+        const customColorName = customInput.value.trim();
+
+        if (customColorName.length < 2) {
+            showError("Bitte geben Sie Ihre Wunschfarbe ein.");
+            customInput.focus();
+            return;
+        }
+        colorName = `Wunschfarbe: ${customColorName}`;
+        // Unique ID for cart separation (otherwise 'custom' stacks)
+        colorVal = `custom-${customColorName.toLowerCase().replace(/\s/g, '-')}`;
+    }
+
+    const existingItem = cart.find(item => item.id === productId && item.color === colorVal && !item.isCustom);
+
+    if (existingItem) {
+        existingItem.qty += qty;
+    } else {
+        cart.push({
+            id: productId,
+            nameKey: product.nameKey, // Use nameKey
+            name: t(product.nameKey), // Support legacy code if needed
+            price: product.price,
+            qty: qty,
+            color: colorVal,
+            colorName: colorName,
+            isCustom: false
+        });
+    }
+
+    showSuccess(`${qty}x ${t(product.nameKey)} (${colorName}) ${t('alert_success_added')}`);
+    trackProductPurchase(productId);
+    saveCartToStorage();
+    updateCartIcon();
+};
+
+// Cart Logic for Custom Items
+function addCustomToCart(productId) {
+    const product = products.find(p => p.id === productId);
+    const fromVal = document.getElementById(`custom-from-${productId}`).value;
+    const toVal = document.getElementById(`custom-to-${productId}`).value;
+    const descVal = document.getElementById(`custom-desc-${productId}`).value;
+    const fileInput = document.getElementById(`custom-files-${productId}`);
+    const fileNames = fileInput && fileInput.files ? Array.from(fileInput.files).map(f => f.name) : [];
+
+    if (!fromVal || !toVal || !descVal) {
+        showError("Bitte füllen Sie alle Felder für den Auftrag aus.");
+        return;
+    }
+
+    cart.push({
+        id: productId,
+        name: product.name,
+        price: 0,
+        qty: 1,
+        isCustom: true,
+        customFrom: fromVal,
+        customTo: toVal,
+        customDesc: descVal,
+        files: fileNames
+    });
+
+    showSuccess(t('alert_success_added'));
+    if (fileNames.length > 0) {
+        showWarning(`WICHTIG: Bitte hängen Sie die ${fileNames.length} Datei(en) später an Ihre E-Mail an.`, 6000);
+    }
+
+    // Clear inputs
+    document.getElementById(`custom-from-${productId}`).value = '';
+    document.getElementById(`custom-to-${productId}`).value = '';
+    document.getElementById(`custom-desc-${productId}`).value = '';
+
+    saveCartToStorage();
+    updateCartIcon();
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    saveCartToStorage();
+    renderCart(); // Re-render cart to show updates
+    updateCartIcon();
+};
+
+function updateCartIcon() {
+    const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+    document.getElementById('cart-count').innerText = totalQty;
+}
+
+function renderCart() {
+    const container = document.getElementById('cart-items-container');
+    const summaryContainer = document.getElementById('cart-summary');
+
+    if (cart.length === 0) {
+        container.innerHTML = `<p>${t('cart_empty')}</p>`;
+        summaryContainer.style.display = 'none';
+        return;
+    }
+
+    summaryContainer.style.display = 'block';
+
+    container.innerHTML = cart.map((item, index) => {
+        const displayName = item.nameKey ? t(item.nameKey) : item.name;
+        if (item.isCustom) {
+            const escapedDesc = escapeHtml(item.customDesc);
+            const escapedFrom = escapeHtml(item.customFrom);
+            const escapedTo = escapeHtml(item.customTo);
+            return `
+            <div class="cart-item">
+                <div class="cart-item-details">
+                    <h4>${displayName}</h4>
+                    <div class="cart-item-info">
+                        <strong>${t('cart_item_order')}</strong> ${escapedDesc}<br>
+                        <strong>${t('cart_item_from')}</strong> ${escapedFrom} | <strong>${t('cart_item_to')}</strong> ${escapedTo}
+                        ${item.files && item.files.length > 0 ? `
+                            <div style="margin-top:5px; font-size:0.8rem;">
+                                <strong>${t('cart_item_files')}</strong>
+                                <ul style="margin: 0; padding-left: 1.2rem; list-style-type: disc;">
+                                    ${item.files.map(f => `<li><code>${escapeHtml(f)}</code></li>`).join('')}
+                                </ul>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                <div style="display:flex; align-items:center; gap: 1rem;">
+                    <strong>${t('cart_item_price_on_request')}</strong>
+                    <button class="remove-btn" data-index="${index}" title="${t('cart_item_remove')}">
+                        ${t('cart_item_remove')}
+                    </button>
+                </div>
+            </div>`;
+        } else {
+            const escapedColor = escapeHtml(item.colorName);
+            return `
+            <div class="cart-item">
+                <div class="cart-item-details">
+                    <h4>${displayName}</h4>
+                    <div class="cart-item-info">${t('cart_item_qty')} ${item.qty} | ${t('cart_item_color')} ${escapedColor} | ${t('cart_item_unit_price')} ${item.price.toFixed(2)}€</div>
+                </div>
+                <div style="display:flex; align-items:center; gap: 1rem;">
+                    <strong>${(item.price * item.qty).toFixed(2)} €</strong>
+                    <button class="remove-btn" data-index="${index}" title="${t('cart_item_remove')}">
+                        ${t('cart_item_remove')}
+                    </button>
+                </div>
+            </div>`;
+        }
+    }).join('');
+
+    // Update icons in HTML string (hacky reuse of SVG separately to keep code clean above)
+    // Fixed the SVG issue by just using text "Remove" or simplified SVG above. 
+    // Let's perform a quick replacement to ensure the trash icon is there if nice.
+    // Actually, I just used text "Remove" to avoid big SVG block in map. 
+    // Let's stick the SVG back in for polish.
+    const trashSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/></svg>`;
+    container.querySelectorAll('.remove-btn').forEach(btn => btn.innerHTML = trashSvg);
+
+    // Add highlighted warning if custom files are present
+    const customItemsWithFiles = cart.filter(item => item.isCustom && item.files && item.files.length > 0);
+    const existingWarning = document.getElementById('cart-file-warning');
+    if (existingWarning) existingWarning.remove();
+
+    if (customItemsWithFiles.length > 0) {
+        const warningDiv = document.createElement('div');
+        warningDiv.id = 'cart-file-warning';
+        warningDiv.className = 'file-warning-box';
+        warningDiv.style.margin = '1rem 0';
+        warningDiv.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+            </svg>
+            <span>${t('cart_file_warning_text')}</span>
+        `;
+        container.prepend(warningDiv);
+    }
+
+
+    const hasCustom = cart.some(item => item.isCustom);
+    const hasRegular = cart.some(item => !item.isCustom);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const discount = calculateDiscount(subtotal);
+    const total = subtotal - discount + SHIPPING_COST;
+
+    if (!hasRegular && hasCustom) {
+        // Only custom items
+        document.getElementById('subtotal').innerText = t('cart_price_indiv');
+        document.getElementById('shipping').innerText = t('cart_shipping_cost_indiv');
+        document.getElementById('total-sum').innerText = t('cart_price_indiv');
+    } else if (hasRegular && hasCustom) {
+        // Mixed items
+        document.getElementById('subtotal').innerText = subtotal.toFixed(2) + ` € (${t('cart_extra_charge_info')})`;
+        if (discount > 0) {
+            document.getElementById('discount-row').style.display = 'flex';
+            document.getElementById('discount').innerText = '-' + discount.toFixed(2) + ' €';
+        } else {
+            document.getElementById('discount-row').style.display = 'none';
+        }
+        document.getElementById('shipping').innerText = SHIPPING_COST.toFixed(2) + ` € (${t('cart_shipping_extra_info')})`;
+        document.getElementById('total-sum').innerText = total.toFixed(2) + ` € (${t('cart_extra_charge_info')})`;
+    } else {
+        // Only regular items
+        document.getElementById('subtotal').innerText = subtotal.toFixed(2) + ' €';
+        if (discount > 0) {
+            document.getElementById('discount-row').style.display = 'flex';
+            document.getElementById('discount').innerText = '-' + discount.toFixed(2) + ' €';
+        } else {
+            document.getElementById('discount-row').style.display = 'none';
+        }
+        document.getElementById('shipping').innerText = SHIPPING_COST.toFixed(2) + ' €';
+        document.getElementById('total-sum').innerText = total.toFixed(2) + ' €';
+    }
+
+    // Update coupon UI
+    const couponSection = document.getElementById('coupon-section');
+    if (couponSection) {
+        if (appliedCoupon) {
+            couponSection.innerHTML = `
+                <div class="coupon-applied">
+                    <span>✓ Gutschein "${appliedCoupon.code}" angewendet</span>
+                    <button class="coupon-remove-btn" onclick="removeCoupon()">✕</button>
+                </div>
+            `;
+        } else {
+            couponSection.innerHTML = `
+                <div class="coupon-input-group">
+                    <input type="text" id="coupon-input" class="coupon-input" placeholder="${t('cart_coupon_label')}">
+                    <button id="apply-coupon-btn" class="coupon-apply-btn">${t('cart_coupon_btn')}</button>
+                </div>
+            `;
+            // Re-attach event listener
+            setTimeout(() => {
+                const btn = document.getElementById('apply-coupon-btn');
+                if (btn) btn.addEventListener('click', applyCoupon);
+            }, 0);
+        }
+    }
+}
+
+
+
+
+// Modern Checkout System
+let checkoutData = {};
+let currentCheckoutStep = 1;
+
+function checkout() {
+    if (cart.length === 0) {
+        showWarning(t('cart_empty'));
+        return;
+    }
+
+    checkoutData = {};
+    currentCheckoutStep = 1;
+
+    // Clear previous errors
+    document.querySelectorAll('.form-error').forEach(el => el.textContent = '');
+    document.querySelectorAll('.form-input').forEach(el => el.classList.remove('error', 'success'));
+
+    // Reset inputs
+    document.getElementById('checkout-name').value = '';
+    document.getElementById('checkout-email').value = '';
+    document.getElementById('checkout-address').value = '';
+    document.getElementById('checkout-zip').value = '';
+    document.getElementById('checkout-city').value = '';
+
+    const modal = document.getElementById('checkout-modal');
+    modal.classList.add('show');
+    showCheckoutStep(1);
+}
+
+function closeCheckoutModal() {
+    const modal = document.getElementById('checkout-modal');
+    modal.classList.remove('show');
+}
+
+function showCheckoutStep(step) {
+    console.log('showing checkout step:', step);
+    currentCheckoutStep = step;
+
+    // Hide all steps and remove active class
+    document.querySelectorAll('.checkout-step').forEach(el => {
+        el.style.display = 'none';
+        el.classList.remove('active');
+    });
+
+    // Show current step
+    const targetStep = document.getElementById(`checkout-step-${step}`);
+    if (targetStep) {
+        targetStep.style.display = 'block';
+        targetStep.classList.add('active');
+
+        // Ensure the modal scrolls to top
+        const modalContent = targetStep.closest('.modal-content');
+        if (modalContent) modalContent.scrollTop = 0;
+    } else {
+        console.error('Checkout step element not found:', step);
+        showError('Ein technischer Fehler ist aufgetreten. Bitte laden Sie die Seite neu.');
+    }
+
+    // Update progress bar
+    document.querySelectorAll('.progress-step').forEach(el => {
+        const stepNum = parseInt(el.getAttribute('data-step'));
+        el.classList.remove('active', 'completed');
+        if (stepNum === step) {
+            el.classList.add('active');
+        } else if (stepNum < step) {
+            el.classList.add('completed');
+        }
+    });
+
+    if (step === 3) {
+        renderCheckoutSummary();
+    }
+}
+
+function nextCheckoutStep() {
+    try {
+        console.log('nextCheckoutStep called. Current step:', currentCheckoutStep);
+        if (validateCheckoutStep(currentCheckoutStep)) {
+            console.log('Validation passed. Moving to step:', currentCheckoutStep + 1);
+            showCheckoutStep(currentCheckoutStep + 1);
+        } else {
+            console.log('Validation failed for step:', currentCheckoutStep);
+        }
+    } catch (e) {
+        console.error('nextCheckoutStep error:', e);
+        showError('Fehler: ' + e.message);
+    }
+}
+
+function prevCheckoutStep() {
+    if (currentCheckoutStep > 1) {
+        showCheckoutStep(currentCheckoutStep - 1);
+    }
+}
+
+function validateCheckoutStep(step) {
+    console.log('Validating step:', step);
+    let isValid = true;
+
+    if (step === 1) {
+        const nameInput = document.getElementById('checkout-name');
+        const emailInput = document.getElementById('checkout-email');
+
+        if (nameInput.value.trim().length < 2) {
+            setError(nameInput, 'Bitte geben Sie Ihren Namen ein (min. 2 Zeichen).');
+            isValid = false;
+        } else {
+            setSuccess(nameInput);
+        }
+
+        if (!emailInput.value.includes('@') || emailInput.value.length < 5) {
+            setError(emailInput, 'Bitte eine gültige E-Mail-Adresse eingeben.');
+            isValid = false;
+        } else {
+            setSuccess(emailInput);
+        }
+    } else if (step === 2) {
+        const addressInput = document.getElementById('checkout-address');
+        const zipInput = document.getElementById('checkout-zip');
+        const cityInput = document.getElementById('checkout-city');
+
+        if (addressInput.value.trim().length < 5) {
+            setError(addressInput, 'Bitte Ihre Adresse eingeben (min. 5 Zeichen).');
+            isValid = false;
+        } else {
+            setSuccess(addressInput);
+        }
+
+        if (!/^[0-9]{4,5}$/.test(zipInput.value.trim())) {
+            setError(zipInput, 'Gültige PLZ eingeben.');
+            isValid = false;
+        } else {
+            setSuccess(zipInput);
+        }
+
+        if (cityInput.value.trim().length < 2) {
+            setError(cityInput, 'Bitte Ihren Ort eingeben.');
+            isValid = false;
+        } else {
+            setSuccess(cityInput);
+        }
+    }
+
+    if (!isValid) {
+        showWarning('Bitte füllen Sie alle markierten Felder korrekt aus.');
+    }
+    return isValid;
+}
+
+function setError(input, message) {
+    if (!input) return;
+    input.classList.add('error');
+    input.classList.remove('success');
+    const errorSpan = input.parentElement.querySelector('.form-error');
+    if (errorSpan) errorSpan.textContent = message;
+}
+
+function setSuccess(input) {
+    if (!input) return;
+    input.classList.remove('error');
+    input.classList.add('success');
+    const errorSpan = input.parentElement.querySelector('.form-error');
+    if (errorSpan) errorSpan.textContent = '';
+}
+
+function renderCheckoutSummary() {
+    const summary = document.getElementById('checkout-summary');
+    const name = document.getElementById('checkout-name').value;
+    const email = document.getElementById('checkout-email').value;
+    const address = document.getElementById('checkout-address').value;
+    const zip = document.getElementById('checkout-zip').value;
+    const city = document.getElementById('checkout-city').value;
+
+    let itemsHtml = cart.map(item => {
+        if (item.isCustom) {
+            return `<li>[${typeof t === 'function' ? t('nav_more') : 'AUFTRAG'}] ${item.name} (${item.customDesc})</li>`;
+        } else {
+            return `<li>${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€</li>`;
+        }
+    }).join('');
+
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const discount = calculateDiscount(subtotal);
+    const total = subtotal - discount + SHIPPING_COST;
+
+    const shippingAddrHeader = typeof t === 'function' ? t('summary_shipping_address') : 'Lieferadresse:';
+    const orderPreviewHeader = typeof t === 'function' ? t('summary_order_preview') : 'Bestellübersicht:';
+    const shippingLabel = typeof t === 'function' ? t('cart_shipping') : 'Versand:';
+    const totalLabel = typeof t === 'function' ? t('cart_total') : 'Gesamt:';
+    const discountLabel = typeof t === 'function' ? t('cart_discount') : 'Rabatt:';
+
+    summary.innerHTML = `
+        <div style="margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
+            <strong>${shippingAddrHeader}</strong><br>
+            ${name}<br>
+            ${address}<br>
+            ${zip} ${city}<br>
+            E-Mail: ${email}
+        </div>
+        <div>
+            <strong>${orderPreviewHeader}</strong>
+            <ul style="padding-left: 1.2rem; margin: 0.5rem 0;">${itemsHtml}</ul>
+            <div style="border-top: 1px solid #ddd; margin-top: 0.5rem; padding-top: 0.5rem;">
+                ${discount > 0 ? `${discountLabel} -${discount.toFixed(2)}€<br>` : ''}
+                ${shippingLabel} ${SHIPPING_COST.toFixed(2)}€<br>
+                <strong>${totalLabel} ${total.toFixed(2)}€</strong>
+            </div>
+        </div>
+    `;
+}
+
+function submitCheckout() {
+    console.log('submitCheckout called');
+    const nameInput = document.getElementById('checkout-name');
+    const emailInput = document.getElementById('checkout-email');
+    const addressInput = document.getElementById('checkout-address');
+    const zipInput = document.getElementById('checkout-zip');
+    const cityInput = document.getElementById('checkout-city');
+
+    if (!nameInput || !emailInput || !addressInput || !zipInput || !cityInput) {
+        console.error('One or more checkout input elements missing');
+        return;
+    }
+
+    const name = nameInput.value;
+    const email = emailInput.value;
+    const address = addressInput.value;
+    const zip = document.getElementById('checkout-zip').value;
+    const city = document.getElementById('checkout-city').value;
+
+    const fullAddress = `${address}, ${zip} ${city}`;
+    const orderId = generateOrderId();
+
+    let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
+
+    cart.forEach(item => {
+        if (item.isCustom) {
+            body += `- [AUFTRAGSARBEIT] ${item.name}\n  Von: ${item.customFrom}\n  Zu: ${item.customTo}\n  Info: ${item.customDesc}\n`;
+            if (item.files && item.files.length > 0) {
+                body += `  !! BITTE ANHÄNGEN !! Dateien: ${item.files.join(', ')}\n`;
+            }
+        } else {
+            body += `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€\n`;
+        }
+    });
+
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const discount = calculateDiscount(subtotal);
+    const total = subtotal - discount + SHIPPING_COST;
+
+    body += `\nZwischensumme: ${subtotal.toFixed(2)}€\n`;
+    if (discount > 0) body += `Rabatt: -${discount.toFixed(2)}€\n`;
+    body += `Versand: ${SHIPPING_COST.toFixed(2)}€\n`;
+    body += `Gesamt: ${total.toFixed(2)}€\n`;
+
+    if (appliedCoupon) {
+        body += `\nGutschein: ${appliedCoupon.code}\n`;
+    }
+
+    body += `\nVielen Dank!`;
+
+    logOrder(name, email, orderId, body, appliedCoupon ? { code: appliedCoupon.code, discount: discount } : null);
+
+    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
+
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    cart = [];
+    saveCartToStorage();
+    updateCartIcon();
+    renderCart();
+    closeCheckoutModal();
+
+    showSuccess(t('checkout_prepare_success'));
+}
+
+// Old modal functions removed or unused
+/*
+function closeCheckoutModal() { ... }
+function showCheckoutStep(step) { ... }
+*/
+
+// Helper to generate a unique readable Order ID
+function generateOrderId() {
+    const now = new Date();
+    // Format: DB-YYYYMMDD-XXXX (4 random digits)
+    const dateStr = now.getFullYear().toString() +
+        (now.getMonth() + 1).toString().padStart(2, '0') +
+        now.getDate().toString().padStart(2, '0');
+    const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 1000-9999
+    return `DB-${dateStr}-${randomSuffix}`;
+}
+
+// Rate Limiter
+const RATE_LIMIT_MS = 30000; // 30 seconds
+function isRateLimited(key) {
+    const last = localStorage.getItem(`rl_${key}`);
+    const now = Date.now();
+    if (last && (now - last) < RATE_LIMIT_MS) return true;
+    localStorage.setItem(`rl_${key}`, now);
+    return false;
+}
+
+// Contact Form Logic
+function handleContact(event) {
+    if (event) event.preventDefault();
+    if (isRateLimited('contact')) {
+        alert("Bitte warten Sie einen Moment vor der nächsten Anfrage.");
+        return;
+    }
+
+    // Bot detection: Submission too fast (< 3 seconds since section shown)
+    const timeSinceShown = Date.now() - SECTION_STATS.contactShownAt;
+    if (timeSinceShown < 3000) {
+        console.warn("Bot suspected: Submission too fast.");
+        SecurityMonitor.sendAlert('Bot-Verdacht', `Formular wurde in nur ${timeSinceShown}ms ausgefüllt.`);
+        return;
+    }
+
+    // Honeypot check
+    const hp = document.getElementById('hp_name').value;
+    if (hp) {
+        console.warn("Spam detected");
+        SecurityMonitor.sendAlert('Bot-Angriff', 'Honeypot-Feld wurde ausgefüllt.');
+        return;
+    }
+
+    const name = document.getElementById('contact-name').value;
+    const email = document.getElementById('contact-email').value;
+    const orderId = document.getElementById('contact-order-id').value;
+    const message = document.getElementById('contact-message').value;
+    const gdpr = document.getElementById('contact-gdpr').checked;
+
+    if (!gdpr) {
+        alert("Bitte akzeptieren Sie die Datenschutzerklärung.");
+        return;
+    }
+
+    // Strict validation
+    if (!name || name.trim().length < 2) {
+        alert("Bitte geben Sie Ihren Namen ein.");
+        return;
+    }
+    if (!email || !email.includes('@') || email.trim().length < 5) {
+        alert("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        return;
+    }
+
+    // Strict Order ID Validation (Format: DB-YYYYMMDD-XXXX)
+    const orderIdRegex = /^DB-\d{8}-\d{4}$/;
+    if (!orderId || !orderIdRegex.test(orderId.trim())) {
+        alert("Bitte geben Sie eine gültige Bestellnummer ein (Format: DB-YYYYMMDD-XXXX).");
+        return;
+    }
+
+    if (!message || message.trim().length < 10) {
+        alert("Bitte geben Sie eine Nachricht ein (mindestens 10 Zeichen).");
+        return;
+    }
+
+    // Priority Check Logic
+    const urgentKeywords = [
+        'dringend', 'sofort', 'defekt', 'kaputt', 'beschwerde', 'problem', 'hilfe', 'eilig', 'wichtig', 'notfall',
+        'reklamation', 'rückerstattung', 'stornierung', 'frist', 'deadline', 'fehler', 'falsch', 'nicht erhalten',
+        'vermisst', 'beschädigt', 'kaput', 'geld zurück', 'schaden', 'anzeige', 'mahnung'
+    ];
+    const mediumKeywords = ['frage', 'bestellung', 'status', 'wann', 'angebot', 'termin', 'lieferzeit', 'versand'];
+
+    let subject = "Anfrage über Webseite";
+    const lowerMsg = message.toLowerCase();
+
+    // Check for high priority
+    const isUrgent = urgentKeywords.some(keyword => lowerMsg.includes(keyword));
+    // Check for medium priority if not urgent
+    const isMedium = !isUrgent && mediumKeywords.some(keyword => lowerMsg.includes(keyword));
+
+    if (isUrgent) {
+        subject = "[HOHE PRIORITÄT] " + subject;
+    } else if (isMedium) {
+        subject = "[MITTLERE PRIORITÄT] " + subject;
+    }
+
+    // Construct Email Body
+    let bodyHeader = `Name: ${name}\nE-Mail: ${email}\n`;
+    if (orderId && orderId.trim() !== "") {
+        bodyHeader += `Bestellnummer: ${orderId}\n`;
+    }
+
+    let couponInfo = null;
+    if (appliedCoupon) {
+        const discount = getCouponDiscount();
+        couponInfo = {
+            code: appliedCoupon.code,
+            discount: discount
+        };
+        bodyHeader += `Gutschein: ${appliedCoupon.code} (-${formatCurrency(discount)})\n`;
+    }
+
+    bodyHeader += `\n--------------------------------\n\n`;
+
+    const body = bodyHeader + message;
+
+    // Open mail client in a way that doesn't trigger navigation
+    const mailtoLink = `mailto:druckbau@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+    // Create a hidden link and click it to avoid window.location issues
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    // Log Order Internally (Admin Feature)
+    if (typeof logOrder === 'function') {
+        logOrder(name, email, orderId, message, couponInfo);
+    }
+
+    // Show success message instead of redirecting/reloading
+    if (typeof showSuccess === 'function') {
+        showSuccess("Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die Nachricht ab!", 5000);
+    } else {
+        alert("Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die Nachricht ab!");
+    }
+
+    // Formular NICHT automatisch zurücksetzen, damit der Nutzer die Daten behält
+    // setTimeout(() => {
+    //     document.querySelector('.contact-form').reset();
+    // }, 8000);
+
+    return false;
+}
+
+// --- SECURITY MONITORING SYSTEM ---
+const SECURITY_CONFIG = {
+    emailjs_public_key: 'YOUR_PUBLIC_KEY', // USER: Please replace with your EmailJS Public Key
+    service_id: 'YOUR_SERVICE_ID',     // USER: Please replace with your EmailJS Service ID
+    template_id: 'YOUR_TEMPLATE_ID'    // USER: Please replace with your EmailJS Template ID
+};
+
+const SecurityMonitor = {
+    init: function () {
+        if (typeof emailjs !== 'undefined') {
+            emailjs.init(SECURITY_CONFIG.emailjs_public_key);
+        }
+
+        // Listen for CSP Violations
+        document.addEventListener('securitypolicyviolation', (e) => {
+            console.error('CSP Violation detected:', e);
+            this.sendAlert('CSP-Verstoß', `Quelle: ${e.blockedURI}, Typ: ${e.violatedDirective}`);
+        });
+
+        // Periodic Check for DOM Manipulations (Basic check)
+        this.startAuditLoop();
+        console.log('Security Monitor active.');
+    },
+
+    sendAlert: function (incident, details) {
+        if (!SECURITY_CONFIG.emailjs_public_key || SECURITY_CONFIG.emailjs_public_key.startsWith('YOUR_')) {
+            console.warn(`[SECURITY ALERT] ${incident}: ${details} (EmailJS not configured)`);
+            return;
+        }
+
+        const templateParams = {
+            incident: incident,
+            details: details,
+            timestamp: new Date().toLocaleString(),
+            url: window.location.href
+        };
+
+        emailjs.send(SECURITY_CONFIG.service_id, SECURITY_CONFIG.template_id, templateParams)
+            .then(() => console.log('Security alert sent via email.'))
+            .catch((error) => console.error('Failed to send security alert:', error));
+    },
+
+    startAuditLoop: function () {
+        // Observer for suspicious DOM changes in the footer or hidden fields
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                    // Check if honeypot was tampered with (unhidden)
+                    const hp = document.querySelector('.hp-field');
+                    if (hp && window.getComputedStyle(hp).display !== 'none') {
+                        this.sendAlert('Manipulation erkannt', 'Honeypot-Feld wurde sichtbar gemacht oder manipuliert.');
+                        observer.disconnect();
+                    }
+                }
+            });
+        });
+
+        observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+    }
+};
+// Initialize on load is enough, avoid double calls
+// init() at end of file will handle it
+document.addEventListener('DOMContentLoaded', () => {
+    // init(); // Removed to avoid double execution
+    SecurityMonitor.init();
+});
+
+// Event Delegation: Products & Cart
+document.body.addEventListener('click', (e) => {
+    // Add to Cart
+    if (e.target.classList.contains('add-to-cart-btn')) {
+        addToCart(e.target.getAttribute('data-id'));
+    }
+    // Add Custom to Cart
+    if (e.target.classList.contains('add-custom-btn')) {
+        addCustomToCart(e.target.getAttribute('data-id'));
+    }
+    // Maximize Icon Stop Propagation
+    if (e.target.closest('.maximize-icon')) {
+        e.stopPropagation();
+    }
+    // Remove from Cart
+    const removeBtn = e.target.closest('.remove-btn');
+    if (removeBtn) {
+        removeFromCart(parseInt(removeBtn.getAttribute('data-index')));
+    }
+    // Checkout
+    if (e.target.id === 'checkout-btn') {
+        checkout();
+    }
+    // Gallery Close
+    if (e.target.id === 'close-gallery-btn') {
+        e.preventDefault();
+        window.close();
+    }
+    // Rate Product
+    if (e.target.classList.contains('rate-btn')) {
+        const id = e.target.getAttribute('data-id');
+        const name = e.target.getAttribute('data-name');
+        if (window.openRateModal) {
+            window.openRateModal(id, name);
+        } else {
+            console.error('openRateModal not found');
+        }
+    }
+    // View Reviews
+    if (e.target.classList.contains('view-reviews-btn')) {
+        const id = e.target.getAttribute('data-id');
+        const name = e.target.getAttribute('data-name');
+        if (window.openViewReviewsModal) {
+            window.openViewReviewsModal(id, name);
+        }
+    }
+    // Delete Review
+    if (e.target.classList.contains('delete-review-btn')) {
+        const productId = e.target.getAttribute('data-product-id');
+        const index = parseInt(e.target.getAttribute('data-index'));
+        const isOwner = e.target.getAttribute('data-is-owner') === 'true';
+
+        deleteReviewInternal(productId, index, isOwner);
+    }
+});
+
+// Event Delegation: Color Previews
+document.body.addEventListener('change', (e) => {
+    if (e.target.classList.contains('color-select')) {
+        updateColorPreview(e.target, e.target.getAttribute('data-id'));
+    }
+
+    // Update file list preview
+    if (e.target.classList.contains('file-input-trigger')) {
+        const id = e.target.getAttribute('data-id');
+        const list = document.getElementById(`file-list-${id}`);
+        const files = e.target.files;
+        if (list) {
+            list.innerHTML = '';
+            if (files.length > 0) {
+                Array.from(files).forEach((file, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                            <span>${file.name}</span>
+                            <button type="button" class="remove-file-btn" data-index="${index}" data-id="${id}" title="Entfernen">&times;</button>
+                        `;
+                    list.appendChild(li);
+                });
+            }
+        }
+    }
+});
+
+// Click handler for removing files (Event Delegation)
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('remove-file-btn')) {
+        const index = parseInt(e.target.getAttribute('data-index'));
+        const id = e.target.getAttribute('data-id');
+        const fileInput = document.getElementById(`custom-files-${id}`);
+
+        if (fileInput && fileInput.files) {
+            const dt = new DataTransfer();
+            const { files } = fileInput;
+
+            for (let i = 0; i < files.length; i++) {
+                if (i !== index) dt.items.add(files[i]);
+            }
+
+            fileInput.files = dt.files;
+            // Trigger change event to refresh the list
+            fileInput.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+    }
+});
+
+// Form Submission
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleContact();
+    });
+}
+
+// Gallery Thumbnails
+const thumbsContainer = document.getElementById('thumbs-container');
+if (thumbsContainer) {
+    thumbsContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('thumbnail')) {
+            switchGalleryImage(e.target.getAttribute('data-src'), e.target);
+        }
+    });
+}
+
+// Lightbox Setup
+if (!document.getElementById('gallery-app')) {
+    const lightbox = document.createElement('div');
+    lightbox.id = 'lightbox';
+    lightbox.className = 'lightbox';
+    lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target.classList.contains('close-lightbox')) {
+            closeLightbox();
+        }
+    });
+    lightbox.innerHTML = '<span class="close-lightbox">&times;</span><img class="lightbox-content" id="lightbox-img">';
+    document.body.appendChild(lightbox);
+}
+
+
+// Global Event Delegation for Gallery Items
+document.addEventListener('click', (e) => {
+    // Check if clicked element is or is inside a gallery-item
+    const galleryItem = e.target.closest('.gallery-item');
+    if (galleryItem) {
+        const src = galleryItem.getAttribute('data-lightbox-src');
+        if (src) {
+            openLightbox(src);
+        }
+    }
+});
+
+// Explicitly define global functions for the onclick handlers in HTML
+function openLightbox(src) {
+    const lightbox = document.getElementById('lightbox');
+    const img = document.getElementById('lightbox-img');
+    if (lightbox && img) {
+        img.src = src;
+        lightbox.style.display = 'flex';
+    }
+}
+
+function closeLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (lightbox) {
+        lightbox.style.display = 'none';
+    }
+}
+
+// --- Product Review System ---
+
+function loadReviews() {
+    try {
+        return safeJSONParse('productReviews', {});
+    } catch (e) {
+        return {};
+    }
+}
+
+function saveReview(productId, review) {
+    const reviews = loadReviews();
+    if (!reviews[productId]) {
+        reviews[productId] = [];
+    }
+    reviews[productId].push(review);
+    localStorage.setItem('productReviews', JSON.stringify(reviews));
+}
+
+function getAverageRating(productId) {
+    const reviews = loadReviews();
+    const productReviews = reviews[productId] || [];
+    if (productReviews.length === 0) return 0;
+
+    const sum = productReviews.reduce((acc, r) => acc + parseInt(r.rating), 0);
+    return (sum / productReviews.length).toFixed(1);
+}
+
+function renderStars(rating) {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    let starsHtml = '';
+
+    for (let i = 0; i < 5; i++) {
+        if (i < fullStars) {
+            starsHtml += '★';
+        } else if (i === fullStars && halfStar) {
+            starsHtml += '½';
+        } else {
+            starsHtml += '☆';
+        }
+    }
+    return starsHtml;
+    return starsHtml;
+}
+
+
+
+function renderReviewList(productId) {
+    const listContainer = document.getElementById('reviews-list-container');
+    if (!listContainer) return;
+
+    const reviews = loadReviews()[productId] || [];
+    const currentUser = localStorage.getItem('reviewUsername');
+
+    if (reviews.length === 0) {
+        listContainer.innerHTML = '<p style="color: var(--text-light); font-style: italic;">Noch keine Bewertungen.</p>';
+        return;
+    }
+
+    listContainer.innerHTML = reviews.map((review, index) => {
+        // Star display helper
+        let stars = '';
+        for (let i = 0; i < 5; i++) stars += i < review.rating ? '★' : '☆';
+
+        // Check ownership
+        const isOwner = currentUser && review.author === currentUser;
+
+        let imageHtml = '';
+        if (review.image) {
+            imageHtml = `<img src="${review.image}" alt="Review Bild" style="max-width: 100px; max-height: 100px; border-radius: 4px; margin-top: 0.5rem; display: block; object-fit: cover;">`;
+        }
+
+        return `
+        <div class="review-item" style="position: relative;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 0.3rem;">
+                <strong style="font-size: 0.95rem;">${escapeHtml(review.author)}</strong>
+                <span style="color: #fbbf24;">${stars}</span>
+            </div>
+            <p style="font-size: 0.9rem; margin-bottom: 0.3rem; line-height: 1.4;">${escapeHtml(review.text)}</p>
+            ${imageHtml}
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-light); margin-top: 0.5rem;">
+                <span>${review.date}</span>
+                <button class="delete-review-btn" data-product-id="${productId}" data-index="${index}" data-is-owner="${isOwner}"
+                    style="border: none; background: none; color: ${isOwner ? '#d9534f' : '#999'}; cursor: pointer; text-decoration: underline;">
+                    ${isOwner ? 'Löschen' : 'Admin: Löschen'}
+                </button>
+            </div>
+        </div>
+        `;
+    }).join('');
+}
+
+function deleteReviewInternal(productId, reviewIndex, isOwner) {
+    const reviews = loadReviews();
+    if (!reviews[productId]) return;
+
+    if (isOwner) {
+        if (!confirm('Möchtest du deine Bewertung wirklich löschen?')) return;
+    } else {
+        // Not owner -> Admin check
+        const password = prompt("Admin Passwort eingeben (Standard: admin123):");
+        if (password !== 'admin123') {
+            alert("Falsches Passwort!");
+            return;
+        }
+    }
+
+    // Perform deletion
+    reviews[productId].splice(reviewIndex, 1);
+    localStorage.setItem('productReviews', JSON.stringify(reviews));
+
+    // Refresh UI
+    renderReviewList(productId);
+    renderProducts(); // Update stars/counts on main page
+}
+
+
+window.openViewReviewsModal = function (productId, productName) {
+    document.getElementById('review-product-name').textContent = `Bewertungen: ${productName}`;
+
+    // Hide form, Show list
+    const form = document.getElementById('review-form');
+    if (form) form.style.display = 'none';
+
+    const listSection = document.querySelector('.existing-reviews-section');
+    if (listSection) {
+        listSection.style.display = 'block';
+        listSection.style.borderTop = 'none'; // Clean look
+        listSection.style.marginTop = '0';
+    }
+
+    const modal = document.getElementById('review-modal');
+    if (modal) {
+        modal.classList.add('show');
+        modal.style.display = 'flex';
+    }
+
+    renderReviewList(productId);
+}
+
+// Updated openRateModal to show form AND list
+window.openRateModal = function (productId, productName) {
+    document.getElementById('review-product-id').value = productId;
+    document.getElementById('review-product-name').textContent = `Bewerten: ${productName}`;
+
+    // Show form
+    const form = document.getElementById('review-form');
+    if (form) form.style.display = 'block';
+
+    // Show list (User request: "show all reviews also")
+    // Show list (User request: "show all reviews also" -> correction: NO, only in "View Reviews")
+    const listSection = document.querySelector('.existing-reviews-section');
+    if (listSection) {
+        listSection.style.display = 'none';
+    }
+
+    // Form prep logic
+    const savedName = localStorage.getItem('reviewUsername');
+    const nameGroup = document.getElementById('review-name-group');
+    const nameInput = document.getElementById('review-author');
+
+    if (savedName) {
+        nameInput.value = savedName;
+        if (nameGroup) nameGroup.style.display = 'none';
+    } else {
+        nameInput.value = '';
+        if (nameGroup) nameGroup.style.display = 'block';
+    }
+
+    document.getElementById('review-text').value = '';
+    const radios = document.getElementsByName('rating');
+    radios.forEach(r => r.checked = false);
+
+    const modal = document.getElementById('review-modal');
+    if (modal) {
+        modal.classList.add('show');
+        modal.style.display = 'flex';
+    }
+
+    // Render list so user sees previous reviews while rating
+    renderReviewList(productId);
+}
+
+
+// Event Listeners for Review System (run once on load)
+document.addEventListener('DOMContentLoaded', () => {
+    const reviewModal = document.getElementById('review-modal');
+    const reviewForm = document.getElementById('review-form');
+
+    if (reviewModal) {
+        const closeBtn = reviewModal.querySelector('.close-modal');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                reviewModal.classList.remove('show');
+                reviewModal.style.display = 'none';
+            });
+        }
+
+        // Close on outside click
+        reviewModal.addEventListener('click', (e) => {
+            if (e.target === reviewModal) {
+                reviewModal.classList.remove('show');
+                reviewModal.style.display = 'none';
+            }
+        });
+    }
+
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const productId = document.getElementById('review-product-id').value;
+            const author = document.getElementById('review-author').value;
+            const text = document.getElementById('review-text').value;
+            const imageInput = document.getElementById('review-image');
+            const ratingInputs = document.getElementsByName('rating');
+            let rating = 0;
+
+            for (const input of ratingInputs) {
+                if (input.checked) {
+                    rating = input.value;
+                    break;
+                }
+            }
+
+            if (rating === 0) {
+                alert('Bitte wählen Sie eine Stern-Bewertung aus.');
+                return;
+            }
+
+            // Image handling
+            let imageData = null;
+            if (imageInput.files && imageInput.files[0]) {
+                const file = imageInput.files[0];
+                if (file.size > 500 * 1024) { // 500KB limit
+                    alert('Das Bild ist zu groß (Max. 500KB).');
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imageData = e.target.result;
+                    saveAndClose(imageData);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                saveAndClose(null);
+            }
+
+            function saveAndClose(img) {
+                // Save username if provided
+                if (author) {
+                    localStorage.setItem('reviewUsername', author);
+                }
+
+                const review = {
+                    author: author || "Anonym",
+                    text: text,
+                    rating: rating,
+                    date: new Date().toLocaleDateString(),
+                    image: img
+                };
+
+                saveReview(productId, review);
+
+                if (reviewModal) {
+                    reviewModal.classList.remove('show');
+                    reviewModal.style.display = 'none';
+                }
+
+                alert('Vielen Dank für deine Bewertung!');
+
+                // Clear input
+                imageInput.value = '';
+
+                renderProducts();
+            }
+        });
+    }
+
+    // Initialize News/Admin
+    if (window.initNewsSystem) window.initNewsSystem();
+    if (window.initAdminSystem) window.initAdminSystem();
+});
+
+// --- News System ---
+function initNewsSystem() {
+    const banner = document.getElementById('public-news-banner');
+    if (!banner) return;
+
+    const newsList = JSON.parse(localStorage.getItem('druckbau_news_list')) || [];
+
+    if (newsList.length > 0) {
+        const latest = newsList[0]; // The list is unshifted, so 0 is newest
+        document.getElementById('news-text').innerHTML = escapeHtml(latest.text).replace(/\n/g, '<br>');
+        document.getElementById('news-date').textContent = `Aktualisiert: ${latest.date}`;
+    } else {
+        document.getElementById('news-text').textContent = "Aktuell gibt es keine besonderen Neuigkeiten. Wir drucken fleißig! 🖨️";
+        document.getElementById('news-date').textContent = "";
+    }
+}
+
+// --- Analytics System ---
+function trackProductView(productId) {
+    const stats = safeJSONParse('druckbau_stats', { views: {}, purchases: {}, youtube_clicks: 0 });
+    stats.views[productId] = (stats.views[productId] || 0) + 1;
+    localStorage.setItem('druckbau_stats', JSON.stringify(stats));
+}
+
+function trackProductPurchase(productId) {
+    const stats = safeJSONParse('druckbau_stats', { views: {}, purchases: {}, youtube_clicks: 0 });
+    stats.purchases[productId] = (stats.purchases[productId] || 0) + 1;
+    localStorage.setItem('druckbau_stats', JSON.stringify(stats));
+}
+
+function trackYouTubeClick() {
+    const stats = safeJSONParse('druckbau_stats', { views: {}, purchases: {}, youtube_clicks: 0 });
+    stats.youtube_clicks = (stats.youtube_clicks || 0) + 1;
+    localStorage.setItem('druckbau_stats', JSON.stringify(stats));
+}
+
+// --- Admin System ---
+// Security State
+const ADMIN_SECURITY = {
+    attempts: 0,
+    maxAttempts: 3,
+    lockoutUntil: 0
+};
+
+function initAdminSystem() {
+    const trigger = document.getElementById('admin-trigger');
+    const panel = document.getElementById('admin-panel');
+    const saveNewsBtn = document.getElementById('save-news-btn');
+    const deleteNewsBtn = document.getElementById('delete-news-btn');
+    const clearOrdersBtn = document.getElementById('clear-orders-btn');
+
+    if (trigger) {
+        let clickCount = 0;
+        let lastClickTime = 0;
+
+        trigger.addEventListener('click', () => {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastClickTime < 500) {
+                clickCount++;
+            } else {
+                clickCount = 1;
+            }
+            lastClickTime = currentTime;
+
+            if (clickCount === 3) {
+                clickCount = 0;
+
+                const now = Date.now();
+                if (now < ADMIN_SECURITY.lockoutUntil) {
+                    const remaining = Math.ceil((ADMIN_SECURITY.lockoutUntil - now) / 1000);
+                    alert(`Zu viele Fehlversuche. Bitte warten Sie ${remaining} Sekunden.`);
+                    return;
+                }
+
+                const pwd = prompt("Admin Passwort:");
+                if (pwd === 'admin123') {
+                    ADMIN_SECURITY.attempts = 0;
+                    // Reveal Nav Item
+                    const adminNavItem = document.getElementById('admin-nav-item');
+                    if (adminNavItem) adminNavItem.style.display = 'list-item';
+
+                    // Switch to section
+                    if (typeof showSection === 'function') {
+                        showSection('admin');
+                    }
+
+                    loadAdminData();
+                } else if (pwd !== null) {
+                    ADMIN_SECURITY.attempts++;
+                    if (ADMIN_SECURITY.attempts >= ADMIN_SECURITY.maxAttempts) {
+                        ADMIN_SECURITY.lockoutUntil = Date.now() + 60000; // 1 min lockout
+                        alert("Maximale Versuche erreicht. Zugriff für 1 Minute gesperrt.");
+                    } else {
+                        alert(`Zugriff verweigert. (${ADMIN_SECURITY.attempts}/${ADMIN_SECURITY.maxAttempts})`);
+                    }
+                }
+            }
+        });
+    }
+
+    if (saveNewsBtn) {
+        saveNewsBtn.addEventListener('click', () => {
+            const text = document.getElementById('admin-news-input').value;
+            if (text) {
+                const date = new Date().toLocaleString();
+                const newsList = safeJSONParse('druckbau_news_list', []);
+                newsList.unshift({ text, date }); // Add to top
+                localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+
+                alert("Status hinzugefügt!");
+                document.getElementById('admin-news-input').value = '';
+                initNewsSystem(); // Refresh public view
+                loadAdminData(); // Refresh history list
+            }
+        });
+    }
+
+    if (deleteNewsBtn) {
+        deleteNewsBtn.addEventListener('click', () => {
+            if (confirm("Möchtest du den gesamten Neuigkeiten-Verlauf löschen?")) {
+                localStorage.removeItem('druckbau_news_list');
+                initNewsSystem();
+                loadAdminData();
+                alert("Verlauf gelöscht.");
+            }
+        });
+    }
+
+    if (clearOrdersBtn) {
+        clearOrdersBtn.addEventListener('click', () => {
+            if (confirm("Wirklich alle Bestellungen aus der Liste löschen?")) {
+                localStorage.removeItem('druckbau_orders');
+                loadAdminData();
+            }
+        });
+    }
+
+    // Event delegation for deleting individual news items & status updates
+    const historyContainer = document.getElementById('admin-news-history');
+    if (historyContainer) {
+        historyContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('delete-news-item')) {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                const newsList = JSON.parse(localStorage.getItem('druckbau_news_list')) || [];
+                newsList.splice(index, 1);
+                localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+                initNewsSystem();
+                loadAdminData();
+            }
+        });
+    }
+
+    const ordersTable = document.getElementById('orders-table');
+    if (ordersTable) {
+        ordersTable.addEventListener('change', (e) => {
+            if (e.target.classList.contains('order-status-select')) {
+                const index = parseInt(e.target.getAttribute('data-index'));
+                const newStatus = e.target.value;
+                const orders = safeJSONParse('druckbau_orders', []);
+                if (orders[index]) {
+                    orders[index].status = newStatus;
+                }
+            }
+        });
+    }
+
+    const deleteCompletedBtn = document.getElementById('delete-completed-orders-btn');
+    if (deleteCompletedBtn) {
+        deleteCompletedBtn.addEventListener('click', () => {
+            if (confirm("Wirklich alle erledigten (versendeten) Bestellungen löschen?")) {
+                let orders = JSON.parse(localStorage.getItem('druckbau_orders')) || [];
+                const initialLength = orders.length;
+                orders = orders.filter(o => o.status !== 'Versendet');
+                localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+                loadAdminData();
+                alert(`${initialLength - orders.length} erledigte Bestellungen gelöscht.`);
+            }
+        });
+    }
+
+    // Admin: Add Coupon
+    const addCouponBtn = document.getElementById('add-coupon-btn');
+    if (addCouponBtn) {
+        addCouponBtn.addEventListener('click', addAdminCoupon);
+    }
+
+    // Admin: Event Delegation for Coupon Deletion (Fixes CSP issue)
+    const couponTable = document.getElementById('admin-coupons-table');
+    if (couponTable) {
+        couponTable.addEventListener('click', (e) => {
+            const btn = e.target.closest('button');
+            if (btn && btn.textContent === 'Löschen') {
+                const code = btn.getAttribute('data-code');
+                if (code) deleteCoupon(code);
+            }
+        });
+    }
+
+    // Admin: Chart Range Listener
+    const chartRange = document.getElementById('admin-chart-range');
+    if (chartRange) {
+        chartRange.addEventListener('change', renderOrdersChart);
+    }
+}
+
+function initNewsletterSystem() {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('newsletter-email');
+        const email = emailInput.value;
+        const gdpr = document.getElementById('newsletter-gdpr').checked;
+
+        if (!email || !gdpr) return;
+
+        const subscribers = safeJSONParse('druckbau_subscribers', []);
+
+        // Check if already exists
+        if (subscribers.some(s => s.email === email)) {
+            alert("Diese E-Mail ist bereits angemeldet.");
+            return;
+        }
+
+        subscribers.unshift({
+            email,
+            date: new Date().toLocaleDateString()
+        });
+        localStorage.setItem('druckbau_subscribers', JSON.stringify(subscribers));
+
+        triggerAdminRefresh();
+        alert("Vielen Dank! Sie sind nun für den Newsletter angemeldet.");
+        form.reset();
+    });
+
+    const unsubscribeBtn = document.getElementById('newsletter-unsubscribe-btn');
+    if (unsubscribeBtn) {
+        unsubscribeBtn.addEventListener('click', () => {
+            const email = document.getElementById('newsletter-email').value;
+            if (!email) {
+                alert("Bitte geben Sie Ihre E-Mail-Adresse zum Abmelden ein.");
+                return;
+            }
+
+            if (confirm("Möchten Sie sich wirklich vom Newsletter abmelden?")) {
+                let subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers')) || [];
+                const initialLength = subscribers.length;
+                subscribers = subscribers.filter(s => s.email !== email);
+
+                if (subscribers.length < initialLength) {
+                    localStorage.setItem('druckbau_subscribers', JSON.stringify(subscribers));
+                    alert("Sie wurden erfolgreich vom Newsletter abgemeldet.");
+                    document.getElementById('newsletter-email').value = '';
+                } else {
+                    alert("Diese E-Mail-Adresse wurde nicht in unserer Liste gefunden.");
+                }
+            }
+        });
+    }
+}
+
+function loadAdminData() {
+    // 1. Render News History
+    const newsList = JSON.parse(localStorage.getItem('druckbau_news_list')) || [];
+    const historyContainer = document.getElementById('admin-news-history');
+    if (historyContainer) {
+        if (newsList.length === 0) {
+            historyContainer.innerHTML = '<p style="font-size:0.9rem; color:#999; text-align:center;">Kein Verlauf vorhanden.</p>';
+        } else {
+            historyContainer.innerHTML = newsList.map((item, index) => `
+                <div style="border-bottom:1px solid #eee; padding:0.5rem 0; display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div style="font-size:0.85rem;">
+                        <div style="font-weight:bold; color:var(--primary-blue);">${item.date}</div>
+                        <div>${escapeHtml(item.text).replace(/\n/g, '<br>')}</div>
+                    </div>
+                    <button class="delete-news-item" data-index="${index}" style="background:none; border:none; color:#d9534f; cursor:pointer; font-size:1.2rem;" title="Löschen">&times;</button>
+                </div>
+            `).join('');
+        }
+    }
+
+    // 2. Render Orders Table
+    const orders = safeJSONParse('druckbau_orders', []);
+    const ordersBody = document.querySelector('#orders-table tbody');
+    if (ordersBody) {
+        if (orders.length === 0) {
+            ordersBody.innerHTML = '<tr><td colspan="6" style="padding:1rem; text-align:center;">Keine Bestellungen vorhanden.</td></tr>';
+        } else {
+            ordersBody.innerHTML = orders.map((order, index) => {
+                const status = order.status || 'Eingegangen';
+                const options = ['Eingegangen', 'In Bearbeitung', 'Gedruckt', 'Versendet'].map(opt =>
+                    `<option value="${opt}" ${status === opt ? 'selected' : ''}>${opt}</option>`
+                ).join('');
+
+                return `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 0.5rem; font-size: 0.9rem;">${order.date}</td>
+                        <td style="padding: 0.5rem;">${escapeHtml(order.name)}</td>
+                        <td style="padding: 0.5rem; font-family:monospace;">${escapeHtml(order.orderId)}</td>
+                        <td style="padding: 0.5rem;">${escapeHtml(order.email)}</td>
+                        <td style="padding: 0.5rem; font-size: 0.9rem;">${escapeHtml(order.message)}</td>
+                        <td style="padding: 0.5rem; font-size: 0.85rem; color: var(--primary-blue);">
+                            ${order.coupon ? `${order.coupon.code}<br><small>(-${formatCurrency(order.coupon.discount)})</small>` : '-'}
+                        </td>
+                        <td style="padding: 0.5rem;">
+                            <select class="order-status-select" data-index="${index}" style="padding:2px; font-size:0.8rem; border-radius:4px; border:1px solid #ccc;">
+                                ${options}
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+    }
+
+    // 3. Render Newsletter Table
+    const subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers')) || [];
+    const newsletterBody = document.querySelector('#newsletter-table tbody');
+    if (newsletterBody) {
+        if (subscribers.length === 0) {
+            newsletterBody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center;">Keine Abonnenten.</td></tr>';
+        } else {
+            newsletterBody.innerHTML = subscribers.map((sub, index) => `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 0.5rem; font-size: 0.85rem;">${sub.date}</td>
+                    <td style="padding: 0.5rem; font-size: 0.85rem;">${escapeHtml(sub.email)}</td>
+                    <td style="padding: 0.5rem;">
+                        <button class="delete-subscriber" data-index="${index}" style="background:none; border:none; color:#d9534f; cursor:pointer;" title="Entfernen">&times;</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+    }
+
+    // 5. Render Coupons Table (Admin)
+    if (typeof renderAdminCoupons === 'function') {
+        renderAdminCoupons();
+    }
+
+    // 6. Render Analytics Charts
+    renderOrdersChart();
+
+    // 4. Render Stats Table
+    const stats = safeJSONParse('druckbau_stats', { views: {}, purchases: {}, youtube_clicks: 0 });
+    const statsBody = document.querySelector('#stats-table tbody');
+    if (statsBody) {
+        // Assuming 'products' is a globally available array or fetched elsewhere
+        // For now, let's use a placeholder if products isn't defined in this scope
+        const products = window.products || []; // Fallback if products isn't global
+
+        let statsHtml = products.map(p => {
+            const buys = stats.purchases[p.id] || 0;
+            return `
+                <tr style="border-bottom: 1px solid #eee;">
+                    <td style="padding: 0.5rem;">${p.name}</td>
+                    <td style="padding: 0.5rem;">${buys}</td>
+                </tr>
+            `;
+        }).join('');
+
+        // Add YouTube Row
+        statsHtml += `
+            <tr style="background: rgba(46, 204, 113, 0.1);">
+                <td style="padding: 0.5rem; font-weight:bold; color:var(--primary-blue);">YouTube Kanal</td>
+                <td style="padding: 0.5rem; font-weight:bold;">${stats.youtube_clicks || 0} Klicks</td>
+            </tr>
+        `;
+
+        statsBody.innerHTML = statsHtml;
+    }
+}
+
+// --- Order Logging Hook ---
+function logOrder(name, email, orderId, message, couponInfo = null) {
+    const newOrder = {
+        name,
+        email,
+        orderId: orderId.toUpperCase(), // Ensure consistency
+        message,
+        coupon: couponInfo,
+        date: new Date().toLocaleString(),
+        status: 'Eingegangen' // Default status
+    };
+
+    const orders = safeJSONParse('druckbau_orders', []);
+    orders.unshift(newOrder);
+    localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+
+    triggerAdminRefresh();
+    // Also track as a generic purchase/order event
+    trackProductPurchase('d'); // 'd' is the ID for custom orders
+}
+
+// Global exports
+window.initNewsSystem = initNewsSystem;
+window.initAdminSystem = initAdminSystem;
+window.logOrder = logOrder;
+window.trackProductView = trackProductView;
+window.trackProductPurchase = trackProductPurchase;
+window.trackYouTubeClick = trackYouTubeClick;
+
+// ============================================
+// NEW FEATURES IMPLEMENTATION
+// ============================================
+
+
+// Add print time to product cards
+function addPrintTimeBadges() {
+    products.forEach(product => {
+        if (product.isCustom) return;
+
+        // Estimate based on typical product dimensions
+        const estimatedVolume = {
+            'a': 5,    // Fidget Klicker - small
+            'b': 50,   // Hundekotbeutelspender - medium
+            'c': 150,  // Vase - large
+            'e': 30    // Stifthalter - small-medium
+        };
+
+        const volume = estimatedVolume[product.id] || 20;
+        const printTime = estimatePrintTime(volume);
+
+        // Add badge to product card (will be rendered in renderProducts)
+        product.printTime = printTime;
+    });
+}
+
+// #13 - Coupon System
+// coupons moved to top
+
+function initCoupons() {
+    const savedCoupons = localStorage.getItem('druckbau_coupons');
+    if (savedCoupons) {
+        coupons = JSON.parse(savedCoupons);
+    } else {
+        // Default coupons
+        coupons = {
+            'NEUKUNDE10': { type: 'percentage', value: 10, expiry: '2026-12-31' },
+            'SOMMER2026': { type: 'fixed', value: 5, expiry: '2026-08-31' },
+            'TREUE15': { type: 'percentage', value: 15, expiry: '2026-12-31' },
+            'WELCOME5': { type: 'fixed', value: 5, expiry: '2026-12-31' }
+        };
+        saveCoupons();
+    }
+}
+
+function saveCoupons() {
+    localStorage.setItem('druckbau_coupons', JSON.stringify(coupons));
+}
+
+// Initialisiere Gutscheine beim Start
+initCoupons();
+
+// appliedCoupon moved to top
+
+function applyCoupon() {
+    const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+
+    if (!code) {
+        alert(t('alert_coupon_invalid'));
+        return;
+    }
+
+    const coupon = coupons[code];
+
+    if (!coupon) {
+        alert(t('alert_coupon_invalid'));
+        return;
+    }
+
+    // Check expiry
+    const today = new Date();
+    const expiryDate = new Date(coupon.expiry);
+
+    if (today > expiryDate) {
+        alert(t('alert_coupon_expired'));
+        return;
+    }
+
+    appliedCoupon = { code, ...coupon };
+    alert(t('alert_coupon_applied'));
+    renderCart(); // Refresh cart with discount
+}
+
+function removeCoupon() {
+    appliedCoupon = null;
+    renderCart();
+}
+
+function calculateDiscount(subtotal) {
+    if (!appliedCoupon) return 0;
+
+    if (appliedCoupon.type === 'percentage') {
+        return subtotal * (appliedCoupon.value / 100);
+    } else {
+        return appliedCoupon.value;
+    }
+}
+
+// #16 - Referral Program
+function generateReferralLink() {
+    // Generate unique referral code based on timestamp
+    const referralCode = 'REF' + Date.now().toString(36).toUpperCase();
+    localStorage.setItem('druckbau_referral_code', referralCode);
+
+    const baseUrl = window.location.origin + window.location.pathname;
+    const referralLink = `${baseUrl}?ref=${referralCode}`;
+
+    document.getElementById('referral-link-input').value = referralLink;
+
+    return referralLink;
+}
+
+function copyReferralLink() {
+    const input = document.getElementById('referral-link-input');
+    input.select();
+    document.execCommand('copy');
+
+    alert(t('alert_link_copied'));
+}
+
+function checkReferral() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const refCode = urlParams.get('ref');
+
+    if (refCode) {
+        // Track referral
+        const referrals = safeJSONParse('druckbau_referrals', []);
+        referrals.push({
+            code: refCode,
+            date: new Date().toISOString(),
+            converted: false
+        });
+        localStorage.setItem('druckbau_referrals', JSON.stringify(referrals));
+
+        // Give 5€ discount to new user
+        appliedCoupon = { code: 'REFERRAL5', type: 'fixed', value: 5 };
+        alert('Willkommen! Sie erhalten 5€ Rabatt durch eine Empfehlung!');
+    }
+}
+
+// #23 - Seasonal Offer with Countdown
+function initSeasonalOffer() {
+    const offerData = safeJSONParse('druckbau_seasonal_offer', null);
+
+    if (!offerData || !offerData.active) {
+        document.getElementById('seasonal-offer-banner')?.remove();
+        return;
+    }
+
+    const banner = document.getElementById('seasonal-offer-banner');
+    if (!banner) return;
+
+    document.getElementById('offer-title-text').textContent = offerData.title;
+    document.getElementById('offer-description-text').textContent = offerData.description;
+
+    // Countdown timer
+    const endDate = new Date(offerData.endDate);
+
+    const updateCountdown = () => {
+        const now = new Date();
+        const diff = endDate - now;
+
+        if (diff <= 0) {
+            banner.remove();
+            return;
+        }
+
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById('countdown-days').textContent = days;
+        document.getElementById('countdown-hours').textContent = hours;
+        document.getElementById('countdown-minutes').textContent = minutes;
+        document.getElementById('countdown-seconds').textContent = seconds;
+    };
+
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+}
+
+// Admin: Create Seasonal Offer
+function createSeasonalOffer() {
+    console.log('createSeasonalOffer called');
+
+    try {
+        const title = prompt('Angebots-Titel:');
+        if (!title) {
+            console.log('User cancelled title input');
+            return;
+        }
+
+        const description = prompt('Beschreibung:');
+        if (!description) {
+            console.log('User cancelled description input');
+            return;
+        }
+
+        const days = parseInt(prompt('Wie viele Tage soll das Angebot laufen?'));
+        if (!days || isNaN(days)) {
+            console.log('Invalid days input:', days);
+            alert('Bitte geben Sie eine gültige Anzahl von Tagen ein.');
+            return;
+        }
+
+        const endDate = new Date();
+        endDate.setDate(endDate.getDate() + days);
+
+        const offerData = {
+            active: true,
+            title,
+            description,
+            endDate: endDate.toISOString()
+        };
+
+        localStorage.setItem('druckbau_seasonal_offer', JSON.stringify(offerData));
+        console.log('Offer created:', offerData);
+        alert('Angebot erfolgreich erstellt! Die Seite wird neu geladen.');
+        location.reload();
+    } catch (error) {
+        console.error('Error creating seasonal offer:', error);
+        alert('Fehler beim Erstellen des Angebots: ' + error.message);
+    }
+}
+
+// #26 - Push Notifications
+function initPushNotifications() {
+    if (!('Notification' in window)) {
+        console.log('Push notifications not supported');
+        return;
+    }
+
+    // Check if already granted or denied
+    if (Notification.permission === 'granted') {
+        return;
+    }
+
+    if (Notification.permission === 'denied') {
+        return;
+    }
+
+    // Show custom prompt after 10 seconds
+    setTimeout(() => {
+        showNotificationPrompt();
+    }, 10000);
+}
+
+function showNotificationPrompt() {
+    const existingPrompt = document.getElementById('notification-prompt');
+    if (existingPrompt) {
+        existingPrompt.style.display = 'block';
+        return;
+    }
+
+    // Create prompt element
+    const promptDiv = document.createElement('div');
+    promptDiv.id = 'notification-prompt';
+    promptDiv.className = 'notification-prompt';
+    promptDiv.innerHTML = `
+        <h4>${t('notif_title')}</h4>
+        <p>${t('notif_desc')}</p>
+        <div class="notification-actions">
+            <button class="notification-allow">${t('notif_allow')}</button>
+            <button class="notification-deny">${t('notif_later')}</button>
+        </div>
+    `;
+    document.body.appendChild(promptDiv);
+
+    // Add event listeners
+    promptDiv.querySelector('.notification-allow').addEventListener('click', allowNotifications);
+    promptDiv.querySelector('.notification-deny').addEventListener('click', denyNotifications);
+}
+
+function allowNotifications() {
+    Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+            new Notification('Druckbau', {
+                body: t('notif_success_body'),
+                icon: 'logo.jpg'
+            });
+        }
+    });
+    document.getElementById('notification-prompt').remove();
+}
+
+function denyNotifications() {
+    document.getElementById('notification-prompt').remove();
+}
+
+// Send notification (for order updates)
+function sendNotification(title, body) {
+    if (Notification.permission === 'granted') {
+        new Notification(title, {
+            body: body,
+            icon: 'logo.jpg',
+            badge: 'logo.jpg'
+        });
+    }
+}
+
+
+// #30 - Enhanced Analytics for Admin Panel
+function renderEnhancedAnalytics() {
+    const stats = safeJSONParse('druckbau_stats', { views: {}, purchases: {}, youtube_clicks: 0 });
+    const orders = safeJSONParse('druckbau_orders', []);
+    const subscribers = safeJSONParse('druckbau_subscribers', []);
+
+    // Calculate metrics
+    const totalOrders = orders.length;
+    const totalRevenue = orders.reduce((sum, order) => {
+        // Parse revenue from order if available
+        return sum + (order.revenue || 0);
+    }, 0);
+
+    const totalViews = Object.values(stats.views).reduce((sum, val) => sum + val, 0);
+    const totalPurchases = Object.values(stats.purchases).reduce((sum, val) => sum + val, 0);
+    const conversionRate = totalViews > 0 ? ((totalPurchases / totalViews) * 100).toFixed(2) : 0;
+
+    // Render analytics cards
+    const analyticsHtml = `
+        <div class="analytics-grid">
+            <div class="analytics-card">
+                <h4>Gesamtumsatz</h4>
+                <div class="analytics-value">${totalRevenue.toFixed(2)} €</div>
+                <div class="analytics-change positive">+12% vs. letzter Monat</div>
+            </div>
+            <div class="analytics-card">
+                <h4>Bestellungen</h4>
+                <div class="analytics-value">${totalOrders}</div>
+                <div class="analytics-change positive">+${orders.filter(o => {
+        const orderDate = new Date(o.date);
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return orderDate > weekAgo;
+    }).length} diese Woche</div>
+            </div>
+            <div class="analytics-card">
+                <h4>Conversion Rate</h4>
+                <div class="analytics-value">${conversionRate}%</div>
+                <div class="analytics-change">Views → Käufe</div>
+            </div>
+            <div class="analytics-card">
+                <h4>Newsletter Abonnenten</h4>
+                <div class="analytics-value">${subscribers.length}</div>
+                <div class="analytics-change positive">+${subscribers.filter(s => {
+        const subDate = new Date(s.date);
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        return subDate > weekAgo;
+    }).length} diese Woche</div>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <h4>Bestellungen der letzten 30 Tage</h4>
+            <canvas id="orders-chart"></canvas>
+        </div>
+        
+        <div class="analytics-grid" style="margin-top: 2rem;">
+            <div class="analytics-card">
+                <h4>Beliebtestes Produkt</h4>
+                <div class="analytics-value" style="font-size: 1.2rem;">${getMostPopularProduct()}</div>
+            </div>
+            <div class="analytics-card">
+                <h4>Durchschn. Bestellwert</h4>
+                <div class="analytics-value">${(totalRevenue / (totalOrders || 1)).toFixed(2)} €</div>
+            </div>
+            <div class="analytics-card">
+                <h4>YouTube Klicks</h4>
+                <div class="analytics-value">${stats.youtube_clicks || 0}</div>
+            </div>
+            <div class="analytics-card">
+                <h4>Gutschein-Nutzung</h4>
+                <div class="analytics-value">${getCouponUsageCount()}</div>
+            </div>
+        </div>
+    `;
+
+    const container = document.getElementById('enhanced-analytics-container');
+    if (container) {
+        container.innerHTML = analyticsHtml;
+        renderOrdersChart();
+    }
+}
+
+function getMostPopularProduct() {
+    const stats = JSON.parse(localStorage.getItem('druckbau_stats')) || { purchases: {} };
+    let maxPurchases = 0;
+    let popularProduct = 'N/A';
+
+    Object.entries(stats.purchases).forEach(([productId, count]) => {
+        if (count > maxPurchases) {
+            maxPurchases = count;
+            const product = products.find(p => p.id === productId);
+            popularProduct = product ? product.name : productId;
+        }
+    });
+
+    return popularProduct;
+}
+
+function getCouponUsageCount() {
+    const couponUsage = safeJSONParse('druckbau_coupon_usage', []);
+    return couponUsage.length;
+}
+
+// Gutschein-Verwaltung Funktionen
+function renderAdminCoupons() {
+    const tbody = document.querySelector('#admin-coupons-table tbody');
+    if (!tbody) return;
+
+    if (Object.keys(coupons).length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:1rem; text-align:center;">Keine Gutscheine vorhanden.</td></tr>';
+    } else {
+        tbody.innerHTML = Object.entries(coupons).map(([code, data]) => `
+            <tr style="border-bottom: 1px solid #eee;">
+                <td style="padding: 0.5rem; font-weight: bold;">${code}</td>
+                <td style="padding: 0.5rem; font-size: 0.85rem;">${data.type === 'percentage' ? 'Prozent' : 'Festbetrag'}</td>
+                <td style="padding: 0.5rem;">${data.value}${data.type === 'percentage' ? '%' : '€'}</td>
+                <td style="padding: 0.5rem; font-size: 0.85rem;">${formatDisplayDate(data.expiry)}</td>
+                <td style="padding: 0.5rem;">
+                    <button data-code="${code}" style="background:#d9534f; border:none; color:white; padding: 4px 8px; border-radius:4px; cursor:pointer; font-size: 0.8rem;" title="Löschen">Löschen</button>
+                </td>
+            </tr>
+        `).join('');
+    }
+}
+
+function deleteCoupon(code) {
+    if (confirm(`Gutschein "${code}" wirklich löschen?`)) {
+        delete coupons[code];
+        saveCoupons();
+        renderAdminCoupons();
+        alert(`Gutschein "${code}" gelöscht.`);
+    }
+}
+
+function addAdminCoupon() {
+    const codeInput = document.getElementById('admin-coupon-code');
+    const typeSelect = document.getElementById('admin-coupon-type');
+    const valueInput = document.getElementById('admin-coupon-value');
+    const expiryInput = document.getElementById('admin-coupon-expiry');
+
+    const code = codeInput.value.trim().toUpperCase();
+    const type = typeSelect.value;
+    const value = parseFloat(valueInput.value);
+    const expiryRaw = expiryInput.value.trim();
+
+    if (!code || isNaN(value) || !expiryRaw) {
+        alert("Bitte füllen Sie alle Felder korrekt aus.");
+        return;
+    }
+
+    // Datum validieren und umwandeln (TT.MM.JJJJ -> YYYY-MM-DD)
+    const dateParts = expiryRaw.split('.');
+    if (dateParts.length !== 3) {
+        alert("Bitte geben Sie das Datum im Format TT.MM.JJJJ an.");
+        return;
+    }
+    const expiry = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+    if (isNaN(new Date(expiry).getTime())) {
+        alert("Ungültiges Datum.");
+        return;
+    }
+
+    if (coupons[code]) {
+        if (!confirm(`Gutschein "${code}" existiert bereits. Möchten Sie ihn überschreiben?`)) {
+            return;
+        }
+    }
+
+    coupons[code] = { type, value, expiry };
+    saveCoupons();
+
+    // UI zurücksetzen
+    codeInput.value = '';
+    valueInput.value = '';
+    expiryInput.value = '';
+
+    renderAdminCoupons();
+    alert(`Gutschein "${code}" gespeichert.`);
+}
+
+function formatDisplayDate(isoDate) {
+    if (!isoDate) return '-';
+    const parts = isoDate.split('-');
+    if (parts.length === 3) {
+        return `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+    return isoDate;
+}
+
+window.deleteCoupon = deleteCoupon;
+
+// Wishlist Logic
+function toggleWishlist(productId) {
+    const index = wishlist.indexOf(productId);
+    if (index === -1) {
+        wishlist.push(productId);
+        showNotification(`${products.find(p => p.id === productId).name} zur Wunschliste hinzugefügt!`, 'success');
+    } else {
+        wishlist.splice(index, 1);
+        showNotification(`${products.find(p => p.id === productId).name} von der Wunschliste entfernt.`, 'info');
+    }
+    saveWishlistToStorage();
+    renderProducts();
+    updateWishlistIcon();
+    if (document.getElementById('wishlist').style.display === 'block' || document.getElementById('wishlist').classList.contains('active')) {
+        renderWishlist();
+    }
+}
+
+function loadWishlistFromStorage() {
+    const saved = localStorage.getItem('druckbau_wishlist');
+    if (saved) {
+        wishlist = JSON.parse(saved);
+    }
+}
+
+function saveWishlistToStorage() {
+    localStorage.setItem('druckbau_wishlist', JSON.stringify(wishlist));
+}
+
+function updateWishlistIcon() {
+    const count = document.getElementById('wishlist-count');
+    if (count) {
+        count.textContent = wishlist.length;
+    }
+}
+
+function renderWishlist() {
+    const container = document.getElementById('wishlist-items');
+    if (!container) return;
+
+    if (wishlist.length === 0) {
+        container.innerHTML = `
+            <div class="wishlist-empty">
+                <h2>Ihre Wunschliste ist leer</h2>
+                <p>Entdecken Sie unsere <a href="#" class="nav-link" data-target="products">Produkte</a> und markieren Sie Ihre Favoriten!</p>
+            </div>
+        `;
+        return;
+    }
+
+    const wishlistProducts = wishlist.map(id => products.find(p => p.id === id)).filter(p => p);
+
+    container.innerHTML = wishlistProducts.map(product => `
+        <div class="cart-item">
+            <div class="cart-item-details">
+                <h4>${product.name}</h4>
+                <p class="cart-item-info">${product.price > 0 ? formatCurrency(product.price) : 'Individueller Preis'}</p>
+            </div>
+            <div style="display: flex; gap: 1rem; align-items: center;">
+                <button class="contact-btn wishlist-add-to-cart-btn" data-product-id="${product.id}" style="padding: 0.5rem 1rem; font-size: 0.85rem;">
+                    In den Warenkorb
+                </button>
+                <button class="remove-btn wishlist-remove-btn" data-product-id="${product.id}" title="Entfernen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    `).join('');
+
+    // Add event listeners for wishlist buttons
+    container.querySelectorAll('.wishlist-add-to-cart-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const productId = btn.getAttribute('data-product-id');
+            addToCartFromWishlist(productId);
+        });
+    });
+
+    container.querySelectorAll('.wishlist-remove-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const productId = btn.getAttribute('data-product-id');
+            toggleWishlist(productId);
+        });
+    });
+
+    // Re-attach nav-link listeners within wishlist
+    container.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = link.getAttribute('data-target');
+            if (targetId) showSection(targetId);
+        });
+    });
+}
+
+function addToCartFromWishlist(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    if (product.isCustom) {
+        showInfo('Bitte konfigurieren Sie die Auftragsarbeit auf der Produktseite');
+        showSection('products');
+        return;
+    }
+
+    // Add with default settings
+    const defaultColor = colors[0];
+    cart.push({
+        id: productId,
+        name: product.name,
+        price: product.price,
+        qty: 1,
+        color: defaultColor.value,
+        colorName: defaultColor.name,
+        isCustom: false
+    });
+
+    saveCartToStorage();
+    updateCartIcon();
+    showSuccess(`${product.name} wurde zum Warenkorb hinzugefügt`);
+    trackProductPurchase(productId);
+}
+
+// Ensure wishlist is rendered when section is shown
+const originalShowSection = window.showSection;
+window.showSection = function (sectionId) {
+    if (originalShowSection) originalShowSection(sectionId);
+    if (sectionId === 'wishlist') {
+        renderWishlist();
+    }
+};
+window.addAdminCoupon = addAdminCoupon;
+
+function renderOrdersChart() {
+    const canvas = document.getElementById('admin-orders-chart');
+    const rangeSelect = document.getElementById('admin-chart-range');
+    if (!canvas) return;
+
+    const orders = safeJSONParse('druckbau_orders', []);
+    const range = rangeSelect ? rangeSelect.value : '1w';
+
+    let daysToDisplay = 7;
+    let stepSize = 1;
+
+    if (range === 'day') daysToDisplay = 1;
+    else if (range === '1w') daysToDisplay = 7;
+    else if (range === '1m') daysToDisplay = 30;
+    else if (range === '5m') daysToDisplay = 150;
+    else if (range === 'all') {
+        if (orders.length > 0) {
+            const firstDate = new Date(orders[orders.length - 1].date.split('.').reverse().join('-'));
+            const diffTime = Math.abs(new Date() - firstDate);
+            daysToDisplay = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        } else {
+            daysToDisplay = 7;
+        }
+    }
+
+    const labels = [];
+    const dataPoints = [];
+
+    for (let i = daysToDisplay - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i);
+        const dateStr = d.toLocaleDateString('de-DE');
+        labels.push(dateStr);
+        dataPoints.push(orders.filter(o => o.date.startsWith(dateStr)).length);
+    }
+
+    // Adjust density for large ranges
+    let finalLabels = labels;
+    let finalData = dataPoints;
+    if (daysToDisplay > 31) {
+        // Show only every 7th label for large ranges
+        finalLabels = labels.map((l, i) => (i % 7 === 0 || i === labels.length - 1) ? l : '');
+    }
+
+    // Destroy existing chart if any
+    if (window.myAdminChart) {
+        window.myAdminChart.destroy();
+    }
+
+    // Create new chart
+    window.myAdminChart = new Chart(canvas, {
+        type: 'line',
+        data: {
+            labels: finalLabels,
+            datasets: [{
+                label: 'Bestellungen',
+                data: finalData,
+                borderColor: '#2563eb',
+                backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointRadius: daysToDisplay > 30 ? 0 : 3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
+                    }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+}
+
+function exportOrdersToCSV() {
+    const orders = safeJSONParse('druckbau_orders', []);
+    if (orders.length === 0) {
+        alert("Keine Bestellungen zum Exportieren vorhanden.");
+        return;
+    }
+
+    // Define CSV header
+    const headers = ['Datum', 'Name', 'Bestell-ID', 'Email', 'Nachricht', 'Gutschein', 'Rabatt', 'Status'];
+
+    // Define rows
+    const rows = orders.map(o => [
+        o.date,
+        `"${o.name}"`,
+        o.orderId,
+        o.email,
+        `"${o.message.replace(/"/g, '""')}"`,
+        o.coupon ? o.coupon.code : '-',
+        o.coupon ? o.coupon.discount : 0,
+        o.status || 'Eingegangen'
+    ]);
+
+    // Create CSV string
+    const csvContent = [
+        headers.join(','),
+        ...rows.map(r => r.join(','))
+    ].join('\n');
+
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `druckbau_bestellungen_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// Initialize all new features
+function initNewFeatures() {
+    // Check for referral
+    checkReferral();
+
+    // Initialize seasonal offer
+    initSeasonalOffer();
+
+    // Initialize push notifications
+    initPushNotifications();
+
+    // Add print time badges
+    addPrintTimeBadges();
+
+    // Setup event listeners
+    setupNewFeatureListeners();
+}
+
+const couponBtn = document.getElementById('apply-coupon-btn');
+if (couponBtn) {
+    couponBtn.addEventListener('click', applyCoupon);
+}
+
+// Referral
+const copyBtn = document.getElementById('copy-referral-btn');
+if (copyBtn) {
+    copyBtn.addEventListener('click', copyReferralLink);
+}
+
+
+// Language switcher
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        const lang = e.currentTarget.getAttribute('data-lang');
+        if (typeof switchLanguage === 'function') {
+            switchLanguage(lang);
+        }
+
+        // Update active state
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+    });
+});
+
+// Set initial active language button
+const currentLang = localStorage.getItem('druckbau_language') || 'de';
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    if (btn.getAttribute('data-lang') === currentLang) {
+        btn.classList.add('active');
+    }
+});
+
+// Wishlist Button Fix (Event Delegation)
+const productsGrid = document.getElementById('products-grid');
+if (productsGrid) {
+    productsGrid.addEventListener('click', (e) => {
+        const btn = e.target.closest('.wishlist-btn');
+        if (btn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const productId = btn.getAttribute('data-id');
+            if (productId && typeof toggleWishlist === 'function') {
+                toggleWishlist(productId);
+            }
+        }
+    });
+}
+
+// Real-time Admin Update (Storage Event)
+window.addEventListener('storage', (e) => {
+    if (e.key === 'druckbau_orders' || e.key === 'druckbau_stats') {
+        const adminSection = document.getElementById('admin');
+        if (adminSection && adminSection.style.display === 'block') {
+            loadAdminData();
+        }
+    }
+});
+
+// Handle local updates in the same tab
+const originalAddToCart = window.addToCart;
+window.addToCart = function (...args) {
+    if (originalAddToCart) originalAddToCart(...args);
+    const adminSection = document.getElementById('admin');
+    if (adminSection && adminSection.style.display === 'block') {
+        loadAdminData();
+    }
+};
+
+// Utility Functions
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(amount);
+}
+
+function showNotification(message, type = 'info') {
+    // Simple alert-based notification as fallback or custom toast if implemented
+    // For now using alert to ensure visibility, but could be enhanced to a toast
+    console.log(`Notification (${type}): ${message}`);
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.style.position = 'fixed';
+    toast.style.bottom = '20px';
+    toast.style.right = '20px';
+    toast.style.padding = '1rem 2rem';
+    toast.style.borderRadius = '8px';
+    toast.style.color = 'white';
+    toast.style.zIndex = '10000';
+    toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+    toast.style.transition = 'opacity 0.3s ease';
+
+    if (type === 'success') toast.style.backgroundColor = '#5cb85c';
+    else if (type === 'error') toast.style.backgroundColor = '#d9534f';
+    else toast.style.backgroundColor = '#2563eb';
+
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+function triggerAdminRefresh() {
+    const adminSection = document.getElementById('admin');
+    if (adminSection && (adminSection.style.display === 'block' || adminSection.classList.contains('active'))) {
+        if (typeof loadAdminData === 'function') {
+            loadAdminData();
+        }
+    }
+}
+
+window.formatCurrency = formatCurrency;
+window.showNotification = showNotification;
+window.toggleWishlist = toggleWishlist;
+window.exportOrdersToCSV = exportOrdersToCSV;
+window.triggerAdminRefresh = triggerAdminRefresh;
+window.toggleChat = toggleChat;
+window.sendChatMessage = sendChatMessage;
+window.sendQuickReply = sendQuickReply;
+window.addToCart = addToCart;
+window.addCustomToCart = addCustomToCart;
+window.openLightbox = openLightbox;
+window.closeLightbox = closeLightbox;
+window.nextCheckoutStep = nextCheckoutStep;
+window.prevCheckoutStep = prevCheckoutStep;
+window.submitCheckout = submitCheckout;
+window.switchGalleryImage = switchGalleryImage;
+window.updateColorPreview = updateColorPreview;
+window.trackYouTubeClick = trackYouTubeClick;
+window.checkout = checkout;
+window.createSeasonalOffer = createSeasonalOffer;
+window.closeCheckoutModal = closeCheckoutModal;
+window.removeFromCart = removeFromCart;
+window.applyCoupon = applyCoupon;
+window.removeCoupon = removeCoupon;
+window.copyReferralLink = copyReferralLink;
+window.saveReview = saveReview;
+window.loadAdminData = loadAdminData;
+window.switchLanguage = switchLanguage;
+
+
+// Duplicated code removed
+
+// Start the application when DOM is ready or if already ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+} else {
+    init();
+}
