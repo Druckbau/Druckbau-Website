@@ -69,6 +69,30 @@ export async function updateOrderStatus(orderId, newStatus) {
     }
 }
 
+export async function deleteAllOrdersFromDB() {
+    if (!supabaseClient) return false;
+    try {
+        const { error } = await supabaseClient.from('orders').delete().neq('order_id', 'none');
+        if (error) throw error;
+        return true;
+    } catch(e) {
+        console.error("Error deleting orders:", e);
+        return false;
+    }
+}
+
+export async function deleteCompletedOrdersFromDB() {
+    if (!supabaseClient) return false;
+    try {
+        const { error } = await supabaseClient.from('orders').delete().eq('status', 'Versendet');
+        if (error) throw error;
+        return true;
+    } catch(e) {
+        console.error("Error deleting completed orders:", e);
+        return false;
+    }
+}
+
 // --- Subscribers ---
 export async function addSubscriberToDB(email) {
     if (!supabaseClient) return false;

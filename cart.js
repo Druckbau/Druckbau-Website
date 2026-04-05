@@ -68,6 +68,10 @@ export function addCustomToCart(productId) {
     const from = fromInput ? fromInput.value.trim() : '';
     const to = toInput ? toInput.value.trim() : '';
     const desc = descInput ? descInput.value.trim() : '';
+    const qtyInput = document.getElementById(`custom-qty-${productId}`);
+    let qty = qtyInput ? parseInt(qtyInput.value) : 1;
+
+    if (isNaN(qty) || qty < 1) qty = 1;
 
     if (!from || !to || !desc) {
         alert("Bitte füllen Sie alle Felder (Von, Für, Info) aus.");
@@ -85,7 +89,7 @@ export function addCustomToCart(productId) {
         id: product.id,
         name: product.name || t(product.nameKey),
         price: 0,
-        qty: 1,
+        qty: qty,
         isCustom: true,
         customFrom: from,
         customTo: to,

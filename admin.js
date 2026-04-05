@@ -2,7 +2,7 @@
 import { products, safeJSONParse, initCoupons } from './store.js';
 import { formatCurrency, escapeHtml, t } from './utils.js';
 import { renderCart } from './cart.js'; // Needed if admin stuff updates state
-import { loadOrdersFromDB, updateOrderStatus, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadAnalyticsFromDB, trackAnalyticInDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB } from './db.js';
+import { loadOrdersFromDB, updateOrderStatus, deleteAllOrdersFromDB, deleteCompletedOrdersFromDB, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadAnalyticsFromDB, trackAnalyticInDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB } from './db.js';
 
 export const ADMIN_SECURITY = {
     attempts: 0,
@@ -104,8 +104,9 @@ export function initAdminSystem() {
     }
 
     if (clearOrdersBtn) {
-        clearOrdersBtn.addEventListener('click', () => {
-            if (confirm("Wirklich alle Bestellungen aus der Liste löschen?")) {
+        clearOrdersBtn.addEventListener('click', async () => {
+            if (confirm("Wirklich alle Bestellungen aus der Datenbank löschen? (Unwiderruflich)")) {
+                await deleteAllOrdersFromDB();
                 localStorage.removeItem('druckbau_orders');
                 loadAdminData();
             }
@@ -250,8 +251,9 @@ export function initAdminSystem() {
 
     const deleteCompletedBtn = document.getElementById('delete-completed-orders-btn');
     if (deleteCompletedBtn) {
-        deleteCompletedBtn.addEventListener('click', () => {
-            if (confirm("Wirklich alle erledigten (versendeten) Bestellungen löschen?")) {
+        deleteCompletedBtn.addEventListener('click', async () => {
+            if (confirm("Wirklich alle erledigten (versendeten) Bestellungen in der Datenbank löschen?")) {
+                await deleteCompletedOrdersFromDB();
                 let orders = JSON.parse(localStorage.getItem('druckbau_orders')) || [];
                 const initialLength = orders.length;
                 orders = orders.filter(o => o.status !== 'Versendet');
@@ -259,6 +261,32 @@ export function initAdminSystem() {
                 loadAdminData();
                 alert(`${initialLength - orders.length} erledigte Bestellungen gelöscht.`);
             }
+        });
+    }
+
+    const seasonalBtn = document.querySelector('.seasonal-offer-btn');
+    if (seasonalBtn) {
+        seasonalBtn.addEventListener('click', async () => {
+            const title = prompt("Titel (z.B. Black Friday!):", "Sonderangebot!");
+            if (!title) return;
+            const desc = prompt("Beschreibung (z.B. 20% auf alles):", "20% Rabatt auf Drucke");
+            if (!desc) return;
+            
+            // We use DB news to store it as a special offer
+            const payload = `[OFFER] ${title} | ${desc}`;
+            const success = await saveNewsToDB(payload);
+            
+            // local fallback
+            const newsList = JSON.parse(localStorage.getItem('druckbau_news_list')) || [];
+            newsList.unshift({ text: payload, date: new Date().toLocaleString() });
+            localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+
+            if (success) {
+                alert("Angebot erfolgreich in der Datenbank gespeichert! Es wird auf der Startseite angezeigt.");
+            } else {
+                alert("Angebot wurde vorerst lokal gespeichert (Fehler bei der Datenbank-Verbindung).");
+            }
+            loadAdminData();
         });
     }
 
@@ -274,22 +302,33 @@ export function initAdminSystem() {
     const statusBadge = document.getElementById('status-badge');
 
     if (submitStatusBtn && orderInput && statusResult && statusBadge) {
-        submitStatusBtn.addEventListener('click', () => {
+        submitStatusBtn.addEventListener('click', async () => {
             const val = orderInput.value.trim().toUpperCase();
             if (!val) return;
 
-            const orders = safeJSONParse('druckbau_orders', []);
-            const foundOrder = orders.find(o => o.orderId === val || o.orderId === val.replace('#', ''));
-
             statusResult.style.display = 'block';
+            statusBadge.innerText = 'Lade...';
+            statusBadge.style.background = '#ccc';
+            statusBadge.style.color = '#333';
 
-            if (foundOrder) {
-                const s = foundOrder.status || 'Eingegangen';
-                statusBadge.innerText = s;
+            const { fetchOrderById } = await import('./db.js');
+            const data = await fetchOrderById(val) || await fetchOrderById(val.replace('#', ''));
+            let statusStr = '';
+
+            if (data) {
+                statusStr = data.status || 'Eingegangen';
+            } else {
+                const orders = safeJSONParse('druckbau_orders', []);
+                const foundOrder = orders.find(o => o.orderId === val || o.orderId === val.replace('#', ''));
+                if (foundOrder) statusStr = foundOrder.status || 'Eingegangen';
+            }
+
+            if (statusStr) {
+                statusBadge.innerText = statusStr;
                 statusBadge.style.color = 'white';
 
-                if (s === 'Versendet') statusBadge.style.background = '#10b981'; // Green
-                else if (s === 'Eingegangen') statusBadge.style.background = '#f59e0b'; // Orange
+                if (statusStr === 'Versendet') statusBadge.style.background = '#10b981'; // Green
+                else if (statusStr === 'Eingegangen') statusBadge.style.background = '#f59e0b'; // Orange
                 else statusBadge.style.background = '#3b82f6'; // Blue
             } else {
                 statusBadge.innerText = 'Bestellung nicht gefunden';

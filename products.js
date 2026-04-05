@@ -60,6 +60,10 @@ export function renderProducts() {
                         <textarea id="custom-desc-${product.id}" placeholder="${t('product_custom_desc_placeholder')}" class="qty-input" style="min-height: 60px;"></textarea>
                     </div>
                     <div class="option-group">
+                        <label>${t('product_quantity')}</label>
+                        <input type="number" id="custom-qty-${product.id}" value="1" min="1" class="qty-input">
+                    </div>
+                    <div class="option-group">
                         <label>${t('product_order_custom_files')}</label>
                         <input type="file" id="custom-files-${product.id}" multiple class="qty-input file-input-trigger" data-id="${product.id}" style="padding: 5px;">
                         <span style="font-size: 0.75rem; color: var(--text-light);">${t('product_order_custom_files_tip')}</span>

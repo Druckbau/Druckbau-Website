@@ -53,9 +53,25 @@ async function loadPublicNews() {
     const newsList = await loadNewsFromDB();
     if (newsList && newsList.length > 0) {
         const latestInfo = newsList[0];
-        newsSection.style.display = 'block';
-        newsText.innerHTML = latestInfo.content.replace(/\\n/g, '<br>');
-        if (newsDate) newsDate.textContent = new Date(latestInfo.created_at).toLocaleDateString('de-DE');
+        
+        if (latestInfo.content.startsWith('[OFFER]')) {
+            const parts = latestInfo.content.replace('[OFFER] ', '').split('|');
+            const offerBanner = document.getElementById('seasonal-offer-banner');
+            if (offerBanner) {
+                offerBanner.style.display = 'block';
+                const titleEl = document.getElementById('offer-title-text');
+                const descEl = document.getElementById('offer-description-text');
+                if (titleEl) titleEl.innerText = parts[0] ? parts[0].trim() : 'Sonderangebot!';
+                if (descEl) descEl.innerText = parts[1] ? parts[1].trim() : '';
+                const countdown = document.querySelector('.countdown-timer');
+                if (countdown) countdown.style.display = 'none';
+            }
+            newsSection.style.display = 'none';
+        } else {
+            newsSection.style.display = 'block';
+            newsText.innerHTML = latestInfo.content.replace(/\\n/g, '<br>');
+            if (newsDate) newsDate.textContent = new Date(latestInfo.created_at).toLocaleDateString('de-DE');
+        }
     } else {
         newsSection.style.display = 'none';
         newsText.innerHTML = "Aktuell keine Neuigkeiten.";

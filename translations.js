@@ -804,6 +804,10 @@ if (typeof document !== 'undefined') {
                                     <textarea id="custom-desc-${p.id}" placeholder="${t('product_custom_desc_placeholder')}" class="qty-input" style="min-height: 60px;"></textarea>
                                 </div>
                                 <div class="option-group">
+                                    <label>${t('product_quantity')}</label>
+                                    <input type="number" id="custom-qty-${p.id}" value="1" min="1" class="qty-input">
+                                </div>
+                                <div class="option-group">
                                     <label>${t('product_order_custom_files')}</label>
                                     <input type="file" id="custom-files-${p.id}" multiple class="qty-input file-input-trigger" data-id="${p.id}" style="padding: 5px;">
                                     <span style="font-size: 0.75rem; color: var(--text-light);">${t('product_order_custom_files_tip')}</span>
@@ -827,8 +831,14 @@ if (typeof document !== 'undefined') {
                         <h3>${name}</h3>
                         <div class="price">${p.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
                         <div class="product-options">
-                            <select class="qty-input"><option value="1">1x</option></select>
-                            <select class="qty-input">${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}</select>
+                            <div class="option-group" style="margin-bottom:0.8rem;">
+                                <label style="display:block; font-size:0.85rem; margin-bottom:0.3rem;">${t('product_quantity')}</label>
+                                <input type="number" value="1" min="1" class="qty-input">
+                            </div>
+                            <div class="option-group">
+                                <label style="display:block; font-size:0.85rem; margin-bottom:0.3rem;">${t('product_color')}</label>
+                                <select class="qty-input">${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}</select>
+                            </div>
                         </div>
                         <button class="add-btn" onclick="alert('Bitte nutzen Sie einen lokalen Server für volle Funktionalität.')">${t('product_add_cart')}</button>
                     </div>

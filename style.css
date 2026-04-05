@@ -293,13 +293,13 @@ section.active {
     margin-bottom: 2rem;
 }
 
-.youtube-link {
+.youtube-link,
+.discord-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.8rem 1.5rem;
     background-color: var(--white);
-    color: #FF0000;
     border-radius: 50px;
     text-decoration: none;
     font-weight: bold;
@@ -307,7 +307,17 @@ section.active {
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
-.youtube-link:hover {
+.youtube-link {
+    color: #FF0000;
+}
+
+.discord-link {
+    background-color: #5865F2;
+    color: var(--white);
+}
+
+.youtube-link:hover,
+.discord-link:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
@@ -763,6 +773,24 @@ select,
         gap: 1rem;
         flex-wrap: wrap;
         justify-content: center;
+    }
+    
+    .dropdown-menu {
+        position: static;
+        transform: none;
+        box-shadow: none;
+        border: none;
+        visibility: hidden;
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        padding: 0;
+    }
+    .dropdown.show .dropdown-menu {
+        visibility: visible;
+        opacity: 1;
+        height: auto;
+        padding: 0.5rem 0;
     }
 
     #home h1 {
