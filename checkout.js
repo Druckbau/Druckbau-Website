@@ -126,6 +126,11 @@ function validateCheckoutStep(step) {
         } else if (cityInput) {
             setSuccess(cityInput);
         }
+    } else if (step === 3) {
+        const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
+        if (!paymentMethod) {
+            isValid = false;
+        }
     }
 
     if (!isValid) {
@@ -162,6 +167,9 @@ function renderCheckoutSummary() {
     const totalLabel = t('cart_total');
     const discountLabel = t('cart_discount');
 
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'email';
+    const paymentLabel = paymentMethod === 'stripe' ? 'Kreditkarte / Apple / Google Pay' : 'Manuelle Zahlung / E-Mail';
+
     summary.innerHTML = `
         <div style="margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
             <strong>${shippingAddrHeader}</strong><br>
@@ -169,6 +177,10 @@ function renderCheckoutSummary() {
             ${address}<br>
             ${zip} ${city}<br>
             E-Mail: ${email}
+        </div>
+        <div style="margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
+            <strong>Zahlungsart:</strong><br>
+            ${paymentLabel}
         </div>
         <div>
             <strong>${orderPreviewHeader}</strong>
@@ -235,26 +247,59 @@ export async function submitCheckout() {
 
     body += `\nVielen Dank!`;
 
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'email';
+    
     const orderData = {
         order_id: orderId,
         customer_name: name,
         customer_email: email,
         total_price: total,
         status: 'Eingegangen',
-        order_data: { cart: state.cart, address, zip, city, message: body, discount, coupon: state.appliedCoupon ? state.appliedCoupon.code : null, subtotal, shipping_cost: SHIPPING_COST }
+        order_data: { 
+            cart: state.cart, 
+            address, zip, city, 
+            message: body, 
+            discount, 
+            coupon: state.appliedCoupon ? state.appliedCoupon.code : null, 
+            subtotal, 
+            shipping_cost: SHIPPING_COST,
+            payment_method: paymentMethod
+        }
     };
     await saveOrderToDB(orderData);
 
     logOrder(name, email, orderId, body, state.appliedCoupon ? { code: state.appliedCoupon.code, discount: discount } : null, total, state.cart);
 
-    // Provide mailto fallback immediately for now, pending DB integration
-    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
-    const tempLink = document.createElement('a');
-    tempLink.href = mailtoLink;
-    tempLink.style.display = 'none';
-    document.body.appendChild(tempLink);
-    tempLink.click();
-    document.body.removeChild(tempLink);
+    // EmailJS Notification
+    try {
+        if (typeof emailjs !== 'undefined') {
+            await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                order_id: orderId,
+                customer_name: name,
+                customer_email: email,
+                order_details: body,
+                total_price: total.toFixed(2)
+            }, "YOUR_PUBLIC_KEY");
+            console.log("Email sent via EmailJS");
+        }
+    } catch (err) {
+        console.warn("EmailJS failed:", err);
+    }
+
+    if (paymentMethod === 'stripe') {
+        showNotification("Leite zu Stripe weiter... (Simulation)");
+        // Hier würde window.location.href = stripeCheckoutUrl kommen
+        alert("Stripe-Zahlung erfolgreich simuliert!");
+    } else {
+        // Provide mailto fallback immediately for now
+        const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
+        const tempLink = document.createElement('a');
+        tempLink.href = mailtoLink;
+        tempLink.style.display = 'none';
+        document.body.appendChild(tempLink);
+        tempLink.click();
+        document.body.removeChild(tempLink);
+    }
 
     state.cart = [];
     saveCartToStorage();

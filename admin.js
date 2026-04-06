@@ -1,8 +1,8 @@
 // js/admin.js
 import { products, safeJSONParse, initCoupons } from './store.js';
-import { formatCurrency, escapeHtml, t } from './utils.js';
+import { formatCurrency, escapeHtml, t, showNotification } from './utils.js';
 import { renderCart } from './cart.js'; // Needed if admin stuff updates state
-import { loadOrdersFromDB, updateOrderStatus, deleteAllOrdersFromDB, deleteCompletedOrdersFromDB, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadAnalyticsFromDB, trackAnalyticInDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB } from './db.js';
+import { initDB, loadOrdersFromDB, updateOrderStatus, deleteAllOrdersFromDB, deleteCompletedOrdersFromDB, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadAnalyticsFromDB, trackAnalyticInDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB } from './db.js';
 
 export const ADMIN_SECURITY = {
     attempts: 0,
@@ -32,6 +32,7 @@ export function logOrder(name, email, orderId, message, couponInfo = null, total
 }
 
 export function initAdminSystem() {
+    initDB();
     window.adminModuleLoaded = true;
 
     const trigger = document.getElementById('admin-trigger');
@@ -39,6 +40,27 @@ export function initAdminSystem() {
     const saveNewsBtn = document.getElementById('save-news-btn');
     const deleteNewsBtn = document.getElementById('delete-news-btn');
     const clearOrdersBtn = document.getElementById('clear-orders-btn');
+    const sendNewsletterBtn = document.getElementById('admin-send-newsletter');
+
+    if (sendNewsletterBtn) {
+        sendNewsletterBtn.addEventListener('click', async () => {
+            const subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers')) || [];
+            if (subscribers.length === 0) {
+                showNotification("Keine Abonnenten vorhanden.", "warning");
+                return;
+            }
+            const subject = prompt("Betreff des Newsletters:", "Neuigkeiten von Druckbau");
+            if (!subject) return;
+            const message = prompt("Nachrichtentext:");
+            if (!message) return;
+
+            sendNewsletterBtn.classList.add('btn-loading');
+            setTimeout(() => {
+                sendNewsletterBtn.classList.remove('btn-loading');
+                showNotification(`${subscribers.length} Abonnenten haben den Newsletter erhalten! (Simulation)`);
+            }, 1500);
+        });
+    }
 
     if (trigger) {
         trigger.addEventListener('click', (e) => {
@@ -75,18 +97,25 @@ export function initAdminSystem() {
         saveNewsBtn.addEventListener('click', async () => {
             const text = document.getElementById('admin-news-input').value;
             if (text) {
-                await saveNewsToDB(text);
-                
-                // Fallback to local sync
-                const date = new Date().toLocaleString();
-                const newsList = safeJSONParse('druckbau_news_list', []);
-                newsList.unshift({ text, date });
-                localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+                saveNewsBtn.classList.add('btn-loading');
+                try {
+                    await saveNewsToDB(text);
+                    
+                    // Fallback to local sync
+                    const date = new Date().toLocaleString();
+                    const newsList = safeJSONParse('druckbau_news_list', []);
+                    newsList.unshift({ text, date });
+                    localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
 
-                alert("Status erfolgreich hinzugefügt!");
-                document.getElementById('admin-news-input').value = '';
-                document.dispatchEvent(new Event('news-updated'));
-                loadAdminData();
+                    showNotification("Status erfolgreich hinzugefügt!");
+                    document.getElementById('admin-news-input').value = '';
+                    document.dispatchEvent(new Event('news-updated'));
+                    loadAdminData();
+                } catch (e) {
+                    showNotification("Fehler beim Speichern.", "error");
+                } finally {
+                    saveNewsBtn.classList.remove('btn-loading');
+                }
             }
         });
     }
@@ -94,11 +123,16 @@ export function initAdminSystem() {
     if (deleteNewsBtn) {
         deleteNewsBtn.addEventListener('click', async () => {
             if (confirm("Möchtest du den gesamten Neuigkeiten-Verlauf löschen?")) {
-                await clearAllNewsFromDB();
-                localStorage.removeItem('druckbau_news_list');
-                document.dispatchEvent(new Event('news-updated'));
-                loadAdminData();
-                alert("Verlauf gelöscht.");
+                deleteNewsBtn.classList.add('btn-loading');
+                try {
+                    await clearAllNewsFromDB();
+                    localStorage.removeItem('druckbau_news_list');
+                    document.dispatchEvent(new Event('news-updated'));
+                    loadAdminData();
+                    showNotification("Verlauf gelöscht.");
+                } finally {
+                    deleteNewsBtn.classList.remove('btn-loading');
+                }
             }
         });
     }
@@ -106,9 +140,15 @@ export function initAdminSystem() {
     if (clearOrdersBtn) {
         clearOrdersBtn.addEventListener('click', async () => {
             if (confirm("Wirklich alle Bestellungen aus der Datenbank löschen? (Unwiderruflich)")) {
-                await deleteAllOrdersFromDB();
-                localStorage.removeItem('druckbau_orders');
-                loadAdminData();
+                clearOrdersBtn.classList.add('btn-loading');
+                try {
+                    await deleteAllOrdersFromDB();
+                    localStorage.removeItem('druckbau_orders');
+                    loadAdminData();
+                    showNotification("Alle Bestellungen gelöscht.");
+                } finally {
+                    clearOrdersBtn.classList.remove('btn-loading');
+                }
             }
         });
     }
@@ -121,17 +161,31 @@ export function initAdminSystem() {
             const value = parseFloat(document.getElementById('admin-coupon-value').value);
             
             if (code && !isNaN(value)) {
-                await saveCouponToDB(code, value, type);
-                alert("Gutschein erfolgreich hinzugefügt!");
-                
-                // Clear inputs
-                document.getElementById('admin-coupon-code').value = '';
-                document.getElementById('admin-coupon-value').value = '';
-                
-                if (typeof initCoupons === 'function') await initCoupons();
-                document.dispatchEvent(new Event('render-admin-coupons'));
+                addCouponBtn.classList.add('btn-loading');
+                try {
+                    const dbSuccess = await saveCouponToDB(code, value, type);
+                    
+                    const local = safeJSONParse('druckbau_coupons', {});
+                    local[code] = { type, value, expiry: 'Unbegrenzt' };
+                    localStorage.setItem('druckbau_coupons', JSON.stringify(local));
+
+                    if (dbSuccess) {
+                        showNotification("Gutschein erfolgreich gespeichert! ✅");
+                    } else {
+                        showNotification("Gutschein wurde nur LOKAL gespeichert. ⚠️", "warning");
+                    }
+                    
+                    // Clear inputs
+                    document.getElementById('admin-coupon-code').value = '';
+                    document.getElementById('admin-coupon-value').value = '';
+                    
+                    if (typeof initCoupons === 'function') await initCoupons();
+                    document.dispatchEvent(new Event('render-admin-coupons'));
+                } finally {
+                    addCouponBtn.classList.remove('btn-loading');
+                }
             } else {
-                alert("Bitte Code und gültigen Wert eingeben.");
+                showNotification("Bitte Code und Wert eingeben.", "warning");
             }
         });
     }
@@ -142,19 +196,25 @@ export function initAdminSystem() {
             if (e.target.classList.contains('delete-coupon-btn')) {
                 const id = e.target.getAttribute('data-id');
                 const code = e.target.getAttribute('data-code');
+                const btn = e.target;
                 
                 if (confirm(`Gutschein definitiv löschen?`)) {
-                    if (id) {
-                        await deleteCouponFromDB(id);
-                    } else if (code) {
-                        // Local deletion fallback
-                        const local = safeJSONParse('druckbau_coupons', {});
-                        delete local[code];
-                        localStorage.setItem('druckbau_coupons', JSON.stringify(local));
+                    btn.classList.add('btn-loading');
+                    try {
+                        if (id) {
+                            await deleteCouponFromDB(id);
+                        } else if (code) {
+                            // Local deletion fallback
+                            const local = safeJSONParse('druckbau_coupons', {});
+                            delete local[code];
+                            localStorage.setItem('druckbau_coupons', JSON.stringify(local));
+                        }
+                        showNotification("Gutschein gelöscht.");
+                        if (typeof initCoupons === 'function') await initCoupons();
+                        document.dispatchEvent(new Event('render-admin-coupons'));
+                    } finally {
+                        btn.classList.remove('btn-loading');
                     }
-                    alert("Gutschein gelöscht.");
-                    if (typeof initCoupons === 'function') await initCoupons();
-                    document.dispatchEvent(new Event('render-admin-coupons'));
                 }
             }
         });
@@ -235,18 +295,48 @@ export function initAdminSystem() {
                 const index = parseInt(e.target.getAttribute('data-index'));
                 const newStatus = e.target.value;
                 const orderId = e.target.getAttribute('data-order-id');
-                
-                await updateOrderStatus(orderId, newStatus);
+                const select = e.target;
 
-                const orders = safeJSONParse('druckbau_orders', []);
-                if (orders[index]) {
-                    orders[index].status = newStatus;
-                    localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+                select.style.opacity = '0.5';
+                try {
+                    await updateOrderStatus(orderId, newStatus);
+
+                    const orders = safeJSONParse('druckbau_orders', []);
+                    if (orders[index]) {
+                        orders[index].status = newStatus;
+                        localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+                    }
+                    
+                    showNotification(`Status für ${orderId} auf "${newStatus}" aktualisiert.`);
+                } finally {
+                    select.style.opacity = '1';
                 }
-                
-                alert('Status in der Datenbank aktualisiert!');
             }
         });
+
+        ordersTable.addEventListener('blur', async (e) => {
+            if (e.target.classList.contains('tracking-id-input')) {
+                const orderId = e.target.getAttribute('data-order-id');
+                const trackingId = e.target.value.trim();
+                
+                e.target.style.borderColor = 'var(--primary-blue)';
+                try {
+                    const success = await updateOrderStatus(orderId, null, trackingId);
+                    if (success) {
+                        showNotification(`Tracking-ID für ${orderId} gespeichert.`);
+                        // Local update
+                        const orders = safeJSONParse('druckbau_orders', []);
+                        const order = orders.find(o => o.orderId === orderId);
+                        if (order) {
+                            order.trackingId = trackingId;
+                            localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+                        }
+                    }
+                } finally {
+                    e.target.style.borderColor = '#ccc';
+                }
+            }
+        }, true);
     }
 
     const deleteCompletedBtn = document.getElementById('delete-completed-orders-btn');
@@ -259,7 +349,25 @@ export function initAdminSystem() {
                 orders = orders.filter(o => o.status !== 'Versendet');
                 localStorage.setItem('druckbau_orders', JSON.stringify(orders));
                 loadAdminData();
-                alert(`${initialLength - orders.length} erledigte Bestellungen gelöscht.`);
+                showNotification(`${initialLength - orders.length} erledigte Bestellungen gelöscht.`);
+            }
+        });
+    }
+
+    // FIX: Missing Newsletter Delete Listener
+    const newsletterTable = document.getElementById('newsletter-table');
+    if (newsletterTable) {
+        newsletterTable.addEventListener('click', (e) => {
+            const btn = e.target.closest('.delete-subscriber');
+            if (btn) {
+                const index = parseInt(btn.getAttribute('data-index'));
+                if (confirm("Abonnent wirklich entfernen?")) {
+                    const subs = JSON.parse(localStorage.getItem('druckbau_subscribers')) || [];
+                    subs.splice(index, 1);
+                    localStorage.setItem('druckbau_subscribers', JSON.stringify(subs));
+                    loadAdminData();
+                    showNotification("Abonnent entfernt.");
+                }
             }
         });
     }
@@ -272,23 +380,41 @@ export function initAdminSystem() {
             const desc = prompt("Beschreibung (z.B. 20% auf alles):", "20% Rabatt auf Drucke");
             if (!desc) return;
             
-            // We use DB news to store it as a special offer
-            const payload = `[OFFER] ${title} | ${desc}`;
-            const success = await saveNewsToDB(payload);
-            
-            // local fallback
-            const newsList = JSON.parse(localStorage.getItem('druckbau_news_list')) || [];
-            newsList.unshift({ text: payload, date: new Date().toLocaleString() });
-            localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+            seasonalBtn.classList.add('btn-loading');
+            try {
+                const payload = `[OFFER] ${title} | ${desc}`;
+                
+                // 1. Save to Supabase (if available)
+                const dbSuccess = await saveNewsToDB(payload);
+                
+                // 2. Save to LocalStorage (Always as backup/sync)
+                const newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
+                newsList.unshift({ content: payload, created_at: new Date().toISOString(), text: payload });
+                localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+                
+                // Special offer flag for quick local loading
+                localStorage.setItem('druckbau_seasonal_offer', JSON.stringify({ title, desc }));
 
-            if (success) {
-                alert("Angebot erfolgreich in der Datenbank gespeichert! Es wird auf der Startseite angezeigt.");
-            } else {
-                alert("Angebot wurde vorerst lokal gespeichert (Fehler bei der Datenbank-Verbindung).");
+                if (dbSuccess) {
+                    showNotification("Sonderangebot erfolgreich veröffentlicht! ✅");
+                } else {
+                    showNotification("Angebot nur LOKAL gespeichert. ⚠️", "warning");
+                }
+                loadAdminData();
+            } finally {
+                seasonalBtn.classList.remove('btn-loading');
             }
-            loadAdminData();
         });
     }
+
+    // Also update the general "News" save if it exists (usually triggered by a button in index.html)
+    window.saveNewsSync = async (text) => {
+        const dbSuccess = await saveNewsToDB(text);
+        const newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
+        newsList.unshift({ content: text, created_at: new Date().toISOString(), text: text });
+        localStorage.setItem('druckbau_news_list', JSON.stringify(newsList));
+        return dbSuccess;
+    };
 
     const chartRange = document.getElementById('admin-chart-range');
     if (chartRange) {
@@ -413,8 +539,8 @@ export async function loadAdminData() {
                         <td style="padding: 0.5rem; font-size: 0.9rem;">${escapeHtml(order.message)}</td>
                         <td style="padding: 0.5rem; font-size: 0.85rem;">${order.items ? order.items.map(i => `${i.qty}x ${escapeHtml(i.name || i.nameKey)}`).join('<br>') : '-'}</td>
                         <td style="padding: 0.5rem; font-weight:bold;">${order.totalPrice ? formatCurrency(order.totalPrice) + ' €' : '-'}</td>
-                        <td style="padding: 0.5rem; font-size: 0.85rem; color: var(--primary-blue);">
-                            ${order.coupon ? `${order.coupon.code}<br><small>(-${formatCurrency(order.coupon.discount)})</small>` : '-'}
+                        <td style="padding: 0.5rem; font-size: 0.85rem;">
+                            <input type="text" class="tracking-id-input" data-order-id="${order.orderId}" value="${order.trackingId || ''}" placeholder="Tracking ID" style="width:100px; padding:2px; font-size:0.75rem; border:1px solid #ccc; border-radius:3px;">
                         </td>
                         <td style="padding: 0.5rem;">
                             <select class="order-status-select" data-index="${index}" data-order-id="${order.orderId}" style="padding:2px; font-size:0.8rem; border-radius:4px; border:1px solid #ccc;">
@@ -553,23 +679,53 @@ export function renderOrdersChart() {
         type: 'line',
         data: {
             labels: finalLabels,
-            datasets: [{
-                label: 'Bestellungen',
-                data: finalData,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                borderWidth: 2,
-                fill: true,
-                tension: 0.3,
-                pointRadius: daysToDisplay > 30 ? 0 : 3
-            }]
+            datasets: [
+                {
+                    label: 'Bestellungen',
+                    data: finalData,
+                    borderColor: '#2563eb',
+                    backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: daysToDisplay > 30 ? 0 : 3
+                },
+                {
+                    label: 'Umsatz (€)',
+                    data: finalRev,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    yAxisID: 'y1',
+                    pointRadius: daysToDisplay > 30 ? 0 : 3
+                }
+            ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+                legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 10 } } } 
+            },
             scales: {
-                y: { beginAtZero: true, ticks: { stepSize: 1, precision: 0 } },
+                y: { 
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    beginAtZero: true, 
+                    ticks: { stepSize: 1, precision: 0 },
+                    title: { display: true, text: 'Bestellungen', font: { size: 10 } }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    beginAtZero: true,
+                    grid: { drawOnChartArea: false },
+                    title: { display: true, text: 'Umsatz (€)', font: { size: 10 } }
+                },
                 x: { grid: { display: false } }
             }
         }

@@ -16,9 +16,27 @@ export function setupThemeToggle() {
     });
 
     // Init theme
-    const savedTheme = localStorage.getItem('druckbau_theme') || 'light';
-    document.documentElement.setAttribute('data-theme', savedTheme);
-    updateThemeIcon(savedTheme);
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const savedTheme = localStorage.getItem('druckbau_theme');
+    
+    let initialTheme = 'light';
+    if (savedTheme) {
+        initialTheme = savedTheme;
+    } else if (systemPrefersDark.matches) {
+        initialTheme = 'dark';
+    }
+
+    document.documentElement.setAttribute('data-theme', initialTheme);
+    updateThemeIcon(initialTheme);
+
+    // Listen for system changes
+    systemPrefersDark.addEventListener('change', (e) => {
+        if (!localStorage.getItem('druckbau_theme')) {
+            const newTheme = e.matches ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+    });
 }
 
 function updateThemeIcon(theme) {

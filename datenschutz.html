@@ -44,10 +44,31 @@
             text-decoration: none;
             font-weight: bold;
         }
+        .back-home-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00AEEF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .back-home-fixed:hover {
+            transform: scale(1.05);
+            background: #0096ce;
+        }
     </style>
 </head>
 
 <body>
+    <a href="index.html" class="back-home-fixed">← Zur Startseite</a>
     <nav>
         <div class="nav-left">
             <a href="index.html" style="text-decoration:none; color:inherit;">

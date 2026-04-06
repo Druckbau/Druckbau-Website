@@ -52,13 +52,17 @@ export async function loadOrdersFromDB() {
     }
 }
 
-export async function updateOrderStatus(orderId, newStatus) {
+export async function updateOrderStatus(orderId, newStatus, trackingId = null) {
     if (!supabaseClient) return false;
 
     try {
+        const updateData = {};
+        if (newStatus) updateData.status = newStatus;
+        if (trackingId !== null) updateData.tracking_id = trackingId;
+
         const { data, error } = await supabaseClient
             .from('orders')
-            .update({ status: newStatus })
+            .update(updateData)
             .eq('order_id', orderId);
 
         if (error) throw error;

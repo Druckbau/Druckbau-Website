@@ -69,6 +69,11 @@ const translations = {
         product_custom_color_warning_text: "Diese Farbe muss ggf. extra bestellt werden. Dadurch können zusätzliche Kosten und Wartezeiten entstehen.",
 
         // Cart
+        checkout_step_payment: "Zahlung",
+        checkout_payment_title: "Gewünschte Zahlungsart",
+        checkout_payment_stripe: "Kreditkarte / Apple Pay / Google Pay (via Stripe)",
+        checkout_payment_email: "Manuelle Zahlung / E-Mail Anfrage",
+        checkout_next_payment: "Weiter zur Zahlung",
         cart_title: '<i class="fas fa-shopping-cart" style="color: var(--primary-blue);"></i> Warenkorb',
         nav_more: 'Mehr <span class="arrow">▼</span>',
         cart_empty: "Ihr Warenkorb ist leer.",
@@ -142,6 +147,14 @@ const translations = {
         calc_calculate: "Preis berechnen",
         calc_result: "Geschätzter Preis:",
         calc_disclaimer: "Dies ist eine Schätzung. Der finale Preis kann abweichen.",
+
+        // Status Checker
+        home_order_status: "Bestellstatus prüfen",
+        home_order_placeholder: "Bestellnummer (z.B. #123456)",
+        home_check_btn: "Prüfen",
+        status_searching: "Suche Bestellung...",
+        status_not_found: "Bestellung nicht gefunden.",
+        status_label: "Status Ihrer Bestellung:",
 
         // Material Comparison
         comparison_title: "Material-Vergleich",
@@ -225,12 +238,12 @@ const translations = {
 
         // FAQ Section
         faq_title: "Häufig gestellte Fragen",
-        faq_q1: "Wie lange dauert der Versand?",
-        faq_a1: "In der Regel versenden wir innerhalb von 2-3 Werktagen. Bei individuellen Aufträgen kann es je nach Aufwand etwas länger dauern.",
-        faq_q2: "Welche Materialien nutzen Sie?",
-        faq_a2: "Wir nutzen hauptsächlich PLA (biologisch abbaubar), PETG (robust) und TPU (flexibel). Mehr Details finden Sie im Material-Vergleich.",
-        faq_q3: "Kann ich eigene Modelle drucken lassen?",
-        faq_a3: "Ja! Nutzen Sie unser Kontaktformular für eine Anfrage.",
+        faq_acc_q1: "Wie lange dauert ein Druck?",
+        faq_acc_a1: "Das hängt stark von der Größe und Komplexität ab. Kleine Teile sind in wenigen Stunden fertig, große Projekte können 1-3 Tage dauern. Wir geben Ihnen bei der Anfrage immer eine Schätzung ab.",
+        faq_acc_q2: "Kann ich eigene Dateien (STL) schicken?",
+        faq_acc_a2: "Ja, absolut! Laden Sie Ihre .stl oder .obj Dateien einfach bei der 'Sonderanfertigung' hoch. Wir prüfen die Druckbarkeit kostenlos für Sie.",
+        faq_acc_q3_extra: "Kann ich eigene Modelle drucken lassen?",
+        faq_acc_a3_extra: "Ja! Nutzen Sie unser Kontaktformular für eine Anfrage.",
 
         faq_acc_q3: "Welche Farben sind möglich?",
         faq_acc_a3: "Wir haben ständig viele Farben auf Lager (siehe Produktoptionen). Sollte Ihre Wunschfarbe nicht dabei sein, bestellen wir diese gerne für Ihren Auftrag.",
@@ -583,6 +596,17 @@ function updatePageLanguage() {
     document.documentElement.lang = currentLanguage;
 }
 
+// Helper for Fallback Notifications
+function fallbackShowNotification(msg, type = 'info') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `position:fixed; bottom:20px; right:20px; padding:1rem 2rem; border-radius:8px; color:white; z-index:100000; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition:all 0.3s ease; transform:translateY(100px); opacity:0; font-family: sans-serif;`;
+    toast.style.backgroundColor = type === 'error' ? '#d9534f' : (type === 'warning' ? '#f0ad4e' : '#2563eb');
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 10);
+    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(100px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
 // Simple showSection fallback for local browsing
 function showSection(id) {
     const sections = document.querySelectorAll('section');
@@ -803,25 +827,13 @@ if (typeof document !== 'undefined') {
                                     <label>${t('product_order_custom_desc')}</label>
                                     <textarea id="custom-desc-${p.id}" placeholder="${t('product_custom_desc_placeholder')}" class="qty-input" style="min-height: 60px;"></textarea>
                                 </div>
-                                <div class="option-group">
-                                    <label>${t('product_quantity')}</label>
-                                    <input type="number" id="custom-qty-${p.id}" value="1" min="1" class="qty-input">
+                                <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                                    <input type="number" id="custom-qty-${p.id}" value="1" min="1" class="qty-input" style="width:60px; padding:0.5rem; flex-shrink:0;" title="${t('product_quantity')}">
+                                    <button class="add-btn" onclick="window.addToCartFallback('${p.id}', true)" style="flex:1; padding:0.6rem 1rem; font-size:0.9rem; margin:0;">
+                                        ${t('product_add_cart')}
+                                    </button>
                                 </div>
-                                <div class="option-group">
-                                    <label>${t('product_order_custom_files')}</label>
-                                    <input type="file" id="custom-files-${p.id}" multiple class="qty-input file-input-trigger" data-id="${p.id}" style="padding: 5px;">
-                                    <span style="font-size: 0.75rem; color: var(--text-light);">${t('product_order_custom_files_tip')}</span>
-                                    <div class="file-warning-box">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                                        </svg>
-                                        <span>${t('product_order_custom_files_warning')}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p style="font-size:0.9rem; color:var(--text-light); margin-top:10px;">Da Sie die Seite lokal öffnen, funktioniert die Warenkorb-Weiterleitung für Anlagen nicht. Bitte senden Sie uns eine Anfrage.</p>
-                            <button class="add-btn contact-trigger" data-target="contact" style="margin-top:10px;">Anfrage senden (Kontaktformular)</button>
+                             </div>
                         </div>
                     `;
                 }
@@ -830,20 +842,69 @@ if (typeof document !== 'undefined') {
                         <img src="${p.images[0]}" alt="${name}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
                         <h3>${name}</h3>
                         <div class="price">${p.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
-                        <div class="product-options">
-                            <div class="option-group" style="margin-bottom:0.8rem;">
-                                <label style="display:block; font-size:0.85rem; margin-bottom:0.3rem;">${t('product_quantity')}</label>
-                                <input type="number" value="1" min="1" class="qty-input">
-                            </div>
-                            <div class="option-group">
-                                <label style="display:block; font-size:0.85rem; margin-bottom:0.3rem;">${t('product_color')}</label>
-                                <select class="qty-input">${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}</select>
-                            </div>
+                        <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                            <input type="number" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;">
+                            <select class="qty-input color-fallback-select" style="flex:1; padding:0.5rem; font-size:0.85rem;">
+                                ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                            <button class="add-btn" onclick="window.addToCartFallback('${p.id}', false, this)" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
+                                ${t('product_add_cart')}
+                            </button>
                         </div>
-                        <button class="add-btn" onclick="alert('Bitte nutzen Sie einen lokalen Server für volle Funktionalität.')">${t('product_add_cart')}</button>
                     </div>
                 `;
             }).join('');
+        };
+
+        // --- FALLBACK CART LOGIC ---
+        window.addToCartFallback = function(productId, isCustom, btnElement) {
+            const product = fallbackProducts.find(p => p.id === productId);
+            if (!product) return;
+
+            let qty = 1;
+            let colorName = 'Standard';
+
+            if (isCustom) {
+                const qtyIn = document.getElementById(`custom-qty-${productId}`);
+                if (qtyIn) qty = parseInt(qtyIn.value) || 1;
+            } else if (btnElement) {
+                const card = btnElement.closest('.product-card');
+                const qtyIn = card.querySelector('input[type="number"]');
+                const colorSel = card.querySelector('.color-fallback-select');
+                if (qtyIn) qty = parseInt(qtyIn.value) || 1;
+                if (colorSel) colorName = colorSel.options[colorSel.selectedIndex].text;
+            }
+
+            const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+            cart.push({
+                id: product.id,
+                name: t(product.nameKey),
+                price: product.price || 0,
+                qty: qty,
+                colorName: colorName,
+                isCustom: isCustom
+            });
+            localStorage.setItem('druckbau_cart', JSON.stringify(cart));
+            
+            fallbackShowNotification(`"${t(product.nameKey)}" wurde zum Warenkorb hinzugefügt!`, 'success');
+            
+            // Auto-navigate to cart
+            if (typeof showSection === 'function') {
+                showSection('cart');
+                setTimeout(() => {
+                    const cartSec = document.getElementById('cart');
+                    if (cartSec) cartSec.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            }
+            
+            // Reload cart display if possible
+            if (typeof window.renderCart === 'function') window.renderCart();
+            // Update icon if possible
+            const count = document.getElementById('cart-count');
+            if (count) {
+                const total = cart.reduce((sum, item) => sum + item.qty, 0);
+                count.textContent = total;
+            }
         };
 
         // Initial render if grid is empty (usually means script.js failed)
@@ -886,20 +947,17 @@ if (typeof document !== 'undefined') {
             if (adminTrigger && !window.adminModuleLoaded) {
                 adminTrigger.addEventListener('click', (e) => {
                     e.preventDefault();
-
                     const pwd = prompt("Admin Passwort:");
                     if (pwd === 'admin123') {
                         const adminNav = document.getElementById('admin-nav-item');
                         if (adminNav) adminNav.style.display = 'list-item';
-
-                        // Hide all other sections manually
                         document.querySelectorAll('section').forEach(s => s.style.display = 'none');
                         const adminSection = document.getElementById('admin');
                         if (adminSection) adminSection.style.display = 'block';
                         window.scrollTo(0, 0);
 
-                        // Fallback Render Table
                         const renderFallbackAdmin = () => {
+                            // 1. Orders Table
                             const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
                             const tbody = document.querySelector('#orders-table tbody');
                             if (tbody) {
@@ -908,10 +966,7 @@ if (typeof document !== 'undefined') {
                                 } else {
                                     tbody.innerHTML = orders.map((order, index) => {
                                         const status = order.status || 'Eingegangen';
-                                        const options = ['Eingegangen', 'In Bearbeitung', 'Gedruckt', 'Versendet'].map(opt =>
-                                            `<option value="${opt}" ${status === opt ? 'selected' : ''}>${opt}</option>`
-                                        ).join('');
-                                        const itemsHtml = order.items ? order.items.map(i => `${i.qty}x ${i.name || t(i.nameKey)}`).join('<br>') : '-';
+                                        const options = ['Eingegangen', 'In Bearbeitung', 'Gedruckt', 'Versendet'].map(opt => `<option value="${opt}" ${status === opt ? 'selected' : ''}>${opt}</option>`).join('');
                                         return `
                                         <tr style="border-bottom: 1px solid #eee;">
                                             <td style="padding: 0.5rem; font-size: 0.9rem;">${order.date}</td>
@@ -919,67 +974,123 @@ if (typeof document !== 'undefined') {
                                             <td style="padding: 0.5rem; font-family:monospace;">${order.orderId}</td>
                                             <td style="padding: 0.5rem;">${order.email}</td>
                                             <td style="padding: 0.5rem; font-size: 0.9rem;">${order.message}</td>
-                                            <td style="padding: 0.5rem; font-size: 0.85rem;">${itemsHtml}</td>
+                                            <td style="padding: 0.5rem; font-size: 0.85rem;">${order.items ? order.items.map(i => `${i.qty}x ${i.name || t(i.nameKey)}`).join('<br>') : '-'}</td>
                                             <td style="padding: 0.5rem; font-weight:bold;">${order.totalPrice ? order.totalPrice.toFixed(2) + ' €' : '-'}</td>
-                                            <td style="padding: 0.5rem; font-size: 0.85rem; color: var(--primary-blue);">
-                                                ${order.coupon ? `${order.coupon.code}<br><small>(-${order.coupon.discount.toFixed(2)}€)</small>` : '-'}
-                                            </td>
+                                            <td style="padding: 0.5rem;"><input type="text" class="fallback-tracking-input" data-index="${index}" value="${order.trackingId || ''}" placeholder="ID" style="width:70px; font-size:0.75rem;"></td>
                                             <td style="padding: 0.5rem;">
-                                                <select class="fallback-status-select" data-index="${index}" style="padding:2px; font-size:0.8rem; border-radius:4px; border:1px solid #ccc;">
-                                                    ${options}
-                                                </select>
+                                                <select class="fallback-status-select" data-index="${index}" style="padding:2px; font-size:0.8rem;">${options}</select>
                                             </td>
                                         </tr>`;
                                     }).join('');
-
-                                    // Event listeners for fallback dropdowns
-                                    document.querySelectorAll('.fallback-status-select').forEach(select => {
-                                        select.addEventListener('change', (e) => {
-                                            const i = parseInt(e.target.getAttribute('data-index'));
-                                            orders[i].status = e.target.value;
-                                            localStorage.setItem('druckbau_orders', JSON.stringify(orders));
-                                        });
-                                    });
+                                    
+                                    document.querySelectorAll('.fallback-status-select').forEach(sel => sel.addEventListener('change', (ev) => {
+                                        const i = parseInt(ev.target.dataset.index);
+                                        orders[i].status = ev.target.value;
+                                        localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+                                        fallbackShowNotification(`Status für ${orders[i].orderId} aktualisiert.`);
+                                    }));
+                                    document.querySelectorAll('.fallback-tracking-input').forEach(inp => inp.addEventListener('blur', (ev) => {
+                                        const i = parseInt(ev.target.dataset.index);
+                                        orders[i].trackingId = ev.target.value.trim();
+                                        localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+                                        fallbackShowNotification(`Tracking-ID gespeichert.`);
+                                    }));
                                 }
                             }
 
-                            // Fallback Render Stats (Revenue)
+                            // 2. News/Neuigkeiten
+                            const news = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
+                            const newsContainer = document.getElementById('admin-news-history');
+                            if (newsContainer) {
+                                newsContainer.innerHTML = news.length ? news.map((n, i) => `
+                                    <div style="border-bottom:1px solid #eee; padding:0.5rem 0; display:flex; justify-content:space-between;">
+                                        <div style="font-size:0.85rem;"><strong>${n.date}</strong><br>${n.text}</div>
+                                        <button class="fallback-delete-news" data-index="${i}" style="border:none; color:red; background:none;">&times;</button>
+                                    </div>`).join('') : '<p>Kein Verlauf.</p>';
+                                document.querySelectorAll('.fallback-delete-news').forEach(btn => btn.addEventListener('click', (ev) => {
+                                    const i = parseInt(ev.target.dataset.index);
+                                    news.splice(i, 1);
+                                    localStorage.setItem('druckbau_news_list', JSON.stringify(news));
+                                    renderFallbackAdmin();
+                                    fallbackShowNotification("Neuigkeit gelöscht.");
+                                }));
+                            }
+
+                            // 3. Newsletter
+                            const subs = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+                            const subTable = document.querySelector('#newsletter-table tbody');
+                            if (subTable) {
+                                subTable.innerHTML = subs.length ? subs.map((s, i) => `
+                                    <tr style="border-bottom:1px solid #eee;">
+                                        <td>${s.date}</td><td>${s.email}</td>
+                                        <td><button class="fallback-delete-sub" data-index="${i}" style="border:none; color:red; background:none;">&times;</button></td>
+                                    </tr>`).join('') : '<tr><td colspan="3">Keine Abonnenten.</td></tr>';
+                                document.querySelectorAll('.fallback-delete-sub').forEach(btn => btn.addEventListener('click', (ev) => {
+                                    const b = ev.target.closest('button');
+                                    const i = parseInt(b.dataset.index);
+                                    subs.splice(i, 1);
+                                    localStorage.setItem('druckbau_subscribers', JSON.stringify(subs));
+                                    renderFallbackAdmin();
+                                    fallbackShowNotification("Abonnent entfernt.");
+                                }));
+                            }
+
+                            // 4. Stats
                             const stats = JSON.parse(localStorage.getItem('druckbau_stats')) || { views: {}, purchases: {}, revenue: {}, youtube_clicks: 0 };
                             const statsBody = document.querySelector('#stats-table tbody');
                             if (statsBody) {
-                                let sortedProducts = [...fallbackProducts].sort((a, b) => {
-                                    const revA = stats.revenue ? (stats.revenue[a.id] || 0) : 0;
-                                    const revB = stats.revenue ? (stats.revenue[b.id] || 0) : 0;
-                                    return revB - revA;
-                                });
-
-                                let statsHtml = sortedProducts.map(p => {
-                                    const buys = stats.purchases && stats.purchases[p.id] ? stats.purchases[p.id] : 0;
-                                    const rev = stats.revenue && stats.revenue[p.id] ? stats.revenue[p.id] : 0;
-                                    return `
-                                        <tr style="border-bottom: 1px solid #eee;">
-                                        <td style="padding: 0.5rem;">${t(p.nameKey)}</td>
-                                        <td style="padding: 0.5rem;">${buys}</td>
-                                        <td style="padding: 0.5rem; color: var(--primary-blue); font-weight: bold;">${rev.toFixed(2)} €</td>
-                                        </tr>
-                                    `;
-                                }).join('');
-                                statsHtml += `
-                                    <tr style="background: rgba(46, 204, 113, 0.1);">
-                                    <td style="padding: 0.5rem; font-weight:bold; color:var(--primary-blue);">YouTube Kanal</td>
-                                    <td style="padding: 0.5rem; font-weight:bold;">${stats.youtube_clicks || 0} Klicks</td>
-                                    <td style="padding: 0.5rem;">-</td>
-                                    </tr>
-                                `;
-                                statsBody.innerHTML = statsHtml;
+                                statsBody.innerHTML = fallbackProducts.map(p => {
+                                    const s = stats.purchases?.[p.id] || 0;
+                                    const r = stats.revenue?.[p.id] || 0;
+                                    return `<tr><td>${t(p.nameKey)}</td><td>${s}</td><td style="color:var(--primary-blue); font-weight:bold;">${r.toFixed(2)} €</td></tr>`;
+                                }).join('') + `<tr><td style="font-weight:bold;">YouTube Klicks</td><td>${stats.youtube_clicks || 0}</td><td>-</td></tr>`;
                             }
                         };
+
+                        // Helper for news saving in fallback
+                        const saveNewsBtn = document.getElementById('save-news-btn');
+                        if (saveNewsBtn) {
+                            saveNewsBtn.onclick = () => {
+                                const txt = document.getElementById('admin-news-input').value;
+                                if (!txt) return;
+                                saveNewsBtn.classList.add('btn-loading');
+                                setTimeout(() => {
+                                    const news = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
+                                    news.unshift({ text: txt, date: new Date().toLocaleString() });
+                                    localStorage.setItem('druckbau_news_list', JSON.stringify(news));
+                                    document.getElementById('admin-news-input').value = '';
+                                    saveNewsBtn.classList.remove('btn-loading');
+                                    renderFallbackAdmin();
+                                    fallbackShowNotification("Status hinzugefügt.");
+                                }, 800);
+                            };
+                        }
+
+                        // Seasonal Offer in fallback
+                        const seasonalBtn = document.querySelector('.seasonal-offer-btn');
+                        if (seasonalBtn) {
+                            seasonalBtn.onclick = () => {
+                                const title = prompt("Titel:", "Sonderangebot!");
+                                const desc = prompt("Beschreibung:", "20% Rabatt");
+                                if (!title || !desc) return;
+                                seasonalBtn.classList.add('btn-loading');
+                                setTimeout(() => {
+                                    const news = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
+                                    news.unshift({ text: `[OFFER] ${title} | ${desc}`, date: new Date().toLocaleString() });
+                                    localStorage.setItem('druckbau_news_list', JSON.stringify(news));
+                                    seasonalBtn.classList.remove('btn-loading');
+                                    renderFallbackAdmin();
+                                    fallbackShowNotification("Angebot veröffentlicht.");
+                                }, 800);
+                            };
+                        }
+                        
                         renderFallbackAdmin();
                     } else if (pwd !== null) {
                         alert("Falsches Passwort.");
                     }
                 });
             }
-        }, 1000); // Wait 1s to see if module loads.
+        }, 1000);
     });
 }

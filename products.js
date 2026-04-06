@@ -59,27 +59,21 @@ export function renderProducts() {
                         <label>${t('product_order_custom_desc')}</label>
                         <textarea id="custom-desc-${product.id}" placeholder="${t('product_custom_desc_placeholder')}" class="qty-input" style="min-height: 60px;"></textarea>
                     </div>
-                    <div class="option-group">
-                        <label>${t('product_quantity')}</label>
-                        <input type="number" id="custom-qty-${product.id}" value="1" min="1" class="qty-input">
+                    <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                        <input type="number" id="custom-qty-${product.id}" value="1" min="1" class="qty-input" style="width:60px; padding:0.5rem; flex-shrink:0;" title="${t('product_quantity')}">
+                         <button type="button" class="add-btn add-custom-btn" data-id="${product.id}" style="flex:1; padding:0.6rem 1rem; font-size:0.9rem; margin:0;">
+                            ${t('product_add_cart')}
+                        </button>
                     </div>
-                    <div class="option-group">
-                        <label>${t('product_order_custom_files')}</label>
-                        <input type="file" id="custom-files-${product.id}" multiple class="qty-input file-input-trigger" data-id="${product.id}" style="padding: 5px;">
-                        <span style="font-size: 0.75rem; color: var(--text-light);">${t('product_order_custom_files_tip')}</span>
+
+                    <div class="option-group" style="margin-top:10px;">
+                        <input type="file" id="custom-files-${product.id}" multiple class="qty-input file-input-trigger" data-id="${product.id}" style="padding: 5px; font-size: 0.75rem;">
                         <ul id="file-list-${product.id}" class="selected-files-list"></ul>
-                        <div class="file-warning-box">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                                <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
-                            </svg>
+                        <div class="file-warning-box" style="margin-top:5px; padding:5px; font-size:0.7rem;">
                             <span>${t('product_order_custom_files_warning')}</span>
                         </div>
                     </div>
                 </div>
-
-                <button type="button" class="add-btn add-custom-btn" data-id="${product.id}">
-                    ${t('product_add_cart')}
-                </button>
             </div>
             `;
         }
@@ -91,49 +85,37 @@ export function renderProducts() {
                     <div id="tint-layer-${product.id}" class="tint-layer"></div>
                     <img src="${product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg'}" alt="${t(product.nameKey)}" class="product-img main-img" id="main-img-${product.id}">
                 </div>
-                 ${product.images && product.images.length > 1 ? `
                 <div class="thumbnail-row">
-                    ${product.images.map((img, index) => `
+                    ${(product.images || []).map((img, index) => `
                         <img src="${img}" class="thumbnail ${index === 0 ? 'active' : ''}" 
-                             data-src="${img}">
+                             data-src="${img}" data-id="${product.id}" onclick="window.switchGalleryImage('${img}', this)">
                     `).join('')}
-                </div>` : ''}
+                </div>
             </div>
 
-            <div class="product-info">
+                <div class="product-info">
                 <h3>${t(product.nameKey)}</h3>
                 ${ratingHtml}
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
                 <div class="price">${product.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
                 
-                <div class="product-options">
-                    <div class="option-group">
-                        <label>${t('product_quantity')}</label>
-                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input">
-                    </div>
-                    
-                    <div class="option-group">
-                        <label>${t('product_color')}</label>
-                        <div class="color-preview-container">
-                            <select id="color-${product.id}" class="color-select" data-id="${product.id}">
-                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
-                            </select>
-                            <div id="preview-${product.id}" class="color-preview preview-blue"></div>
-                        </div>
-                    </div>
-
-                    <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none;">
-                        <label style="color: var(--primary-blue);">${t('product_custom_color_label')}</label>
-                        <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input">
-                        <div class="warning-msg">
-                            <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
-                        </div>
-                    </div>
+                <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                    <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;">
+                    <select id="color-${product.id}" class="qty-input" style="flex:1; padding:0.5rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
+                        ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                    </select>
+                    <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
+                        ${t('product_add_cart')}
+                    </button>
                 </div>
 
-                <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}">
-                    ${t('product_add_cart')}
-                </button>
+                <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none; margin-top:10px;">
+                    <label style="color: var(--primary-blue); font-size:0.8rem;">${t('product_custom_color_label')}</label>
+                    <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input" style="padding:0.4rem;">
+                    <div class="warning-msg" style="font-size:0.7rem; margin-top:5px;">
+                        <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
+                    </div>
+                </div>
                 <div id="cart-animation-${product.id}" style="position: absolute; right: 20px; bottom: 80px; pointer-events: none;"></div>
             </div>
         </div>

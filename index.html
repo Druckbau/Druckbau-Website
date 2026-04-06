@@ -45,15 +45,7 @@
         </div>
         <ul class="nav-links">
             <li><a href="#" class="nav-link active" data-target="home" data-i18n="nav_home">Home</a></li>
-            <li class="dropdown">
-                <a href="#" class="nav-link dropdown-toggle" data-target="products" data-i18n="nav_products">Produkte
-                    <span class="arrow">▼</span></a>
-                <ul class="dropdown-menu">
-                    <li><a href="#" class="nav-link" data-target="products" data-i18n="nav_products">Alle Produkte</a>
-                    </li>
-                    <li><a href="#" class="nav-link" data-target="process" data-i18n="process_title">Ablauf</a></li>
-                </ul>
-            </li>
+            <li><a href="#" class="nav-link" data-target="products" data-i18n="nav_products">Produkte</a></li>
             <li><a href="#" class="nav-link" data-target="news" data-i18n="nav_news">Neuigkeiten</a></li>
             <li><a href="#" class="nav-link" data-target="contact" data-i18n="nav_contact">Kontakt</a></li>
             <li class="dropdown">
@@ -188,33 +180,6 @@
                         style="display: inline-block; padding: 0.3rem 1rem; border-radius: 20px; font-weight: bold; background: #eee; color: #333;">
                         -
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Process Section -->
-        <section id="process" class="process-section">
-            <h2 class="section-title" data-i18n="process_title">Wie es funktioniert</h2>
-            <div class="process-grid">
-                <div class="process-step">
-                    <div class="process-icon">📤</div>
-                    <h3 data-i18n="process_step1_title">1. Anfrage senden</h3>
-                    <p data-i18n="process_step1_text">Laden Sie Ihre Datei hoch oder beschreiben Sie Ihre Idee im
-                        Kontaktformular.</p>
-                </div>
-                <div class="process-arrow">➝</div>
-                <div class="process-step">
-                    <div class="process-icon">🔍</div>
-                    <h3 data-i18n="process_step2_title">2. Prüfung & Angebot</h3>
-                    <p data-i18n="process_step2_text">Wir prüfen die Machbarkeit und senden Ihnen ein unverbindliches
-                        Angebot.</p>
-                </div>
-                <div class="process-arrow">➝</div>
-                <div class="process-step">
-                    <div class="process-icon">📦</div>
-                    <h3 data-i18n="process_step3_title">3. Druck & Versand</h3>
-                    <p data-i18n="process_step3_text">Nach Bestätigung starten wir den Druck und versenden Ihr Teil
-                        versichert.</p>
                 </div>
             </div>
         </section>
@@ -736,7 +701,10 @@
                 </div>
 
                 <div class="admin-group" style="margin-top: 2rem;">
-                    <h4>Newsletter Abonnenten</h4>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                        <h4 style="margin: 0;">Newsletter Abonnenten</h4>
+                        <button id="admin-send-newsletter" class="contact-btn" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--primary-blue);">Newsletter senden</button>
+                    </div>
                     <div class="table-container" style="overflow-x: auto; margin-top: 1rem;">
                         <table id="newsletter-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
@@ -772,7 +740,7 @@
                                     <th style="padding: 0.5rem;">Nachricht</th>
                                     <th style="padding: 0.5rem;">Produkte</th>
                                     <th style="padding: 0.5rem;">Gesamtpreis</th>
-                                    <th style="padding: 0.5rem;">Gutschein</th>
+                                    <th style="padding: 0.5rem;">Tracking</th>
                                     <th style="padding: 0.5rem;">Status</th>
                                 </tr>
                             </thead>
@@ -840,6 +808,30 @@
                 </div>
             </div>
         </section>
+        <!-- Social Media Feed Section -->
+        <section id="social-feed" class="social-section" style="padding: 4rem 2rem; background: var(--bg-light);">
+            <h2 class="section-title" data-i18n="social_title">Folgen Sie uns</h2>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--text-light);" data-i18n="social_subtitle">Täglich neue Inspiration auf Instagram & TikTok</p>
+            <div class="social-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto;">
+                <!-- Social placeholders -->
+                <div class="social-item" style="aspect-ratio: 1/1; background: #ddd; border-radius: 12px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=400" alt="Social" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="social-item" style="aspect-ratio: 1/1; background: #ddd; border-radius: 12px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=400" alt="Social" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="social-item" style="aspect-ratio: 1/1; background: #ddd; border-radius: 12px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=400" alt="Social" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+                <div class="social-item" style="aspect-ratio: 1/1; background: #ddd; border-radius: 12px; overflow: hidden; position: relative;">
+                    <img src="https://images.unsplash.com/photo-1558434195-200780287590?w=400" alt="Social" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="https://instagram.com/druckbau" target="_blank" class="contact-btn" style="text-decoration: none; display: inline-block;">@druckbau auf Instagram</a>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer -->
@@ -1059,6 +1051,10 @@
                 </div>
                 <div class="progress-step" data-step="3">
                     <span class="step-number">3</span>
+                    <span class="step-label" data-i18n="checkout_step_payment">Zahlung</span>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <span class="step-number">4</span>
                     <span class="step-label" data-i18n="checkout_step_3">Vorschau</span>
                 </div>
             </div>
@@ -1103,14 +1099,34 @@
                 <div class="checkout-actions" style="display: flex; gap: 1rem;">
                     <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
                         data-i18n="checkout_back">Zurück</button>
-                    <button class="contact-btn next-step-btn" style="flex: 2;" data-i18n="checkout_next_preview">Weiter
-                        zur
-                        Übersicht</button>
+                    <button class="contact-btn next-step-btn" style="flex: 2;" data-i18n="checkout_next_payment">Weiter zur Zahlung</button>
                 </div>
             </div>
 
-            <!-- Step 3: Review -->
+            <!-- Step 3: Payment -->
             <div class="checkout-step" id="checkout-step-3" style="display: none;">
+                <h4 style="margin-bottom: 1rem;" data-i18n="checkout_payment_title">Gewünschte Zahlungsart</h4>
+                <div class="form-group">
+                    <div style="display: flex; gap: 1rem; flex-direction: column;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 2px solid var(--primary-blue); border-radius: 8px; cursor: pointer;">
+                            <input type="radio" name="payment-method" value="stripe" checked>
+                            <strong data-i18n="checkout_payment_stripe">Kreditkarte / Apple Pay / Google Pay (via Stripe)</strong>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; cursor: pointer;">
+                            <input type="radio" name="payment-method" value="email">
+                            <strong data-i18n="checkout_payment_email">Manuelle Zahlung / E-Mail Anfrage</strong>
+                        </label>
+                    </div>
+                </div>
+                <div class="checkout-actions" style="display: flex; gap: 1rem;">
+                    <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
+                        data-i18n="checkout_back">Zurück</button>
+                    <button class="contact-btn next-step-btn" style="flex: 2;" data-i18n="checkout_next_preview">Weiter zur Vorschau</button>
+                </div>
+            </div>
+
+            <!-- Step 4: Review -->
+            <div class="checkout-step" id="checkout-step-4" style="display: none;">
                 <div id="checkout-summary"
                     style="margin-bottom: 2rem; background: var(--bg-light); padding: 1rem; border-radius: 8px;">
                     <!-- Populated by JS -->

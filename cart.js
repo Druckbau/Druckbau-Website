@@ -3,6 +3,9 @@ import { products, colors, state, saveCartToStorage, saveWishlistToStorage, SHIP
 import { trackProductPurchase } from './admin.js';
 import { formatCurrency, showNotification, escapeHtml, t } from './utils.js';
 
+let lastAddedIndex = -1;
+
+
 export function addToCart(productId) {
     const product = products.find(p => p.id === productId);
     if (!product) return;
@@ -49,7 +52,18 @@ export function addToCart(productId) {
 
     saveCartToStorage();
     updateCartIcon();
-    renderCart();
+    
+    lastAddedIndex = state.cart.indexOf(existingItem || state.cart[state.cart.length - 1]);
+    
+    if (window.showSection) {
+        window.showSection('cart');
+        setTimeout(() => {
+            const cartItems = document.getElementById('cart-items-container');
+            if (cartItems) cartItems.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    } else {
+        renderCart();
+    }
 
     const translatedName = typeof t === 'function' ? t(product.nameKey) : product.name;
     const addedTxt = typeof t === 'function' ? t('alert_success_added') : 'wurde zum Warenkorb hinzugefügt.';
@@ -107,7 +121,18 @@ export function addCustomToCart(productId) {
 
     saveCartToStorage();
     updateCartIcon();
-    renderCart();
+
+    lastAddedIndex = state.cart.length - 1;
+
+    if (window.showSection) {
+        window.showSection('cart');
+        setTimeout(() => {
+            const cartItems = document.getElementById('cart-items-container');
+            if (cartItems) cartItems.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+    } else {
+        renderCart();
+    }
 
     const translatedName = typeof t === 'function' ? t(product.nameKey) : product.name;
     const addedTxt = typeof t === 'function' ? t('alert_success_added') : 'wurde zum Warenkorb hinzugefügt.';
@@ -181,10 +206,13 @@ export function renderCart() {
     let hasCustomItems = false;
 
     container.innerHTML = state.cart.map((item, index) => {
+        const isNew = index === lastAddedIndex;
+        if (isNew) setTimeout(() => { lastAddedIndex = -1; }, 2000);
+
         if (item.isCustom) {
             hasCustomItems = true;
             return `
-            <div class="cart-item">
+            <div class="cart-item ${isNew ? 'cart-item-new' : ''}">
                 <div class="cart-item-details">
                     <h4>[${t('nav_more')}] ${item.name}</h4>
                     <div class="cart-item-info">
@@ -205,7 +233,7 @@ export function renderCart() {
             const itemTotal = item.price * item.qty;
             subtotal += itemTotal;
             return `
-            <div class="cart-item">
+            <div class="cart-item ${isNew ? 'cart-item-new' : ''}">
                 <div class="cart-item-details">
                     <h4>${item.name}</h4>
                     <p class="cart-item-info">${item.colorName} | ${item.qty}x</p>

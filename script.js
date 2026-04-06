@@ -5,9 +5,10 @@ import { renderCart, updateCartIcon, addToCart, addCustomToCart, toggleWishlist,
 import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevCheckoutStep } from './js/checkout.js';
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
-import { loadNewsFromDB } from './js/db.js';
+import { initDB, loadNewsFromDB } from './js/db.js';
 
 async function init() {
+    initDB();
     setupNavigation();
     setupThemeToggle();
     setupChat();
@@ -24,6 +25,7 @@ async function init() {
         updateCartIcon();
 
         setupFAQ();
+        initOrderStatusChecker();
     }
 
     // Pass global utilities that inline HTML or older scripts might need
@@ -50,12 +52,19 @@ async function loadPublicNews() {
     const newsDate = document.getElementById('news-date');
     if (!newsSection || !newsText) return;
 
-    const newsList = await loadNewsFromDB();
+    let newsList = await loadNewsFromDB();
+    
+    // Fallback if DB is empty/fails
+    if (!newsList || newsList.length === 0) {
+        newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
+    }
+
     if (newsList && newsList.length > 0) {
         const latestInfo = newsList[0];
+        const content = latestInfo.content || latestInfo.text;
         
-        if (latestInfo.content.startsWith('[OFFER]')) {
-            const parts = latestInfo.content.replace('[OFFER] ', '').split('|');
+        if (content && content.startsWith('[OFFER]')) {
+            const parts = content.replace('[OFFER] ', '').split('|');
             const offerBanner = document.getElementById('seasonal-offer-banner');
             if (offerBanner) {
                 offerBanner.style.display = 'block';
@@ -67,10 +76,13 @@ async function loadPublicNews() {
                 if (countdown) countdown.style.display = 'none';
             }
             newsSection.style.display = 'none';
-        } else {
+        } else if (content) {
             newsSection.style.display = 'block';
-            newsText.innerHTML = latestInfo.content.replace(/\\n/g, '<br>');
-            if (newsDate) newsDate.textContent = new Date(latestInfo.created_at).toLocaleDateString('de-DE');
+            newsText.innerHTML = content.replace(/\\n/g, '<br>');
+            if (newsDate) {
+                const date = latestInfo.created_at || latestInfo.date;
+                newsDate.textContent = date ? new Date(date).toLocaleDateString('de-DE') : '';
+            }
         }
     } else {
         newsSection.style.display = 'none';
@@ -127,6 +139,10 @@ function setupGlobalEventListeners() {
         }
 
         if (target.innerText && target.innerText.includes('Export') && target.classList.contains('contact-btn')) exportOrdersToCSV();
+
+        if (target.id === 'check-status-btn') {
+            handleStatusCheck();
+        }
     });
 
     document.body.addEventListener('change', (e) => {
@@ -148,6 +164,63 @@ function setupGlobalEventListeners() {
     });
 
     // Language switcher logic will remain mostly global for now, handled here if needed
+}
+
+async function handleStatusCheck() {
+    const input = document.getElementById('status-order-id');
+    const badge = document.getElementById('status-badge');
+    const resultDiv = document.getElementById('status-result');
+    if (!input || !badge || !resultDiv) return;
+
+    const orderId = input.value.trim().replace('#', '').toUpperCase();
+    if (!orderId) return;
+
+    badge.innerText = t('status_searching') || "Suche...";
+    badge.style.background = "#eee";
+    badge.style.color = "#333";
+    resultDiv.style.display = 'block';
+
+    try {
+        // 1. Try Supabase
+        const { loadOrdersFromDB } = await import('./js/db.js');
+        const dbOrders = await loadOrdersFromDB();
+        let order = dbOrders ? dbOrders.find(o => o.orderId === orderId) : null;
+
+        // 2. Fallback LocalStorage
+        if (!order) {
+            const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+            order = localOrders.find(o => o.orderId === orderId);
+        }
+
+        if (order) {
+            const status = order.status || 'Eingegangen';
+            badge.innerText = status;
+            
+            // Nice coloring
+            if (status.includes('Versendet')) {
+                badge.style.background = '#d4edda';
+                badge.style.color = '#155724';
+            } else if (status.includes('Bearbeitung') || status.includes('Gedruckt')) {
+                badge.style.background = '#fff3cd';
+                badge.style.color = '#856404';
+            } else {
+                badge.style.background = '#e9ecef';
+                badge.style.color = '#495057';
+            }
+        } else {
+            badge.innerText = t('status_not_found') || "Nicht gefunden";
+            badge.style.background = '#f8d7da';
+            badge.style.color = '#721c24';
+        }
+    } catch (err) {
+        console.error("Status check failed", err);
+        badge.innerText = "Fehler bei der Abfrage.";
+    }
+}
+
+function initOrderStatusChecker() {
+    // Basic setup if needed, most is handled via event delegation now
+    console.log("Order Status Checker initialized");
 }
 
 // Start App
