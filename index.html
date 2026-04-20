@@ -1072,7 +1072,7 @@
                     <span class="form-error"></span>
                 </div>
                 <div class="checkout-actions">
-                    <button class="contact-btn" style="width: 100%;" data-i18n="checkout_next_shipping">Weiter zu
+                    <button class="contact-btn next-step-btn" style="width: 100%;" data-i18n="checkout_next_shipping">Weiter zu
                         Versand</button>
                 </div>
             </div>
@@ -1107,15 +1107,12 @@
             <div class="checkout-step" id="checkout-step-3" style="display: none;">
                 <h4 style="margin-bottom: 1rem;" data-i18n="checkout_payment_title">Gewünschte Zahlungsart</h4>
                 <div class="form-group">
-                    <div style="display: flex; gap: 1rem; flex-direction: column;">
-                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 2px solid var(--primary-blue); border-radius: 8px; cursor: pointer;">
-                            <input type="radio" name="payment-method" value="stripe" checked>
-                            <strong data-i18n="checkout_payment_stripe">Kreditkarte / Apple Pay / Google Pay (via Stripe)</strong>
-                        </label>
-                        <label style="display: flex; align-items: center; gap: 0.5rem; padding: 1rem; border: 1px solid #ccc; border-radius: 8px; cursor: pointer;">
-                            <input type="radio" name="payment-method" value="email">
-                            <strong data-i18n="checkout_payment_email">Manuelle Zahlung / E-Mail Anfrage</strong>
-                        </label>
+                    <div style="background: var(--bg-light); padding: 1.5rem; border-radius: 8px; border: 1px solid #ddd;">
+                        <p style="margin-bottom: 1rem;"><strong>Zahlung per E-Mail-Anfrage</strong></p>
+                        <p style="font-size: 0.9rem; color: var(--text-light);">
+                            Ihre Bestellung wird als unverbindliche Anfrage an uns gesendet. Wir prüfen die Verfügbarkeit und senden Ihnen anschließend alle Details zur Zahlung (z.B. PayPal oder Überweisung) per E-Mail zu.
+                        </p>
+                        <input type="hidden" name="payment-method" value="email">
                     </div>
                 </div>
                 <div class="checkout-actions" style="display: flex; gap: 1rem;">
@@ -1150,7 +1147,7 @@
         crossorigin="anonymous"></script>
     <script src="translations.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script type="module" src="script.js"></script>
+    <script src="bundled.js"></script>
 </body>
 
 </html>

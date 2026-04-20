@@ -33,18 +33,23 @@ export function addToCart(productId) {
         }
     }
 
-    const existingItem = state.cart.find(item => item.id === productId && item.color === colorValue && item.customColor === customColor);
+    const finalName = product.name || t(product.nameKey) || product.id;
+    const existingItem = state.cart.find(item => 
+        item.id === productId && 
+        item.color === colorValue && 
+        (item.customColor === customColor || (!item.customColor && !customColor))
+    );
 
     if (existingItem) {
         existingItem.qty += qty;
     } else {
         state.cart.push({
             id: product.id,
-            name: product.name || t(product.nameKey),
+            name: finalName,
             price: product.price,
             qty: qty,
             color: colorValue,
-            colorName: customColor ? `Wunschfarbe: ${customColor}` : colorName,
+            colorName: customColor ? `${t('product_custom_color_label')}: ${customColor}` : colorName,
             customColor: customColor,
             isCustom: false
         });
@@ -181,6 +186,13 @@ export function applyCoupon() {
         return;
     }
 
+    // Per-device usage limit
+    const usedCoupons = JSON.parse(localStorage.getItem('druckbau_used_coupons') || '[]');
+    if (usedCoupons.includes(code)) {
+        alert("Dieser Gutschein wurde auf diesem Gerät bereits eingelöst.");
+        return;
+    }
+
     state.appliedCoupon = { code, ...coupon };
     alert(t('alert_coupon_applied'));
     renderCart();
@@ -207,40 +219,49 @@ export function renderCart() {
 
     container.innerHTML = state.cart.map((item, index) => {
         const isNew = index === lastAddedIndex;
-        if (isNew) setTimeout(() => { lastAddedIndex = -1; }, 2000);
+        if (isNew) {
+            setTimeout(() => { 
+                lastAddedIndex = -1; 
+                renderCart();
+            }, 2000);
+        }
+
+        const qty = parseInt(item.qty) || 1;
+        const name = item.name || t('cart_item_unknown');
 
         if (item.isCustom) {
             hasCustomItems = true;
             return `
             <div class="cart-item ${isNew ? 'cart-item-new' : ''}">
                 <div class="cart-item-details">
-                    <h4>[${t('nav_more')}] ${item.name}</h4>
+                    <h4>[${t('nav_more')}] ${name}</h4>
                     <div class="cart-item-info">
-                        Von: ${escapeHtml(item.customFrom)}<br>
-                        Zu: ${escapeHtml(item.customTo)}<br>
-                        Info: ${escapeHtml(item.customDesc)}<br>
-                        ${item.files && item.files.length > 0 ? `Dateien: ${item.files.join(', ')}` : ''}
+                        ${t('product_order_custom_from')}: ${escapeHtml(item.customFrom)}<br>
+                        ${t('product_order_custom_to')}: ${escapeHtml(item.customTo)}<br>
+                        ${t('product_order_custom_desc')}: ${escapeHtml(item.customDesc)}<br>
+                        ${item.files && item.files.length > 0 ? `${t('product_order_custom_files_warning')}: ${item.files.join(', ')}` : ''}
                     </div>
                 </div>
                 <div>
                      <span style="font-weight:bold; color:var(--text-light); margin-right:15px;">${t('cart_price_indiv')}</span>
-                     <button type="button" class="remove-btn" data-index="${index}" title="Entfernen">
+                     <button type="button" class="remove-btn" data-index="${index}" title="${t('cart_remove')}">
                         ✕
                      </button>
                 </div>
             </div>`;
         } else {
-            const itemTotal = item.price * item.qty;
+            const price = parseFloat(item.price) || 0;
+            const itemTotal = price * qty;
             subtotal += itemTotal;
             return `
             <div class="cart-item ${isNew ? 'cart-item-new' : ''}">
                 <div class="cart-item-details">
-                    <h4>${item.name}</h4>
-                    <p class="cart-item-info">${item.colorName} | ${item.qty}x</p>
+                    <h4>${name}</h4>
+                    <p class="cart-item-info">${item.colorName || t('product_standard')} | ${qty}x</p>
                 </div>
                 <div>
                      <span style="font-weight:bold; margin-right:15px;">${formatCurrency(itemTotal)}</span>
-                     <button type="button" class="remove-btn" data-index="${index}" title="Entfernen">
+                     <button type="button" class="remove-btn" data-index="${index}" title="${t('cart_remove')}">
                         ✕
                      </button>
                 </div>

@@ -6,6 +6,7 @@ import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevChe
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
 import { initDB, loadNewsFromDB } from './js/db.js';
+import { openReviewModal, openReviewListModal, closeReviewModal, submitReview } from './js/reviews.js';
 
 async function init() {
     initDB();
@@ -95,53 +96,115 @@ function setupGlobalEventListeners() {
     document.body.addEventListener('click', (e) => {
         const target = e.target;
 
-        if (target.id === 'checkout-btn') checkout();
-        if (target.closest('.add-to-cart-btn')) addToCart(target.closest('.add-to-cart-btn').dataset.id);
-        if (target.closest('.add-custom-btn')) addCustomToCart(target.closest('.add-custom-btn').dataset.id);
+        if (target.closest('#checkout-btn')) {
+            checkout();
+            return;
+        }
+        if (target.closest('#close-checkout')) {
+            closeCheckoutModal();
+            return;
+        }
+        if (target.closest('.next-step-btn')) {
+            nextCheckoutStep();
+            return;
+        }
+        if (target.closest('.back-step-btn')) {
+            prevCheckoutStep();
+            return;
+        }
+        if (target.closest('#final-checkout-btn')) {
+            e.preventDefault();
+            submitCheckout();
+            return;
+        }
+
+        if (target.closest('.rate-btn')) {
+            e.stopPropagation();
+            const btn = target.closest('.rate-btn');
+            openReviewModal(btn.dataset.id, btn.dataset.name);
+            return;
+        }
+        if (target.closest('.view-reviews-btn')) {
+            e.stopPropagation();
+            const btn = target.closest('.view-reviews-btn');
+            openReviewListModal(btn.dataset.id, btn.dataset.name);
+            return;
+        }
+        if (target.closest('#review-modal .close-modal')) {
+            closeReviewModal();
+            return;
+        }
+
+        if (target.closest('.add-to-cart-btn')) {
+            addToCart(target.closest('.add-to-cart-btn').dataset.id);
+            return;
+        }
+        if (target.closest('.add-custom-btn')) {
+            addCustomToCart(target.closest('.add-custom-btn').dataset.id);
+            return;
+        }
         if (target.closest('.wishlist-btn')) {
             e.preventDefault();
             toggleWishlist(target.closest('.wishlist-btn').dataset.id);
+            return;
         }
         if (target.closest('.remove-btn') && target.closest('.remove-btn').dataset.index !== undefined) {
             removeFromCart(parseInt(target.closest('.remove-btn').dataset.index));
+            return;
         }
 
-        if (target.id === 'apply-coupon-btn') applyCoupon();
-        if (target.id === 'remove-coupon-btn') removeCoupon();
-
-        if (target.classList.contains('wishlist-add-to-cart-btn')) {
-            addToCartFromWishlist(target.dataset.productId);
+        if (target.closest('#apply-coupon-btn')) {
+            applyCoupon();
+            return;
         }
-        if (target.classList.contains('wishlist-remove-btn')) {
-            toggleWishlist(target.dataset.productId);
+        if (target.closest('#remove-coupon-btn')) {
+            removeCoupon();
+            return;
         }
 
-        if (target.classList.contains('main-img')) {
+        if (target.closest('.wishlist-add-to-cart-btn')) {
+            addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
+            return;
+        }
+        if (target.closest('.wishlist-remove-btn')) {
+            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
+            return;
+        }
+
+        if (target.closest('.main-img')) {
             const card = target.closest('.product-card');
             if (card) {
                 const id = card.dataset.productId;
-                if (window.openLightbox) window.openLightbox(target.src);
+                if (window.openLightbox) window.openLightbox(target.closest('.main-img').src);
                 trackProductView(id);
             }
+            return;
         }
         
-        if (target.classList.contains('thumbnail')) {
+        if (target.closest('.thumbnail')) {
             const card = target.closest('.product-card');
             if (card) {
-                const src = target.getAttribute('data-src') || target.src;
-                if (window.switchGalleryImage) window.switchGalleryImage(src, target);
+                const thumb = target.closest('.thumbnail');
+                const src = thumb.getAttribute('data-src') || thumb.src;
+                if (window.switchGalleryImage) window.switchGalleryImage(src, thumb);
                 trackProductView(card.dataset.productId);
             }
+            return;
         }
         
         if (target.closest('.youtube-link')) {
             trackYouTubeClick();
+            return;
         }
 
-        if (target.innerText && target.innerText.includes('Export') && target.classList.contains('contact-btn')) exportOrdersToCSV();
+        if (target.innerText && target.innerText.includes('Export') && target.classList.contains('contact-btn')) {
+            exportOrdersToCSV();
+            return;
+        }
 
-        if (target.id === 'check-status-btn') {
+        if (target.closest('#check-status-btn')) {
             handleStatusCheck();
+            return;
         }
     });
 
@@ -164,6 +227,11 @@ function setupGlobalEventListeners() {
     });
 
     // Language switcher logic will remain mostly global for now, handled here if needed
+
+    const reviewForm = document.getElementById('review-form');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', submitReview);
+    }
 }
 
 async function handleStatusCheck() {

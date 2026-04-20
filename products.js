@@ -123,13 +123,16 @@ export function renderProducts() {
 }
 
 
-export function updateColorPreview(select, id) {
-    const preview = document.getElementById(`preview-${id}`);
-    const customWrapper = document.getElementById(`custom-color-wrapper-${id}`);
+export function updateColorPreview(productId, colorValue) {
+    const tintLayer = document.getElementById(`tint-layer-${productId}`);
+    const customWrapper = document.getElementById(`custom-color-wrapper-${productId}`);
 
-    if (preview) preview.className = `color-preview preview-${select.value}`;
+    if (tintLayer) {
+        // Reset class and add new color class
+        tintLayer.className = `tint-layer preview-${colorValue}`;
+    }
 
-    if (select.value === 'custom') {
+    if (colorValue === 'custom') {
         if (customWrapper) customWrapper.style.display = 'block';
     } else {
         if (customWrapper) customWrapper.style.display = 'none';

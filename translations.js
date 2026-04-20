@@ -604,7 +604,11 @@ function fallbackShowNotification(msg, type = 'info') {
     toast.textContent = msg;
     document.body.appendChild(toast);
     setTimeout(() => { toast.style.transform = 'translateY(0)'; toast.style.opacity = '1'; }, 10);
-    setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(100px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+    setTimeout(() => { 
+        toast.style.opacity = '0'; 
+        toast.style.transform = 'translateY(100px)'; 
+        setTimeout(() => toast.remove(), 300); 
+    }, 6000); // Increased to 6 seconds
 }
 
 // Simple showSection fallback for local browsing
@@ -620,6 +624,10 @@ function showSection(id) {
         target.style.display = (id === 'home' ? 'flex' : 'block');
         setTimeout(() => target.classList.add('active'), 10);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        // Trigger fallback rendering
+        if (id === 'cart' && typeof window.renderCart === 'function') window.renderCart();
+        if (id === 'wishlist' && typeof window.renderWishlist === 'function') window.renderWishlist();
     }
 
     document.querySelectorAll('.nav-link, .nav-trigger, .lang-btn').forEach(link => {
@@ -803,14 +811,33 @@ if (typeof document !== 'undefined') {
             { name: 'Eigene (Wunschfarbe)', value: 'custom' }
         ];
 
+        // Initialize default coupons for fallback if not found
+        if (!localStorage.getItem('druckbau_coupons')) {
+            const defaultCoupons = {
+                'NEUKUNDE10': { type: 'percentage', value: 10, expiry: '2026-12-31' },
+                'SOMMER2026': { type: 'fixed', value: 5, expiry: '2026-08-31' },
+                'TREUE15': { type: 'percentage', value: 15, expiry: '2026-12-31' },
+                'WELCOME5': { type: 'fixed', value: 5, expiry: '2026-12-31' }
+            };
+            localStorage.setItem('druckbau_coupons', JSON.stringify(defaultCoupons));
+        }
+
         window.renderProducts = function () {
             const grid = document.getElementById('products-grid');
             if (!grid) return;
             grid.innerHTML = fallbackProducts.map(p => {
                 const name = t(p.nameKey);
+                const wishlist = JSON.parse(localStorage.getItem('druckbau_wishlist') || '[]');
+                const isInWishlist = wishlist.includes(p.id);
+                const reviews = JSON.parse(localStorage.getItem(`druckbau_reviews_${p.id}`) || '[]');
+                const avgRating = reviews.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : '5.0';
+
                 if (p.isCustom) {
                     return `
                         <div class="product-card" data-product-id="${p.id}" style="position: relative;">
+                            <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlistFallback('${p.id}', this)" title="${t('product_wishlist_btn')}" style="position:absolute; top:10px; right:10px; z-index:5;">
+                                <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
+                            </button>
                             <h3>${name}</h3>
                             <span class="price">${t('product_indiv')}</span>
                             
@@ -829,7 +856,7 @@ if (typeof document !== 'undefined') {
                                 </div>
                                 <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
                                     <input type="number" id="custom-qty-${p.id}" value="1" min="1" class="qty-input" style="width:60px; padding:0.5rem; flex-shrink:0;" title="${t('product_quantity')}">
-                                    <button class="add-btn" onclick="window.addToCartFallback('${p.id}', true)" style="flex:1; padding:0.6rem 1rem; font-size:0.9rem; margin:0;">
+                                    <button class="add-btn" onclick="event.stopPropagation(); window.addToCartFallback('${p.id}', true)" style="flex:1; padding:0.6rem 1rem; font-size:0.9rem; margin:0;">
                                         ${t('product_add_cart')}
                                     </button>
                                 </div>
@@ -838,18 +865,37 @@ if (typeof document !== 'undefined') {
                     `;
                 }
                 return `
-                    <div class="product-card">
+                    <div class="product-card" data-product-id="${p.id}" style="position: relative;">
+                        <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlistFallback('${p.id}', this)" title="${t('product_wishlist_btn')}" style="position:absolute; top:10px; right:10px; z-index:5;">
+                            <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
+                        </button>
                         <img src="${p.images[0]}" alt="${name}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
                         <h3>${name}</h3>
-                        <div class="price">${p.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
-                        <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
-                            <input type="number" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;">
-                            <select class="qty-input color-fallback-select" style="flex:1; padding:0.5rem; font-size:0.85rem;">
-                                ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
-                            </select>
-                            <button class="add-btn" onclick="window.addToCartFallback('${p.id}', false, this)" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
-                                ${t('product_add_cart')}
-                            </button>
+                        
+                        <div class="product-meta" style="display:flex; justify-content:space-between; align-items:center; margin: 5px 0;">
+                            <div class="rating-mini">
+                                <i class="fas fa-star" style="color:#ffcc00;"></i> ${avgRating} 
+                                <span style="font-size:0.8rem; color:var(--text-light); cursor:pointer;" onclick="window.showReviewsFallback('${p.id}')">(${reviews.length})</span>
+                            </div>
+                            <div class="price" style="margin:0;">${p.price.toFixed(2)} €</div>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom:10px;">${t('price_hint')} ${t('shipping_hint')}</div>
+
+                        <div class="product-actions" style="display:flex; flex-direction:column; gap:8px;">
+                            <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
+                                <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
+                                <select class="qty-input color-fallback-select" style="flex:1; padding:0.4rem; font-size:0.8rem;">
+                                    ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button class="add-btn" onclick="event.stopPropagation(); window.addToCartFallback('${p.id}', false, this)" style="flex:2; padding:0.5rem; font-size:0.8rem; margin:0;">
+                                    ${t('product_add_cart')}
+                                </button>
+                                <button class="rate-btn" onclick="event.stopPropagation(); window.openReviewModalFallback('${p.id}')" style="flex:1; padding:0.5rem; font-size:0.8rem; margin:0; border:1px solid #ddd; background:white; color:#333;">
+                                    ${t('product_rate')}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -857,6 +903,136 @@ if (typeof document !== 'undefined') {
         };
 
         // --- FALLBACK CART LOGIC ---
+        window.renderCart = function() {
+            const container = document.getElementById('cart-items-container');
+            const summary = document.getElementById('cart-summary');
+            if (!container || !summary) return;
+
+            const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+            if (cart.length === 0) {
+                container.innerHTML = `<p style="text-align:center;">${t('cart_empty')}</p>`;
+                summary.style.display = 'none';
+                return;
+            }
+
+            let subtotal = 0;
+            container.innerHTML = cart.map((item, index) => {
+                const itemTotal = (item.price || 0) * (item.qty || 1);
+                subtotal += itemTotal;
+                return `
+                <div class="cart-item">
+                    <div class="cart-item-details">
+                        <h4>${item.name || 'Produkt'}</h4>
+                        <p class="cart-item-info">${item.colorName || 'Standard'} | ${item.qty}x</p>
+                    </div>
+                    <div>
+                         <span style="font-weight:bold; margin-right:15px;">${itemTotal.toFixed(2)} €</span>
+                         <button type="button" class="remove-btn" onclick="window.removeFromCartFallback(${index})">✕</button>
+                    </div>
+                </div>`;
+            }).join('');
+
+            summary.style.display = 'block';
+            
+            const SHIPPING = 4.90;
+            const appliedCoupon = JSON.parse(localStorage.getItem('druckbau_applied_coupon') || 'null');
+            let discount = 0;
+            
+            if (appliedCoupon) {
+                if (appliedCoupon.type === 'percentage') {
+                    discount = subtotal * (appliedCoupon.value / 100);
+                } else {
+                    discount = appliedCoupon.value;
+                }
+            }
+            
+            const total = subtotal - discount + SHIPPING;
+            
+            const subtotalEl = document.getElementById('subtotal');
+            if (subtotalEl) {
+                subtotalEl.textContent = subtotal.toFixed(2) + ' €';
+            }
+            
+            const discountRow = document.getElementById('discount-row');
+            const discountEl = document.getElementById('discount');
+            if (discountRow && discountEl) {
+                if (discount > 0) {
+                    discountRow.style.display = 'flex';
+                    discountEl.textContent = '-' + discount.toFixed(2) + ' €';
+                } else {
+                    discountRow.style.display = 'none';
+                }
+            }
+
+            const couponSection = document.getElementById('coupon-section');
+            if (couponSection) {
+                if (appliedCoupon) {
+                    couponSection.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:#e6f4ea; padding:0.5rem 1rem; border-radius:4px; margin-top:1rem;">
+                            <span style="color:#1e7e34; font-weight:bold;">✅ ${appliedCoupon.code}</span>
+                            <button type="button" onclick="window.removeCouponFallback()" style="background:none; border:none; color:#dc3545; cursor:pointer; text-decoration:underline;">Entfernen</button>
+                        </div>
+                    `;
+                } else {
+                    couponSection.innerHTML = `
+                        <div style="margin-top:1rem; display:flex; gap:5px;">
+                            <input type="text" id="coupon-input" style="flex:1; padding:0.5rem; border:1px solid #ccc; border-radius:4px;" placeholder="Gutscheincode">
+                            <button type="button" onclick="window.applyCouponFallback()" class="contact-btn" style="padding:0.5rem 1rem;">Einlösen</button>
+                        </div>
+                    `;
+                }
+            }
+            
+            const shippingEl = document.getElementById('shipping');
+            if (shippingEl) shippingEl.textContent = SHIPPING.toFixed(2) + ' €';
+            
+            const totalSumEl = document.getElementById('total-sum');
+            if (totalSumEl) totalSumEl.textContent = total.toFixed(2) + ' €';
+        };
+
+        window.applyCouponFallback = function() {
+            const input = document.getElementById('coupon-input');
+            if (!input) return;
+            const code = input.value.trim().toUpperCase();
+            if (!code) return;
+
+            const coupons = JSON.parse(localStorage.getItem('druckbau_coupons') || '{}');
+            const coupon = coupons[code];
+
+            if (!coupon) {
+                fallbackShowNotification('Ungültiger Gutscheincode', 'info');
+                return;
+            }
+
+            const today = new Date();
+            if (coupon.expiry && today > new Date(coupon.expiry)) {
+                fallbackShowNotification('Gutscheincode ist abgelaufen', 'info');
+                return;
+            }
+
+            localStorage.setItem('druckbau_applied_coupon', JSON.stringify({ code, ...coupon }));
+            fallbackShowNotification('Gutschein angewendet!', 'success');
+            window.renderCart();
+        };
+
+        window.removeCouponFallback = function() {
+            localStorage.removeItem('druckbau_applied_coupon');
+            window.renderCart();
+        };
+
+        window.removeFromCartFallback = function(index) {
+            const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+            cart.splice(index, 1);
+            localStorage.setItem('druckbau_cart', JSON.stringify(cart));
+            window.renderCart();
+            // Update icon
+            const count = document.getElementById('cart-count');
+            if (count) {
+                const total = cart.reduce((sum, item) => sum + item.qty, 0);
+                count.textContent = total;
+            }
+        };
+
         window.addToCartFallback = function(productId, isCustom, btnElement) {
             const product = fallbackProducts.find(p => p.id === productId);
             if (!product) return;
@@ -888,23 +1064,374 @@ if (typeof document !== 'undefined') {
             
             fallbackShowNotification(`"${t(product.nameKey)}" wurde zum Warenkorb hinzugefügt!`, 'success');
             
-            // Auto-navigate to cart
-            if (typeof showSection === 'function') {
-                showSection('cart');
-                setTimeout(() => {
-                    const cartSec = document.getElementById('cart');
-                    if (cartSec) cartSec.scrollIntoView({ behavior: 'smooth' });
-                }, 100);
-            }
-            
-            // Reload cart display if possible
-            if (typeof window.renderCart === 'function') window.renderCart();
-            // Update icon if possible
+            // Reload cart display and navigation
+            window.renderCart(); 
+            showSection('cart');
+
+            // Update icon
             const count = document.getElementById('cart-count');
             if (count) {
                 const total = cart.reduce((sum, item) => sum + item.qty, 0);
                 count.textContent = total;
             }
+        };
+
+        window.renderWishlist = function() {
+            const container = document.getElementById('wishlist-grid');
+            if (!container) return;
+            const wishlist = JSON.parse(localStorage.getItem('druckbau_wishlist') || '[]');
+            if (wishlist.length === 0) {
+                container.innerHTML = `<div class="wishlist-empty" style="grid-column: 1/-1; text-align:center; padding:2rem;"><h3>${t('wishlist_empty') || 'Deine Wunschliste ist leer.'}</h3></div>`;
+                return;
+            }
+            container.innerHTML = wishlist.map((id, index) => {
+                const p = fallbackProducts.find(prod => prod.id === id);
+                if (!p) return '';
+                return `
+                <div class="product-card">
+                    <img src="${p.images[0]}" alt="${t(p.nameKey)}" style="width:100%; height:150px; object-fit:cover; border-radius:8px;">
+                    <h4>${t(p.nameKey)}</h4>
+                    <button class="add-btn" onclick="window.removeFromWishlistFallback(${index})" style="background:#ff4757; margin-top:10px;">Entfernen</button>
+                </div>`;
+            }).join('');
+        };
+
+        window.toggleWishlistFallback = function(productId, btn) {
+            let wishlist = JSON.parse(localStorage.getItem('druckbau_wishlist') || '[]');
+            const index = wishlist.indexOf(productId);
+            if (index > -1) {
+                wishlist.splice(index, 1);
+            } else {
+                wishlist.push(productId);
+            }
+            localStorage.setItem('druckbau_wishlist', JSON.stringify(wishlist));
+            window.renderProducts();
+            if (typeof window.renderWishlist === 'function') window.renderWishlist();
+        };
+
+        window.openReviewModalFallback = function(productId) {
+            const modal = document.getElementById('review-modal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            modal.dataset.productId = productId;
+            
+            // Setup stars
+            const starsContainer = modal.querySelector('.star-rating-input');
+            if (starsContainer) {
+                starsContainer.innerHTML = [1,2,3,4,5].map(v => `
+                    <i class="far fa-star" data-value="${v}" style="cursor:pointer; font-size:1.5rem; color:#ffcc00; margin:0 2px;"></i>
+                `).join('');
+                starsContainer.dataset.value = 5;
+                const stars = starsContainer.querySelectorAll('i');
+                const updateStars = (val) => {
+                    starsContainer.dataset.value = val;
+                    stars.forEach(s => {
+                        const v = parseInt(s.dataset.value);
+                        s.className = v <= val ? 'fas fa-star' : 'far fa-star';
+                    });
+                };
+                stars.forEach(s => s.onclick = () => updateStars(s.dataset.value));
+                updateStars(5);
+            }
+            
+            // Handle form submit
+            const form = document.getElementById('review-form');
+            if (form) {
+                form.onsubmit = (e) => {
+                    e.preventDefault();
+                    window.submitReviewFallback();
+                };
+            }
+        };
+
+        window.showReviewsFallback = function(productId) {
+            const reviews = JSON.parse(localStorage.getItem(`druckbau_reviews_${productId}`) || '[]');
+            const modal = document.getElementById('reviews-list-modal') || document.getElementById('review-modal'); 
+            // Fallback: show reviews in the existing list if available, or just alert/log for now if modal is missing
+            alert(`Bewertungen für ${productId}:\n\n` + (reviews.length ? reviews.map(r => `${r.name} (${r.rating}★): ${r.text}`).join('\n---\n') : 'Noch keine Bewertungen.'));
+        };
+
+        window.submitReviewFallback = function() {
+            const modal = document.getElementById('review-modal');
+            const productId = modal.dataset.productId;
+            const name = document.getElementById('review-name')?.value || 'Anonym';
+            const text = document.getElementById('review-text')?.value || '';
+            const rating = parseInt(modal.querySelector('.star-rating-input')?.dataset.value || 5);
+
+            const reviews = JSON.parse(localStorage.getItem(`druckbau_reviews_${productId}`) || '[]');
+            reviews.push({ name, text, rating, date: new Date().toLocaleDateString() });
+            localStorage.setItem(`druckbau_reviews_${productId}`, JSON.stringify(reviews));
+
+            modal.style.display = 'none';
+            fallbackShowNotification('Vielen Dank für deine Bewertung!', 'success');
+            setTimeout(() => window.renderProducts(), 100);
+        };
+
+        window.removeFromWishlistFallback = function(index) {
+            const wishlist = JSON.parse(localStorage.getItem('druckbau_wishlist') || '[]');
+            wishlist.splice(index, 1);
+            localStorage.setItem('druckbau_wishlist', JSON.stringify(wishlist));
+            window.renderWishlist();
+        };
+
+        // --- CHECKOUT FALLBACK ---
+        let currentFallbackStep = 1;
+
+        window.openCheckout = function() {
+            const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+            if (cart.length === 0) {
+                alert(t('cart_empty'));
+                return;
+            }
+            const modal = document.getElementById('checkout-modal');
+            if (modal) modal.classList.add('show');
+            window.showCheckoutStepFallback(1);
+        };
+
+        window.closeCheckoutModal = function() {
+            const modal = document.getElementById('checkout-modal');
+            if (modal) {
+                modal.classList.remove('show');
+                modal.style.display = 'none';
+            }
+        };
+
+        window.showCheckoutStepFallback = function(step) {
+            currentFallbackStep = step;
+            document.querySelectorAll('.checkout-step').forEach(el => el.style.display = 'none');
+            const target = document.getElementById(`checkout-step-${step}`);
+            if (target) target.style.display = 'block';
+
+            document.querySelectorAll('.progress-step').forEach(el => {
+                const s = parseInt(el.dataset.step);
+                el.classList.remove('active', 'completed');
+                if (s === step) el.classList.add('active');
+                else if (s < step) el.classList.add('completed');
+            });
+
+            if (step === 3) window.renderCheckoutSummaryFallback();
+        };
+
+        window.validateCheckoutStepFallback = function(step) {
+            let isValid = true;
+            const fields = step === 1 ? ['checkout-name', 'checkout-email'] : 
+                           step === 2 ? ['checkout-address', 'checkout-zip', 'checkout-city'] : [];
+            
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    if (!el.value.trim() || (id === 'checkout-email' && !el.value.includes('@'))) {
+                        el.style.border = '2px solid #ff4757';
+                        isValid = false;
+                    } else {
+                        el.style.border = '';
+                    }
+                }
+            });
+            return isValid;
+        };
+
+        window.nextCheckoutStep = () => {
+            if (window.validateCheckoutStepFallback(currentFallbackStep)) {
+                window.showCheckoutStepFallback(currentFallbackStep + 1);
+            } else {
+                fallbackShowNotification('Bitte füllen Sie alle Pflichtfelder korrekt aus.', 'info');
+            }
+        };
+        window.prevCheckoutStep = () => window.showCheckoutStepFallback(currentFallbackStep - 1);
+
+        window.renderCheckoutSummaryFallback = function() {
+            const summary = document.getElementById('checkout-summary');
+            if (!summary) return;
+            const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+            const name = document.getElementById('checkout-name')?.value || '';
+            const address = document.getElementById('checkout-address')?.value || '';
+            const appliedCoupon = JSON.parse(localStorage.getItem('druckbau_applied_coupon') || 'null');
+            
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let discount = 0;
+            if (appliedCoupon) {
+                if (appliedCoupon.type === 'percentage') discount = subtotal * (appliedCoupon.value / 100);
+                else discount = appliedCoupon.value;
+            }
+
+            let itemsHtml = cart.map(item => `<li>${item.qty}x ${item.name} - ${(item.price * item.qty).toFixed(2)}€</li>`).join('');
+            const SHIPPING = 4.90;
+            const total = subtotal - discount + SHIPPING;
+
+            summary.innerHTML = `
+                <div style="margin-bottom:1rem; border-bottom:1px solid #eee;">
+                    <strong>Lieferadresse:</strong><br>${name}<br>${address}
+                </div>
+                <div>
+                    <strong>Bestellung:</strong>
+                    <ul>${itemsHtml}</ul>
+                    ${discount > 0 ? `<p style="color:#1e7e34;">Rabatt (${appliedCoupon.code}): <strong>-${discount.toFixed(2)}€</strong></p>` : ''}
+                    <p>Versand: <strong>${SHIPPING.toFixed(2)}€</strong></p>
+                    <p style="font-size:1.1rem; border-top:1px solid #eee; padding-top:0.5rem;">Gesamt: <strong>${total.toFixed(2)}€</strong></p>
+                </div>
+            `;
+        };
+
+        window.submitCheckoutFallback = function() {
+            const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+            const appliedCoupon = JSON.parse(localStorage.getItem('druckbau_applied_coupon') || 'null');
+            
+            const name = document.getElementById('checkout-name')?.value || '';
+            const email = document.getElementById('checkout-email')?.value || '';
+            const address = document.getElementById('checkout-address')?.value || '';
+            const zip = document.getElementById('checkout-zip')?.value || '';
+            const city = document.getElementById('checkout-city')?.value || '';
+
+            let subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            let discount = 0;
+            if (appliedCoupon) {
+                if (appliedCoupon.type === 'percentage') discount = subtotal * (appliedCoupon.value / 100);
+                else discount = appliedCoupon.value;
+            }
+            
+            const total = subtotal - discount + 4.90;
+            const orderId = "DB-" + Date.now().toString().slice(-6);
+            
+            let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
+            cart.forEach(item => {
+                body += `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€\n`;
+            });
+            body += `\nGesamt: ${total.toFixed(2)}€\n\nVielen Dank!`;
+
+            // Save order locally for sync (UNIFIED STRUCTURE)
+            const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+            orders.unshift({ 
+                order_id: orderId, 
+                customer_name: name,
+                customer_email: email,
+                total_price: total,
+                status: 'Eingegangen',
+                created_at: new Date().toISOString(),
+                order_data: { 
+                    cart: cart, 
+                    address: address, 
+                    zip: zip, 
+                    city: city, 
+                    message: body, 
+                    coupon: appliedCoupon ? appliedCoupon.code : null,
+                    payment_method: 'email'
+                },
+                synced: false
+            });
+            localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+
+            // Mailto fallback
+            const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
+            const tempLink = document.createElement('a');
+            tempLink.href = mailtoLink;
+            tempLink.style.display = 'none';
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+
+            localStorage.setItem('druckbau_cart', '[]');
+            localStorage.removeItem('druckbau_applied_coupon');
+            window.renderCart();
+            
+            const count = document.getElementById('cart-count');
+            if (count) count.textContent = '0';
+            
+            window.closeCheckoutModal();
+            fallbackShowNotification(`${t('checkout_prepare_success')} (Order: ${orderId})`, 'success');
+        };
+
+        // ESC to close
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(m => {
+                    m.classList.remove('show');
+                    m.style.display = 'none';
+                });
+            }
+        });
+
+        // Hook up buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.checkout-btn')) window.openCheckout();
+            
+            const closeBtn = e.target.closest('.close-modal, .close-review-modal');
+            const overlay = e.target.classList.contains('modal-overlay');
+            
+            if (closeBtn || overlay) {
+                document.querySelectorAll('.modal-overlay').forEach(m => {
+                    m.classList.remove('show');
+                    m.style.display = 'none';
+                });
+            }
+            if (e.target.closest('.next-step, .next-step-btn')) window.nextCheckoutStep();
+            if (e.target.closest('.prev-step, .back-step-btn')) window.prevCheckoutStep();
+            if (e.target.closest('.submit-checkout-btn')) window.submitCheckoutFallback();
+            
+            // Order Status
+            if (e.target.closest('#check-status-btn')) window.checkOrderStatusFallback();
+            
+            // Contact & Newsletter
+            if (e.target.closest('#contact-form button[type="submit"]')) {
+                e.preventDefault();
+                window.submitContactFallback();
+            }
+            if (e.target.closest('.newsletter-form button')) {
+                e.preventDefault();
+                window.submitNewsletterFallback();
+            }
+        });
+
+        window.checkOrderStatusFallback = function() {
+            const input = document.getElementById('order-id-input');
+            const resultDiv = document.getElementById('order-status-result');
+            if (!input || !resultDiv) return;
+            
+            const id = input.value.trim();
+            if (!id) return;
+            
+            resultDiv.innerHTML = `<p>${t('status_searching')}</p>`;
+            resultDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+                const order = orders.find(o => o.orderId === id || o.orderId === '#' + id);
+                
+                if (order) {
+                    resultDiv.innerHTML = `
+                        <div style="padding:1rem; background:rgba(37,99,235,0.1); border-radius:8px; border-left:4px solid var(--primary-blue);">
+                            <strong>${t('status_label')}</strong><br>
+                            <span style="font-size:1.2rem; font-weight:bold; color:var(--primary-blue);">${order.status || 'Eingegangen'}</span>
+                            ${order.trackingId ? `<br><small>Tracking: ${order.trackingId}</small>` : ''}
+                        </div>
+                    `;
+                } else {
+                    resultDiv.innerHTML = `<p style="color:#d9534f;">${t('status_not_found')}</p>`;
+                }
+            }, 800);
+        };
+
+        window.submitContactFallback = function() {
+            const name = document.getElementById('contact-name')?.value;
+            if (!name) return;
+            fallbackShowNotification("Vielen Dank! Ihre Nachricht wurde (simuliert) gesendet.", "success");
+            const form = document.getElementById('contact-form');
+            if (form) form.reset();
+        };
+
+        window.submitNewsletterFallback = function() {
+            const email = document.querySelector('.newsletter-form input')?.value;
+            if (!email || !email.includes('@')) return;
+            
+            const subs = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+            if (!subs.some(s => s.email === email)) {
+                subs.push({ email, date: new Date().toLocaleDateString() });
+                localStorage.setItem('druckbau_subscribers', JSON.stringify(subs));
+            }
+            
+            fallbackShowNotification(t('alert_link_copied') === 'Link copied!' ? 'Subscribed!' : 'Erfolgreich angemeldet!', 'success');
+            const input = document.querySelector('.newsletter-form input');
+            if (input) input.value = '';
         };
 
         // Initial render if grid is empty (usually means script.js failed)
@@ -957,6 +1484,42 @@ if (typeof document !== 'undefined') {
                         window.scrollTo(0, 0);
 
                         const renderFallbackAdmin = () => {
+                            // 0. Sync Header
+                            const adminHeader = document.querySelector('#admin h3');
+                            if (adminHeader && !document.getElementById('fallback-sync-btn')) {
+                                const syncBtn = document.createElement('button');
+                                syncBtn.id = 'fallback-sync-btn';
+                                syncBtn.className = 'contact-btn';
+                                syncBtn.style.margin = '10px 0';
+                                syncBtn.innerHTML = '<i class="fas fa-sync"></i> Daten mit Cloud synchronisieren';
+                                syncBtn.onclick = async () => {
+                                    syncBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Synchronisiere...';
+                                    syncBtn.disabled = true;
+                                    
+                                    try {
+                                        // Try to load script if not present
+                                        if (!window.supabaseSync) {
+                                            const module = await import('./js/db.js');
+                                            window.supabaseSync = module.syncLocalStorageToDB;
+                                        }
+                                        
+                                        const result = await window.supabaseSync();
+                                        if (result.success) {
+                                            fallbackShowNotification("✓ " + result.message, "success");
+                                        } else {
+                                            fallbackShowNotification("⚠ Sync eingeschränkt: " + result.message);
+                                        }
+                                    } catch (e) {
+                                        fallbackShowNotification("⚠ Cloud nicht erreichbar.", "info");
+                                    } finally {
+                                        syncBtn.innerHTML = '<i class="fas fa-sync"></i> Daten mit Cloud synchronisieren';
+                                        syncBtn.disabled = false;
+                                        renderFallbackAdmin();
+                                    }
+                                };
+                                adminHeader.after(syncBtn);
+                            }
+
                             // 1. Orders Table
                             const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
                             const tbody = document.querySelector('#orders-table tbody');
@@ -967,16 +1530,23 @@ if (typeof document !== 'undefined') {
                                     tbody.innerHTML = orders.map((order, index) => {
                                         const status = order.status || 'Eingegangen';
                                         const options = ['Eingegangen', 'In Bearbeitung', 'Gedruckt', 'Versendet'].map(opt => `<option value="${opt}" ${status === opt ? 'selected' : ''}>${opt}</option>`).join('');
+                                        const name = order.customer_name || order.name || 'Unbekannt';
+                                        const orderId = order.order_id || order.orderId || '-';
+                                        const email = order.customer_email || order.email || '-';
+                                        const total = order.total_price || order.totalPrice || 0;
+                                        const date = order.created_at ? new Date(order.created_at).toLocaleString() : (order.date || '-');
+                                        const cart = order.order_data?.cart || order.items || [];
+                                        
                                         return `
                                         <tr style="border-bottom: 1px solid #eee;">
-                                            <td style="padding: 0.5rem; font-size: 0.9rem;">${order.date}</td>
-                                            <td style="padding: 0.5rem;">${order.name}</td>
-                                            <td style="padding: 0.5rem; font-family:monospace;">${order.orderId}</td>
-                                            <td style="padding: 0.5rem;">${order.email}</td>
-                                            <td style="padding: 0.5rem; font-size: 0.9rem;">${order.message}</td>
-                                            <td style="padding: 0.5rem; font-size: 0.85rem;">${order.items ? order.items.map(i => `${i.qty}x ${i.name || t(i.nameKey)}`).join('<br>') : '-'}</td>
-                                            <td style="padding: 0.5rem; font-weight:bold;">${order.totalPrice ? order.totalPrice.toFixed(2) + ' €' : '-'}</td>
-                                            <td style="padding: 0.5rem;"><input type="text" class="fallback-tracking-input" data-index="${index}" value="${order.trackingId || ''}" placeholder="ID" style="width:70px; font-size:0.75rem;"></td>
+                                            <td style="padding: 0.5rem; font-size: 0.9rem;">${date}</td>
+                                            <td style="padding: 0.5rem;">${name}</td>
+                                            <td style="padding: 0.5rem; font-family:monospace;">${orderId}</td>
+                                            <td style="padding: 0.5rem;">${email}</td>
+                                            <td style="padding: 0.5rem; font-size: 0.9rem;">${order.order_data?.message || order.message || '-'}</td>
+                                            <td style="padding: 0.5rem; font-size: 0.85rem;">${cart.map(i => `${i.qty}x ${i.name || t(i.nameKey)}`).join('<br>')}</td>
+                                            <td style="padding: 0.5rem; font-weight:bold;">${parseFloat(total).toFixed(2)} €</td>
+                                            <td style="padding: 0.5rem;"><input type="text" class="fallback-tracking-input" data-index="${index}" value="${order.tracking_id || order.trackingId || ''}" placeholder="ID" style="width:70px; font-size:0.75rem;"></td>
                                             <td style="padding: 0.5rem;">
                                                 <select class="fallback-status-select" data-index="${index}" style="padding:2px; font-size:0.8rem;">${options}</select>
                                             </td>
@@ -987,11 +1557,13 @@ if (typeof document !== 'undefined') {
                                         const i = parseInt(ev.target.dataset.index);
                                         orders[i].status = ev.target.value;
                                         localStorage.setItem('druckbau_orders', JSON.stringify(orders));
-                                        fallbackShowNotification(`Status für ${orders[i].orderId} aktualisiert.`);
+                                        fallbackShowNotification(`Status für ${orders[i].order_id || orders[i].orderId} aktualisiert.`);
                                     }));
                                     document.querySelectorAll('.fallback-tracking-input').forEach(inp => inp.addEventListener('blur', (ev) => {
                                         const i = parseInt(ev.target.dataset.index);
-                                        orders[i].trackingId = ev.target.value.trim();
+                                        const val = ev.target.value.trim();
+                                        if (orders[i].order_id) orders[i].tracking_id = val;
+                                        else orders[i].trackingId = val;
                                         localStorage.setItem('druckbau_orders', JSON.stringify(orders));
                                         fallbackShowNotification(`Tracking-ID gespeichert.`);
                                     }));

@@ -242,8 +242,91 @@ export async function trackAnalyticInDB(itemId, type, value = 1) {
         const { error } = await supabaseClient.from('analytics').upsert([payload], { onConflict: 'item_id' });
         if (error) throw error;
         return true;
-    } catch(e) {
-        console.error("Error tracking analytics:", e);
+// --- Synchronization ---
+export async function syncLocalStorageToDB() {
+    if (!supabaseClient) return { success: false, message: "Supabase not initialized." };
+
+    let syncCount = { orders: 0, subs: 0, reviews: 0 };
+    let errors = [];
+
+    // 1. Sync Orders
+    try {
+        const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+        const toSync = localOrders.filter(o => !o.synced);
+        for (const order of toSync) {
+            // Remove the temporary 'synced' flag before sending to DB if it exists
+            const cleanOrder = { ...order };
+            delete cleanOrder.synced;
+            
+            const success = await saveOrderToDB(cleanOrder);
+            if (success) {
+                order.synced = true;
+                syncCount.orders++;
+            }
+        }
+        localStorage.setItem('druckbau_orders', JSON.stringify(localOrders));
+    } catch (e) { errors.push("Order sync failed: " + e.message); }
+
+    // 2. Sync Subscribers
+    try {
+        const localSubs = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+        const toSync = localSubs.filter(s => !s.synced);
+        for (const sub of toSync) {
+            const result = await addSubscriberToDB(sub.email);
+            if (result === true || result === 'exists') {
+                sub.synced = true;
+                syncCount.subs++;
+            }
+        }
+        localStorage.setItem('druckbau_subscribers', JSON.stringify(localSubs));
+    } catch (e) { errors.push("Subscriber sync failed: " + e.message); }
+
+    // 3. Sync Reviews
+    try {
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('druckbau_reviews_')) {
+                const productId = key.replace('druckbau_reviews_', '');
+                const reviews = JSON.parse(localStorage.getItem(key) || '[]');
+                const toSync = reviews.filter(r => !r.synced);
+                
+                for (const review of toSync) {
+                    const success = await saveReviewToDB(productId, review.name, review.text, review.rating);
+                    if (success) {
+                        review.synced = true;
+                        syncCount.reviews++;
+                    }
+                }
+                localStorage.setItem(key, JSON.stringify(reviews));
+            }
+        }
+    } catch (e) { errors.push("Review sync failed: " + e.message); }
+
+    return { 
+        success: errors.length === 0, 
+        message: `Synced ${syncCount.orders} orders, ${syncCount.subs} subs, ${syncCount.reviews} reviews.`,
+        details: syncCount,
+        errors: errors
+    };
+}
+
+// Helper for reviews (if not already defined)
+export async function saveReviewToDB(productId, name, text, rating) {
+    if (!supabaseClient) return false;
+    try {
+        const { error } = await supabaseClient
+            .from('reviews')
+            .insert([{ 
+                product_id: productId, 
+                name: name, 
+                text: text, 
+                rating: parseInt(rating),
+                created_at: new Date().toISOString()
+            }]);
+        if (error) throw error;
+        return true;
+    } catch (e) {
+        console.error("Error saving review to DB:", e);
         return false;
     }
 }

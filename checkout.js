@@ -190,11 +190,7 @@ function renderCheckoutSummary() {
                 ${shippingLabel} ${SHIPPING_COST.toFixed(2)}€ (${t('price_hint')})<br>
                 <strong>${totalLabel} ${total.toFixed(2)}€ (${t('price_hint')})</strong>
             </div>
-        </div>
-    `;
-}
-
-export async function submitCheckout() {
+        </div>export async function submitCheckout() {
     const nameInput = document.getElementById('checkout-name');
     const emailInput = document.getElementById('checkout-email');
     const addressInput = document.getElementById('checkout-address');
@@ -207,9 +203,12 @@ export async function submitCheckout() {
     }
 
     const btn = document.querySelector('.submit-checkout-btn');
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = '<span class="loading-spinner"></span> Bitte warten...';
+    const finalBtn = document.getElementById('final-checkout-btn');
+    const activeBtn = finalBtn || btn;
+
+    if (activeBtn) {
+        activeBtn.disabled = true;
+        activeBtn.innerHTML = '<span class="loading-spinner"></span> Bitte warten...';
     }
 
     const name = nameInput.value;
@@ -247,7 +246,7 @@ export async function submitCheckout() {
 
     body += `\nVielen Dank!`;
 
-    const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'email';
+    const paymentMethod = 'email';
     
     const orderData = {
         order_id: orderId,
@@ -255,6 +254,7 @@ export async function submitCheckout() {
         customer_email: email,
         total_price: total,
         status: 'Eingegangen',
+        created_at: new Date().toISOString(),
         order_data: { 
             cart: state.cart, 
             address, zip, city, 
@@ -266,8 +266,11 @@ export async function submitCheckout() {
             payment_method: paymentMethod
         }
     };
+    
+    // Save to DB
     await saveOrderToDB(orderData);
 
+    // Legacy logging
     logOrder(name, email, orderId, body, state.appliedCoupon ? { code: state.appliedCoupon.code, discount: discount } : null, total, state.cart);
 
     // EmailJS Notification
@@ -286,19 +289,22 @@ export async function submitCheckout() {
         console.warn("EmailJS failed:", err);
     }
 
-    if (paymentMethod === 'stripe') {
-        showNotification("Leite zu Stripe weiter... (Simulation)");
-        // Hier würde window.location.href = stripeCheckoutUrl kommen
-        alert("Stripe-Zahlung erfolgreich simuliert!");
-    } else {
-        // Provide mailto fallback immediately for now
-        const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
-        const tempLink = document.createElement('a');
-        tempLink.href = mailtoLink;
-        tempLink.style.display = 'none';
-        document.body.appendChild(tempLink);
-        tempLink.click();
-        document.body.removeChild(tempLink);
+    // Always use mailto fallback for manual flow
+    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    // Mark coupon as used on this device
+    if (state.appliedCoupon) {
+        const usedCoupons = JSON.parse(localStorage.getItem('druckbau_used_coupons') || '[]');
+        if (!usedCoupons.includes(state.appliedCoupon.code)) {
+            usedCoupons.push(state.appliedCoupon.code);
+            localStorage.setItem('druckbau_used_coupons', JSON.stringify(usedCoupons));
+        }
     }
 
     state.cart = [];
@@ -309,9 +315,9 @@ export async function submitCheckout() {
 
     showSuccess(t('checkout_prepare_success'));
 
-    if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = t('checkout_submit');
+    if (activeBtn) {
+        activeBtn.disabled = false;
+        activeBtn.innerHTML = t('checkout_submit');
     }
 }
 

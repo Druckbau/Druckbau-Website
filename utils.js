@@ -47,7 +47,7 @@ export function showNotification(message, type = 'info') {
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(100%)';
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 6000);
 }
 
 export function showSuccess(msg) { showNotification(msg, 'success'); }
@@ -73,5 +73,13 @@ export function setSuccess(input) {
 
 // Translations placeholder: until translations.js is modularized
 export function t(key) {
-    return window.translations && window.translations[key] ? window.translations[key] : key;
+    const lang = localStorage.getItem('druckbau_language') || 'de';
+    if (window.translations && window.translations[lang] && window.translations[lang][key]) {
+        return window.translations[lang][key];
+    }
+    // Fallback to global translations object if it exists (for de/en flat structure if applicable)
+    if (window.translations && window.translations[key]) {
+        return window.translations[key];
+    }
+    return key;
 }
