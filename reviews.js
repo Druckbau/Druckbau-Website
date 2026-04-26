@@ -3,6 +3,7 @@ import { renderProducts, renderStars } from './products.js';
 import { escapeHtml, showNotification, t } from './utils.js';
 
 export function openReviewModal(productId, productName) {
+    console.log("Opening review modal for:", productId);
     const modal = document.getElementById('review-modal');
     if (!modal) return;
     
@@ -68,6 +69,7 @@ export function closeReviewModal() {
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('review-modal');
     if (modal) {
+
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 closeReviewModal();

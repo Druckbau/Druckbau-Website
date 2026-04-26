@@ -8,7 +8,9 @@ import { saveOrderToDB } from './db.js';
 let currentCheckoutStep = 1;
 
 export function checkout() {
+    console.log("Checkout initiated. Cart items:", state.cart.length);
     if (state.cart.length === 0) {
+        console.warn("Checkout aborted: Cart is empty.");
         showWarning(t('cart_empty'));
         return;
     }
@@ -64,7 +66,7 @@ export function showCheckoutStep(step) {
         }
     });
 
-    if (step === 3) {
+    if (step === 4) {
         renderCheckoutSummary();
     }
 }
@@ -188,117 +190,29 @@ function renderCheckoutSummary() {
             <div style="border-top: 1px solid #ddd; margin-top: 0.5rem; padding-top: 0.5rem;">
                 ${discount > 0 ? `${discountLabel} -${discount.toFixed(2)}€<br>` : ''}
                 ${shippingLabel} ${SHIPPING_COST.toFixed(2)}€ (${t('price_hint')})<br>
-                <strong>${totalLabel} ${total.toFixed(2)}€ (${t('price_hint')})</strong>
             </div>
-        </div>export async function submitCheckout() {
-    const nameInput = document.getElementById('checkout-name');
-    const emailInput = document.getElementById('checkout-email');
-    const addressInput = document.getElementById('checkout-address');
-    const zipInput = document.getElementById('checkout-zip');
-    const cityInput = document.getElementById('checkout-city');
+        </div>
+    `;
 
-    if (!nameInput || !emailInput || !addressInput || !zipInput || !cityInput) {
-        console.error('One or more checkout input elements missing');
-        return;
-    }
+}
 
-    const btn = document.querySelector('.submit-checkout-btn');
+export async function submitCheckout() {
+    // Background processing only (Mail trigger moved to script.js for synchronicity)
     const finalBtn = document.getElementById('final-checkout-btn');
-    const activeBtn = finalBtn || btn;
-
-    if (activeBtn) {
-        activeBtn.disabled = true;
-        activeBtn.innerHTML = '<span class="loading-spinner"></span> Bitte warten...';
-    }
-
-    const name = nameInput.value;
-    const email = emailInput.value;
-    const address = addressInput.value;
-    const zip = zipInput.value;
-    const city = cityInput.value;
-    const orderId = generateOrderId();
-
-    let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
-
-    state.cart.forEach(item => {
-        if (item.isCustom) {
-            body += `- [AUFTRAGSARBEIT] ${item.name}\n  Von: ${item.customFrom}\n  Zu: ${item.customTo}\n  Info: ${item.customDesc}\n`;
-            if (item.files && item.files.length > 0) {
-                body += `  !! BITTE ANHÄNGEN !! Dateien: ${item.files.join(', ')}\n`;
-            }
-        } else {
-            body += `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€\n`;
-        }
-    });
-
+    const orderId = finalBtn?.dataset.orderId || generateOrderId();
+    
+    // Get all necessary data
+    const name = document.getElementById('checkout-name')?.value || '';
+    const email = document.getElementById('checkout-email')?.value || '';
+    const address = document.getElementById('checkout-address')?.value || '';
+    const zip = document.getElementById('checkout-zip')?.value || '';
+    const city = document.getElementById('checkout-city')?.value || '';
+    
     const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
 
-    body += `\nZwischensumme: ${subtotal.toFixed(2)}€\n`;
-    if (discount > 0) body += `Rabatt: -${discount.toFixed(2)}€\n`;
-    body += `Versand: ${SHIPPING_COST.toFixed(2)}€\n`;
-    body += `Gesamt: ${total.toFixed(2)}€\n`;
-
-    if (state.appliedCoupon) {
-        body += `\nGutschein: ${state.appliedCoupon.code}\n`;
-    }
-
-    body += `\nVielen Dank!`;
-
-    const paymentMethod = 'email';
-    
-    const orderData = {
-        order_id: orderId,
-        customer_name: name,
-        customer_email: email,
-        total_price: total,
-        status: 'Eingegangen',
-        created_at: new Date().toISOString(),
-        order_data: { 
-            cart: state.cart, 
-            address, zip, city, 
-            message: body, 
-            discount, 
-            coupon: state.appliedCoupon ? state.appliedCoupon.code : null, 
-            subtotal, 
-            shipping_cost: SHIPPING_COST,
-            payment_method: paymentMethod
-        }
-    };
-    
-    // Save to DB
-    await saveOrderToDB(orderData);
-
-    // Legacy logging
-    logOrder(name, email, orderId, body, state.appliedCoupon ? { code: state.appliedCoupon.code, discount: discount } : null, total, state.cart);
-
-    // EmailJS Notification
-    try {
-        if (typeof emailjs !== 'undefined') {
-            await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
-                order_id: orderId,
-                customer_name: name,
-                customer_email: email,
-                order_details: body,
-                total_price: total.toFixed(2)
-            }, "YOUR_PUBLIC_KEY");
-            console.log("Email sent via EmailJS");
-        }
-    } catch (err) {
-        console.warn("EmailJS failed:", err);
-    }
-
-    // Always use mailto fallback for manual flow
-    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(body)}`;
-    const tempLink = document.createElement('a');
-    tempLink.href = mailtoLink;
-    tempLink.style.display = 'none';
-    document.body.appendChild(tempLink);
-    tempLink.click();
-    document.body.removeChild(tempLink);
-
-    // Mark coupon as used on this device
+    // 1. Mark coupon as used
     if (state.appliedCoupon) {
         const usedCoupons = JSON.parse(localStorage.getItem('druckbau_used_coupons') || '[]');
         if (!usedCoupons.includes(state.appliedCoupon.code)) {
@@ -307,19 +221,45 @@ function renderCheckoutSummary() {
         }
     }
 
-    state.cart = [];
-    saveCartToStorage();
-    updateCartIcon();
-    renderCart();
-    closeCheckoutModal();
+    // 2. Prepare Order Data for background save
+    const orderData = {
+        order_id: orderId,
+        customer_name: name,
+        customer_email: email,
+        total_price: total,
+        status: 'Eingegangen',
+        created_at: new Date().toISOString(),
+        order_data: { 
+            cart: state.cart,
+            address, zip, city,
+            payment_method: 'email'
+        }
+    };
 
-    showSuccess(t('checkout_prepare_success'));
-
-    if (activeBtn) {
-        activeBtn.disabled = false;
-        activeBtn.innerHTML = t('checkout_submit');
+    // 3. Background tasks
+    try {
+        await saveOrderToDB(orderData);
+    } catch (dbErr) {
+        console.warn("DB save failed (background):", dbErr);
     }
+
+    logOrder(name, email, orderId, "E-Mail Bestellung", null, total, state.cart);
+
+    // 4. Delay UI cleanup to ensure mail app had time to register
+    setTimeout(() => {
+        state.cart = [];
+        saveCartToStorage();
+        updateCartIcon();
+        renderCart();
+        closeCheckoutModal();
+        showSuccess(t('checkout_prepare_success'));
+    }, 1000);
 }
+
+
+
+
+
 
 function generateOrderId() {
     const now = new Date();

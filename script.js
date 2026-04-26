@@ -7,8 +7,10 @@ import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation }
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
 import { initDB, loadNewsFromDB } from './js/db.js';
 import { openReviewModal, openReviewListModal, closeReviewModal, submitReview } from './js/reviews.js';
+import { initTranslations } from './translations.js';
 
 async function init() {
+    initTranslations();
     initDB();
     setupNavigation();
     setupThemeToggle();
@@ -64,22 +66,13 @@ async function loadPublicNews() {
         const latestInfo = newsList[0];
         const content = latestInfo.content || latestInfo.text;
         
-        if (content && content.startsWith('[OFFER]')) {
-            const parts = content.replace('[OFFER] ', '').split('|');
-            const offerBanner = document.getElementById('seasonal-offer-banner');
-            if (offerBanner) {
-                offerBanner.style.display = 'block';
-                const titleEl = document.getElementById('offer-title-text');
-                const descEl = document.getElementById('offer-description-text');
-                if (titleEl) titleEl.innerText = parts[0] ? parts[0].trim() : 'Sonderangebot!';
-                if (descEl) descEl.innerText = parts[1] ? parts[1].trim() : '';
-                const countdown = document.querySelector('.countdown-timer');
-                if (countdown) countdown.style.display = 'none';
-            }
-            newsSection.style.display = 'none';
-        } else if (content) {
+        if (content) {
             newsSection.style.display = 'block';
-            newsText.innerHTML = content.replace(/\\n/g, '<br>');
+            let displayContent = content;
+            if (content.startsWith('[OFFER]')) {
+                displayContent = content.replace('[OFFER] ', '').replace('|', ':');
+            }
+            newsText.innerHTML = displayContent.replace(/\n/g, '<br>');
             if (newsDate) {
                 const date = latestInfo.created_at || latestInfo.date;
                 newsDate.textContent = date ? new Date(date).toLocaleDateString('de-DE') : '';
@@ -96,14 +89,6 @@ function setupGlobalEventListeners() {
     document.body.addEventListener('click', (e) => {
         const target = e.target;
 
-        if (target.closest('#checkout-btn')) {
-            checkout();
-            return;
-        }
-        if (target.closest('#close-checkout')) {
-            closeCheckoutModal();
-            return;
-        }
         if (target.closest('.next-step-btn')) {
             nextCheckoutStep();
             return;
@@ -112,15 +97,54 @@ function setupGlobalEventListeners() {
             prevCheckoutStep();
             return;
         }
+        if (target.closest('#close-checkout')) {
+            closeCheckoutModal();
+            return;
+        }
         if (target.closest('#final-checkout-btn')) {
             e.preventDefault();
-            submitCheckout();
+            console.log('Final checkout initiated');
+            
+            // Gather fresh data
+            const name = document.getElementById('checkout-name')?.value || '';
+            const email = document.getElementById('checkout-email')?.value || '';
+            const address = document.getElementById('checkout-address')?.value || '';
+            const zip = document.getElementById('checkout-zip')?.value || '';
+            const city = document.getElementById('checkout-city')?.value || '';
+            
+            // Re-calculate total
+            const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const total = subtotal + 5.90; // Simplified total for mail template
+            
+            const orderId = "DB-" + Date.now().toString().slice(-6);
+
+            const mailBody = `Hallo Druckbau Team,\n\n` +
+                `Bestellung: ${orderId}\n\n` +
+                `Kundendaten:\n${name}\n${email}\n${address}, ${zip} ${city}\n\n` +
+                `Produkte:\n` + state.cart.map(item => `- ${item.qty}x ${item.name}`).join('\n') +
+                `\n\nGesamtbetrag: ${total.toFixed(2)} EUR\n\nBitte senden Sie mir die Zahlungsdetails zu.`;
+
+            const subject = `Neue Bestellung ${orderId}`;
+            const mailto = `mailto:druckbau@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailBody).replace(/%0A/g, '%0D%0A')}`;
+            
+            console.log('Triggering mailto...');
+            window.location.href = mailto;
+            
+            // Continue with background log
+            if (typeof submitCheckout === 'function') submitCheckout();
+            return;
+        }
+
+        if (target.closest('#checkout-btn')) {
+            console.log('Checkout button clicked');
+            checkout();
             return;
         }
 
         if (target.closest('.rate-btn')) {
             e.stopPropagation();
             const btn = target.closest('.rate-btn');
+            console.log('Rate button clicked for:', btn.dataset.id);
             openReviewModal(btn.dataset.id, btn.dataset.name);
             return;
         }
@@ -250,7 +274,6 @@ async function handleStatusCheck() {
 
     try {
         // 1. Try Supabase
-        const { loadOrdersFromDB } = await import('./js/db.js');
         const dbOrders = await loadOrdersFromDB();
         let order = dbOrders ? dbOrders.find(o => o.orderId === orderId) : null;
 

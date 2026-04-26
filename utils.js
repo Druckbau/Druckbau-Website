@@ -71,15 +71,3 @@ export function setSuccess(input) {
     if (errorSpan) errorSpan.textContent = '';
 }
 
-// Translations placeholder: until translations.js is modularized
-export function t(key) {
-    const lang = localStorage.getItem('druckbau_language') || 'de';
-    if (window.translations && window.translations[lang] && window.translations[lang][key]) {
-        return window.translations[lang][key];
-    }
-    // Fallback to global translations object if it exists (for de/en flat structure if applicable)
-    if (window.translations && window.translations[key]) {
-        return window.translations[key];
-    }
-    return key;
-}

@@ -242,6 +242,12 @@ export async function trackAnalyticInDB(itemId, type, value = 1) {
         const { error } = await supabaseClient.from('analytics').upsert([payload], { onConflict: 'item_id' });
         if (error) throw error;
         return true;
+    } catch (e) {
+        console.error("Error tracking analytic:", e);
+        return false;
+    }
+}
+
 // --- Synchronization ---
 export async function syncLocalStorageToDB() {
     if (!supabaseClient) return { success: false, message: "Supabase not initialized." };

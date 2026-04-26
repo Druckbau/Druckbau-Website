@@ -1,6 +1,7 @@
 import re
 
 files_order = [
+    'translations.js',
     'js/utils.js',
     'js/db.js',
     'js/store.js',

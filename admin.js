@@ -437,8 +437,8 @@ export function initAdminSystem() {
             statusBadge.style.background = '#ccc';
             statusBadge.style.color = '#333';
 
-            const { fetchOrderById } = await import('./db.js');
-            const data = await fetchOrderById(val) || await fetchOrderById(val.replace('#', ''));
+            const dbOrders = await loadOrdersFromDB();
+            const data = dbOrders ? dbOrders.find(o => o.order_id === val || o.order_id === val.replace('#', '')) : null;
             let statusStr = '';
 
             if (data) {

@@ -100,29 +100,6 @@
     </nav>
 
     <main>
-        <!-- Seasonal Offer Banner (if active) -->
-        <div id="seasonal-offer-banner" class="seasonal-offer-banner" style="display: none;">
-            <div class="offer-title" id="offer-title-text">Sonderangebot!</div>
-            <div class="offer-description" id="offer-description-text">20% Rabatt auf alle Vasen</div>
-            <div class="countdown-timer">
-                <div class="countdown-item">
-                    <span class="countdown-number" id="countdown-days">0</span>
-                    <span class="countdown-label">Tage</span>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="countdown-hours">0</span>
-                    <span class="countdown-label">Std</span>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="countdown-minutes">0</span>
-                    <span class="countdown-label">Min</span>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="countdown-seconds">0</span>
-                    <span class="countdown-label">Sek</span>
-                </div>
-            </div>
-        </div>
 
         <!-- Home Section -->
         <section id="home" class="active" style="display: flex;">
@@ -800,12 +777,6 @@
                     <button class="contact-btn seasonal-offer-btn">Neues Angebot erstellen</button>
                 </div>
 
-                <div class="admin-group" style="margin-top: 2rem;">
-                    <h4>Erweiterte Analytics</h4>
-                    <div id="enhanced-analytics-container">
-                        <!-- Enhanced analytics will be rendered here -->
-                    </div>
-                </div>
             </div>
         </section>
         <!-- Social Media Feed Section -->
@@ -1131,8 +1102,8 @@
                 <div class="checkout-actions" style="display: flex; gap: 1rem;">
                     <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
                         data-i18n="checkout_back">Zurück</button>
-                    <button class="contact-btn" style="flex: 2;" id="final-checkout-btn"
-                        data-i18n="checkout_submit">Bestellung abschließen</button>
+                    <a class="contact-btn" style="flex: 2; text-decoration: none; display: flex; align-items: center; justify-content: center; text-align: center;" id="final-checkout-btn"
+                        data-i18n="checkout_submit">Bestellung abschließen</a>
                 </div>
             </div>
         </div>
@@ -1145,7 +1116,6 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
         integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS"
         crossorigin="anonymous"></script>
-    <script src="translations.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="bundled.js"></script>
 </body>

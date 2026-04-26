@@ -1,5 +1,4 @@
-// Translation System for Druckbau Website
-const translations = {
+window.translations = {
     de: {
         // Navigation
         nav_home: "Home",
@@ -171,19 +170,6 @@ const translations = {
         guarantee_title: "100% Zufriedenheitsgarantie",
         guarantee_text: "Kostenloser Nachdruck bei Druckfehlern",
 
-        // Seasonal Offer
-        offer_title: "Sonderangebot",
-        offer_countdown: "Noch",
-        offer_days: "Tage",
-        offer_hours: "Std",
-        offer_minutes: "Min",
-        offer_seconds: "Sek",
-
-        // Referral
-        referral_title: "Freunde werben",
-        referral_text: "Empfehlen Sie uns weiter und beide erhalten 5€ Rabatt!",
-        referral_your_link: "Ihr persönlicher Link:",
-        referral_copy: "Link kopieren",
 
         // Alerts
         alert_added_cart: "wurde zum Warenkorb hinzugefügt.",
@@ -556,7 +542,7 @@ let currentLanguage = localStorage.getItem('druckbau_language') || 'de';
 
 // Translation function
 function t(key) {
-    return translations[currentLanguage][key] || key;
+    return (window.translations && window.translations[currentLanguage] && window.translations[currentLanguage][key]) || key;
 }
 
 // Switch language
@@ -642,9 +628,10 @@ function showSection(id) {
     document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
 }
 
-if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => {
-        updatePageLanguage();
+export function initTranslations() {
+    if (typeof document === 'undefined') return;
+    
+    updatePageLanguage();
 
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1498,9 +1485,8 @@ if (typeof document !== 'undefined') {
                                     
                                     try {
                                         // Try to load script if not present
-                                        if (!window.supabaseSync) {
-                                            const module = await import('./js/db.js');
-                                            window.supabaseSync = module.syncLocalStorageToDB;
+                                        if (!window.supabaseSync && typeof syncLocalStorageToDB !== 'undefined') {
+                                            window.supabaseSync = syncLocalStorageToDB;
                                         }
                                         
                                         const result = await window.supabaseSync();
@@ -1656,6 +1642,7 @@ if (typeof document !== 'undefined') {
                                 }, 800);
                             };
                         }
+
                         
                         renderFallbackAdmin();
                     } else if (pwd !== null) {
@@ -1664,5 +1651,5 @@ if (typeof document !== 'undefined') {
                 });
             }
         }, 1000);
-    });
 }
+
