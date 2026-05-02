@@ -2,35 +2,48 @@
 import { showNotification } from './utils.js';
 
 // --- Supabase Setup ---
-// NOTE: Replace these with your actual Supabase URL and anonymous key
+// NOTE: These are your current credentials. 
 const SUPABASE_URL = 'https://ezwmsguucjzqovypmggk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6d21zZ3V1Y2p6cW92eXBtZ2drIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzg5MDEsImV4cCI6MjA5MDk1NDkwMX0.H4quCJTA75tZhWwJDkCrvM2Y7_aPhf2YLmvSDCZdgeU';
 
 let supabaseClient = null;
 
-// Only initialize if Supabase library is loaded
 export function initDB() {
     if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        console.log("Supabase Client initialized");
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("✅ Supabase Client erfolgreich initialisiert.");
+            
+            // Sofortige Synchronisation beim Start versuchen
+            setTimeout(() => syncLocalStorageToDB(), 2000);
+        } catch (err) {
+            console.error("❌ Fehler bei der Supabase-Initialisierung:", err);
+        }
     } else {
-        console.warn("Supabase library not found. Running in local-only mode.");
+        console.warn("⚠️ Supabase Bibliothek nicht gefunden. Die Seite läuft im lokalen Modus (Daten werden nur auf diesem Gerät gespeichert).");
     }
 }
 
 // --- Orders ---
 export async function saveOrderToDB(orderData) {
-    if (!supabaseClient) return false;
+    if (!supabaseClient) {
+        console.warn("Bestellung wurde lokal gespeichert (Keine Supabase Verbindung).");
+        return false;
+    }
 
     try {
         const { data, error } = await supabaseClient
             .from('orders')
             .insert([orderData]);
 
-        if (error) throw error;
+        if (error) {
+            console.error("❌ Supabase Fehler (Orders):", error.message, error.details);
+            return false;
+        }
+        console.log("✅ Bestellung erfolgreich nach Supabase übertragen.");
         return true;
     } catch (e) {
-        console.error("Error saving order to DB:", e);
+        console.error("❌ Schwerer Fehler beim Speichern der Bestellung:", e);
         return false;
     }
 }
@@ -107,10 +120,8 @@ export async function addSubscriberToDB(email) {
             .insert([{ email }]);
 
         if (error) {
-            // Check for unique constraint violation (already subscribed)
-            if (error.code === '23505') {
-                return 'exists';
-            }
+            if (error.code === '23505') return 'exists';
+            console.error("❌ Supabase Fehler (Subscribers):", error.message);
             throw error;
         }
         return true;
@@ -137,7 +148,10 @@ export async function saveNewsToDB(content) {
     if (!supabaseClient) return false;
     try {
         const { error } = await supabaseClient.from('news').insert([{ content }]);
-        if (error) throw error;
+        if (error) {
+            console.error("❌ Supabase Fehler (News):", error.message);
+            throw error;
+        }
         return true;
     } catch(e) {
         console.error("Error saving news:", e);
@@ -221,8 +235,6 @@ export async function loadAnalyticsFromDB() {
 export async function trackAnalyticInDB(itemId, type, value = 1) {
     if (!supabaseClient) return false;
     try {
-        // Since we allow inserts/updates, we need to try selecting first or using an RPC/upsert
-        // Supabase upsert works well if item_id is unique
         let currentViews = 0, currentPurchases = 0, currentRevenue = 0;
         
         const { data: existing } = await supabaseClient.from('analytics').select('*').eq('item_id', itemId).maybeSingle();
@@ -250,8 +262,9 @@ export async function trackAnalyticInDB(itemId, type, value = 1) {
 
 // --- Synchronization ---
 export async function syncLocalStorageToDB() {
-    if (!supabaseClient) return { success: false, message: "Supabase not initialized." };
+    if (!supabaseClient) return { success: false, message: "Supabase nicht initialisiert." };
 
+    console.log("🔄 Synchronisation mit Supabase gestartet...");
     let syncCount = { orders: 0, subs: 0, reviews: 0 };
     let errors = [];
 
@@ -260,11 +273,25 @@ export async function syncLocalStorageToDB() {
         const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
         const toSync = localOrders.filter(o => !o.synced);
         for (const order of toSync) {
-            // Remove the temporary 'synced' flag before sending to DB if it exists
             const cleanOrder = { ...order };
             delete cleanOrder.synced;
+            delete cleanOrder.date; // Supabase uses created_at
             
-            const success = await saveOrderToDB(cleanOrder);
+            // Map Local Format to DB Format
+            const dbPayload = {
+                order_id: cleanOrder.orderId,
+                customer_name: cleanOrder.name,
+                customer_email: cleanOrder.email,
+                total_price: cleanOrder.totalPrice,
+                status: cleanOrder.status,
+                order_data: {
+                    message: cleanOrder.message,
+                    coupon: cleanOrder.coupon,
+                    cart: cleanOrder.items
+                }
+            };
+
+            const success = await saveOrderToDB(dbPayload);
             if (success) {
                 order.synced = true;
                 syncCount.orders++;
@@ -289,24 +316,26 @@ export async function syncLocalStorageToDB() {
 
     // 3. Sync Reviews
     try {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('druckbau_reviews_')) {
-                const productId = key.replace('druckbau_reviews_', '');
-                const reviews = JSON.parse(localStorage.getItem(key) || '[]');
-                const toSync = reviews.filter(r => !r.synced);
-                
-                for (const review of toSync) {
-                    const success = await saveReviewToDB(productId, review.name, review.text, review.rating);
-                    if (success) {
-                        review.synced = true;
-                        syncCount.reviews++;
-                    }
+        const allReviews = JSON.parse(localStorage.getItem('productReviews') || '{}');
+        for (const productId in allReviews) {
+            const reviews = allReviews[productId];
+            const toSync = reviews.filter(r => !r.synced);
+            for (const review of toSync) {
+                const success = await saveReviewToDB(productId, review.author, review.text, review.rating);
+                if (success) {
+                    review.synced = true;
+                    syncCount.reviews++;
                 }
-                localStorage.setItem(key, JSON.stringify(reviews));
             }
         }
+        localStorage.setItem('productReviews', JSON.stringify(allReviews));
     } catch (e) { errors.push("Review sync failed: " + e.message); }
+
+    if (syncCount.orders > 0 || syncCount.subs > 0 || syncCount.reviews > 0) {
+        console.log(`✅ Synchronisation abgeschlossen: ${syncCount.orders} Bestellungen, ${syncCount.subs} Abonnenten, ${syncCount.reviews} Bewertungen.`);
+    } else {
+        console.log("ℹ️ Keine neuen Daten zum Synchronisieren.");
+    }
 
     return { 
         success: errors.length === 0, 
@@ -316,7 +345,7 @@ export async function syncLocalStorageToDB() {
     };
 }
 
-// Helper for reviews (if not already defined)
+// Helper for reviews
 export async function saveReviewToDB(productId, name, text, rating) {
     if (!supabaseClient) return false;
     try {
@@ -326,10 +355,12 @@ export async function saveReviewToDB(productId, name, text, rating) {
                 product_id: productId, 
                 name: name, 
                 text: text, 
-                rating: parseInt(rating),
-                created_at: new Date().toISOString()
+                rating: parseInt(rating)
             }]);
-        if (error) throw error;
+        if (error) {
+             console.error("❌ Supabase Fehler (Reviews):", error.message);
+             return false;
+        }
         return true;
     } catch (e) {
         console.error("Error saving review to DB:", e);

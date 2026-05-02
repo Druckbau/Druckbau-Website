@@ -1,12 +1,16 @@
 :root {
     --primary-blue: #2563eb;
-    --secondary-blue: #1d4ed8;
+    --primary-dark: #1d4ed8;
     --white: #ffffff;
     --bg-light: #f8fafc;
     --bg-white: #ffffff;
     --text-dark: #1e293b;
     --text-light: #64748b;
     --border-color: #e2e8f0;
+    --success-color: #10b981;
+    --error-color: #ef4444;
+    --warning-color: #f59e0b;
+    --info-color: #3b82f6;
     --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
     --nav-bg: rgba(255, 255, 255, 0.9);
     --accent-blue: #e7f1ff;
@@ -2939,3 +2943,90 @@ model-viewer {
     0% { background: rgba(37, 99, 235, 0.2); border-color: var(--primary-blue); transform: scale(1.02); }
     100% { background: transparent; border-color: #eee; transform: scale(1); }
 }
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    z-index: 10000;
+    pointer-events: none;
+}
+
+.toast {
+    pointer-events: auto;
+    min-width: 300px;
+    max-width: 450px;
+    background: var(--bg-white);
+    color: var(--text-dark);
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-left: 6px solid var(--info-color);
+    animation: toast-in 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast-success { border-left-color: var(--success-color); }
+.toast-error { border-left-color: var(--error-color); }
+.toast-warning { border-left-color: var(--warning-color); }
+.toast-info { border-left-color: var(--info-color); }
+
+.toast-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.toast-content {
+    flex-grow: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    margin-bottom: 0.1rem;
+}
+
+.toast-message {
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+.toast-close {
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2rem;
+    padding: 0;
+    line-height: 1;
+}
+
+@keyframes toast-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast.toast-out {
+    animation: toast-out 0.3s ease forwards;
+}
+
+@keyframes toast-out {
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+

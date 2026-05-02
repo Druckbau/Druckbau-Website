@@ -5,7 +5,7 @@ import { renderCart, updateCartIcon, addToCart, addCustomToCart, toggleWishlist,
 import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevCheckoutStep } from './js/checkout.js';
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
-import { initDB, loadNewsFromDB } from './js/db.js';
+import { initDB, loadNewsFromDB, syncLocalStorageToDB } from './js/db.js';
 import { openReviewModal, openReviewListModal, closeReviewModal, submitReview } from './js/reviews.js';
 import { initTranslations } from './translations.js';
 
@@ -47,6 +47,11 @@ async function init() {
 
     initAdminSystem();
     setupGlobalEventListeners();
+    
+    // Attempt sync after initialization
+    setTimeout(() => {
+        syncLocalStorageToDB();
+    }, 2000);
 }
 
 async function loadPublicNews() {
@@ -250,8 +255,6 @@ function setupGlobalEventListeners() {
         if (window.showSection) window.showSection(e.detail);
     });
 
-    // Language switcher logic will remain mostly global for now, handled here if needed
-
     const reviewForm = document.getElementById('review-form');
     if (reviewForm) {
         reviewForm.addEventListener('submit', submitReview);
@@ -267,17 +270,15 @@ async function handleStatusCheck() {
     const orderId = input.value.trim().replace('#', '').toUpperCase();
     if (!orderId) return;
 
-    badge.innerText = t('status_searching') || "Suche...";
+    badge.innerText = "Suche...";
     badge.style.background = "#eee";
     badge.style.color = "#333";
     resultDiv.style.display = 'block';
 
     try {
-        // 1. Try Supabase
         const dbOrders = await loadOrdersFromDB();
         let order = dbOrders ? dbOrders.find(o => o.orderId === orderId) : null;
 
-        // 2. Fallback LocalStorage
         if (!order) {
             const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
             order = localOrders.find(o => o.orderId === orderId);
@@ -287,7 +288,6 @@ async function handleStatusCheck() {
             const status = order.status || 'Eingegangen';
             badge.innerText = status;
             
-            // Nice coloring
             if (status.includes('Versendet')) {
                 badge.style.background = '#d4edda';
                 badge.style.color = '#155724';
@@ -299,7 +299,7 @@ async function handleStatusCheck() {
                 badge.style.color = '#495057';
             }
         } else {
-            badge.innerText = t('status_not_found') || "Nicht gefunden";
+            badge.innerText = "Nicht gefunden";
             badge.style.background = '#f8d7da';
             badge.style.color = '#721c24';
         }
@@ -310,7 +310,6 @@ async function handleStatusCheck() {
 }
 
 function initOrderStatusChecker() {
-    // Basic setup if needed, most is handled via event delegation now
     console.log("Order Status Checker initialized");
 }
 

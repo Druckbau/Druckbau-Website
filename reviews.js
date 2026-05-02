@@ -39,16 +39,18 @@ export function openReviewListModal(productId, productName) {
     
     if (container) {
         if (reviews.length === 0) {
-            container.innerHTML = '<p>Bisher keine Bewertungen für dieses Produkt.</p>';
+            container.innerHTML = `<p>${t('review_empty') || 'Bisher keine Bewertungen für dieses Produkt.'}</p>`;
         } else {
             container.innerHTML = reviews.map(r => `
-                <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                         <strong>${escapeHtml(r.author || 'Anonym')}</strong>
                         <span style="color:var(--primary-blue);">${renderStars(r.rating)}</span>
                     </div>
-                    <p style="font-size:0.9rem; margin:0;">${escapeHtml(r.text)}</p>
-                    <small style="color:#999;">${r.date}</small>
+                    <p style="font-size:0.9rem; margin:0; line-height:1.4;">${escapeHtml(r.text)}</p>
+                    <div style="margin-top: 8px;">
+                        <small style="color:var(--text-light); font-size: 0.75rem;">${r.date}</small>
+                    </div>
                 </div>
             `).join('');
         }
@@ -65,11 +67,9 @@ export function closeReviewModal() {
     if (modal) modal.classList.remove('show');
 }
 
-// Ensure background click closes modal but content click doesn't
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('review-modal');
     if (modal) {
-
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 closeReviewModal();
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-export function submitReview(e) {
+export async function submitReview(e) {
     e.preventDefault();
     const productId = document.getElementById('review-product-id').value;
     const authorEl = document.getElementById('review-author');
@@ -89,7 +89,7 @@ export function submitReview(e) {
     
     const ratingInput = document.querySelector('input[name="rating"]:checked');
     if (!ratingInput) {
-        alert("Bitte wählen Sie eine Sternebewertung aus.");
+        showNotification(t('review_no_rating') || "Bitte wählen Sie eine Sternebewertung aus.", 'warning');
         return;
     }
     const rating = parseInt(ratingInput.value);
@@ -101,7 +101,7 @@ export function submitReview(e) {
         date: new Date().toLocaleDateString('de-DE')
     });
     
-    showNotification("Vielen Dank für Ihre Bewertung!", 'success');
+    showNotification(t('review_success') || "Vielen Dank für Ihre Bewertung!", 'success');
     closeReviewModal();
     renderProducts();
 }

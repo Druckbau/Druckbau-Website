@@ -14,46 +14,57 @@ export function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-export function showNotification(message, type = 'info') {
+export function showNotification(message, type = 'info', title = '') {
+    const container = document.getElementById('toast-container');
+    if (!container) {
+        console.error('Toast container not found');
+        return;
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.style.position = 'fixed';
-    toast.style.bottom = '20px';
-    toast.style.right = '20px';
-    toast.style.padding = '1rem 2rem';
-    toast.style.borderRadius = '8px';
-    toast.style.color = 'white';
-    toast.style.zIndex = '100000';
-    toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-    toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    toast.style.transform = 'translateY(100%)';
-    toast.style.opacity = '0';
+    
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+    if (type === 'warning') icon = '⚠️';
 
-    if (type === 'success') toast.style.backgroundColor = 'var(--primary-blue)';
-    else if (type === 'error') toast.style.backgroundColor = '#d9534f';
-    else if (type === 'warning') toast.style.backgroundColor = '#f0ad4e';
-    else toast.style.backgroundColor = '#2563eb';
+    if (!title) {
+        if (type === 'success') title = 'Erfolg';
+        else if (type === 'error') title = 'Fehler';
+        else if (type === 'warning') title = 'Warnung';
+        else title = 'Info';
+    }
 
-    toast.textContent = message;
-    document.body.appendChild(toast);
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close">&times;</button>
+    `;
 
-    // Trigger animation
-    requestAnimationFrame(() => {
-        toast.style.transform = 'translateY(0)';
-        toast.style.opacity = '1';
-    });
+    container.appendChild(toast);
+
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.onclick = () => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    };
 
     setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(100%)';
-        setTimeout(() => toast.remove(), 300);
-    }, 6000);
+        if (toast.parentElement) {
+            toast.classList.add('toast-out');
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
 }
 
-export function showSuccess(msg) { showNotification(msg, 'success'); }
-export function showError(msg) { showNotification(msg, 'error'); }
-export function showWarning(msg) { showNotification(msg, 'warning'); }
-export function showInfo(msg) { showNotification(msg, 'info'); }
+export function showSuccess(msg, title = 'Erfolg') { showNotification(msg, 'success', title); }
+export function showError(msg, title = 'Fehler') { showNotification(msg, 'error', title); }
+export function showWarning(msg, title = 'Warnung') { showNotification(msg, 'warning', title); }
+export function showInfo(msg, title = 'Info') { showNotification(msg, 'info', title); }
 
 export function setError(input, message) {
     if (!input) return;
@@ -70,4 +81,3 @@ export function setSuccess(input) {
     const errorSpan = input.parentElement.querySelector('.form-error');
     if (errorSpan) errorSpan.textContent = '';
 }
-
