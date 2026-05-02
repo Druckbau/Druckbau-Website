@@ -3,7 +3,7 @@
     --primary-dark: #1d4ed8;
     --white: #ffffff;
     --bg-light: #f8fafc;
-    --bg-white: #ffffff;
+    --bg-white: #ffffff; --bg-card: #ffffff;
     --text-dark: #1e293b;
     --text-light: #64748b;
     --border-color: #e2e8f0;
@@ -20,7 +20,7 @@
 
 [data-theme="dark"] {
     --bg-light: #0f172a;
-    --bg-white: #1e293b;
+    --bg-white: #1e293b; --bg-card: #1e293b;
     --text-dark: #f8fafc;
     --text-light: #cbd5e1;
     --border-color: #334155;

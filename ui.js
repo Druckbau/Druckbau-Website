@@ -54,18 +54,35 @@ function updateThemeIcon(theme) {
 }
 
 export function setupChat() {
-    window.toggleChat = () => {
-        const chatWindow = document.getElementById('chat-window');
-        if (chatWindow) {
-            if (chatWindow.style.display === 'flex') {
-                chatWindow.style.display = 'none';
-            } else {
-                chatWindow.style.display = 'flex';
-                const messages = document.getElementById('chat-messages');
-                if (messages && messages.children.length === 0) {
-                    messages.innerHTML = `<div class="message bot"><p>${t('chat_welcome')}</p></div>`;
-                }
+    const toggleBtn = document.getElementById('chat-toggle');
+    const closeBtn = document.querySelector('.chat-close-btn');
+    const chatWindow = document.getElementById('chat-window');
+    const sendBtn = document.querySelector('.chat-send-btn');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', () => {
+            if (chatWindow) {
+                const isVisible = chatWindow.style.display === 'flex';
+                chatWindow.style.display = isVisible ? 'none' : 'flex';
             }
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            if (chatWindow) chatWindow.style.display = 'none';
+        });
+    }
+    
+    if (sendBtn) {
+        sendBtn.addEventListener('click', () => {
+            sendChatMessage();
+        });
+    }
+
+    window.toggleChat = () => {
+        if (chatWindow) {
+            chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
         }
     };
 
@@ -99,6 +116,13 @@ export function setupChat() {
             }
         });
     }
+
+    // Quick replies
+    document.querySelectorAll('.quick-reply-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            sendQuickReply(btn.innerText);
+        });
+    });
 }
 
 function appendMessage(text, sender) {
@@ -106,8 +130,11 @@ function appendMessage(text, sender) {
     if (!messages) return;
 
     const div = document.createElement('div');
-    div.className = `message ${sender}`;
-    div.innerHTML = `<p>${escapeHtml(text)}</p>`;
+    div.className = `chat-message ${sender}`;
+    div.innerHTML = `
+        ${sender === 'bot' ? '<div class="chat-avatar">🤖</div>' : ''}
+        <div class="chat-bubble">${escapeHtml(text)}</div>
+    `;
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
 }
@@ -115,7 +142,6 @@ function appendMessage(text, sender) {
 function getBotResponse(text) {
     const t = text.toLowerCase();
 
-    // Simplistic response generation until translated
     if (t.includes('lieferung') || t.includes('versand') || t.includes('dauer')) {
         return "Unsere Lieferzeit beträgt in der Regel 3-5 Werktage nach Zahlungseingang.";
     } else if (t.includes('kosten') || t.includes('preis') || t.includes('euro')) {
@@ -181,9 +207,7 @@ export function setupFAQ() {
     });
 }
 
-// Navigation Logic (SPA)
 export function setupNavigation() {
-    // We use event delegation on document body to catch ALL navigation triggers
     document.body.addEventListener('click', (e) => {
         const link = e.target.closest('.nav-link, .cart-icon-container, .wishlist-icon-container, .footer-link.nav-trigger, .contact-trigger, .nav-trigger');
 
@@ -193,36 +217,20 @@ export function setupNavigation() {
 
         if (targetId) {
             e.preventDefault();
-            console.log('Navigating to:', targetId);
             showSection(targetId);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-            // Fallback classes if data-target is missing for some reason
-            if (link.classList.contains('cart-icon-container')) {
-                e.preventDefault();
-                showSection('cart');
-            } else if (link.classList.contains('wishlist-icon-container')) {
-                e.preventDefault();
-                showSection('wishlist');
-            }
         }
     });
 
-    // Dropdown toggle logic
     document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
         toggle.addEventListener('click', (e) => {
             const dropdown = toggle.parentElement;
             if (dropdown.classList.contains('dropdown')) {
                 e.preventDefault();
-
-                // Close other dropdowns
                 document.querySelectorAll('.dropdown').forEach(d => {
                     if (d !== dropdown) d.classList.remove('show');
                 });
-
                 dropdown.classList.toggle('show');
-
-                // Trigger navigation
                 const targetId = toggle.getAttribute('data-target');
                 if (targetId) {
                     showSection(targetId);
@@ -232,42 +240,28 @@ export function setupNavigation() {
         });
     });
 
-    // Close dropdowns when clicking outside
     document.addEventListener('click', (e) => {
         if (!e.target.closest('.dropdown')) {
             document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
         }
     });
 
-    // Make showSection globally available
     window.showSection = showSection;
 }
 
-// Bot Protection State
-const SECTION_STATS = {
-    contactShownAt: 0
-};
-
 export function showSection(id) {
-    if (id === 'contact') SECTION_STATS.contactShownAt = Date.now();
-
-    // Hide all sections
     document.querySelectorAll('section').forEach(sec => {
         sec.classList.remove('active');
-        if (sec.style.display !== 'none') sec.style.display = 'none'; // Ensure hidden
+        sec.style.display = 'none';
     });
 
-    // Show target section(s)
-    // Note: Home is special, it's a section.
     const target = document.getElementById(id);
     if (target) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
-        setTimeout(() => target.classList.add('active'), 10); // Small delay for fade in
+        setTimeout(() => target.classList.add('active'), 10);
     }
 
-    // Update active nav link
-    const triggers = '.nav-link, .cart-icon-container, .wishlist-icon-container, .footer-link.nav-trigger, .contact-trigger, .nav-trigger';
-    document.querySelectorAll(triggers).forEach(link => {
+    document.querySelectorAll('.nav-link, .nav-trigger').forEach(link => {
         link.classList.remove('active');
         if (link.getAttribute('data-target') === id) {
             link.classList.add('active');
@@ -277,8 +271,5 @@ export function showSection(id) {
     if (id === 'cart' && window.renderCart) window.renderCart();
     if (id === 'wishlist' && window.renderWishlist) window.renderWishlist();
 
-    const currentTheme = document.documentElement.getAttribute('data-theme');
-
-    // Trigger any additional section-specific logic
-    document.dispatchEvent(new CustomEvent('section-shown', { detail: { id, theme: currentTheme } }));
+    document.dispatchEvent(new CustomEvent('section-shown', { detail: { id } }));
 }
