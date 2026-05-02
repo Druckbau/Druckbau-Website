@@ -5,7 +5,7 @@ import { renderCart, updateCartIcon, addToCart, addCustomToCart, toggleWishlist,
 import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevCheckoutStep } from './js/checkout.js';
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
-import { initDB, loadNewsFromDB, syncLocalStorageToDB } from './js/db.js';
+import { initDB, loadNewsFromDB, syncLocalStorageToDB, loadOrdersFromDB } from './js/db.js';
 import { openReviewModal, openReviewListModal, closeReviewModal, submitReview } from './js/reviews.js';
 import { initTranslations } from './translations.js';
 
@@ -277,7 +277,8 @@ async function handleStatusCheck() {
 
     try {
         const dbOrders = await loadOrdersFromDB();
-        let order = dbOrders ? dbOrders.find(o => o.orderId === orderId) : null;
+        // FIX: Match both order_id (DB) and orderId (Local)
+        let order = dbOrders ? dbOrders.find(o => (o.order_id === orderId || o.orderId === orderId)) : null;
 
         if (!order) {
             const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
@@ -288,14 +289,18 @@ async function handleStatusCheck() {
             const status = order.status || 'Eingegangen';
             badge.innerText = status;
             
+            // Verfeinerte Farben für verschiedene Statusse
             if (status.includes('Versendet')) {
-                badge.style.background = '#d4edda';
+                badge.style.background = '#d4edda'; // Hellgrün
                 badge.style.color = '#155724';
-            } else if (status.includes('Bearbeitung') || status.includes('Gedruckt')) {
-                badge.style.background = '#fff3cd';
+            } else if (status.includes('Gedruckt')) {
+                badge.style.background = '#cce5ff'; // Hellblau
+                badge.style.color = '#004085';
+            } else if (status.includes('Bearbeitung')) {
+                badge.style.background = '#fff3cd'; // Gelb
                 badge.style.color = '#856404';
             } else {
-                badge.style.background = '#e9ecef';
+                badge.style.background = '#e9ecef'; // Grau
                 badge.style.color = '#495057';
             }
         } else {

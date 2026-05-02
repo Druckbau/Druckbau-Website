@@ -4606,7 +4606,8 @@ async function handleStatusCheck() {
 
     try {
         const dbOrders = await loadOrdersFromDB();
-        let order = dbOrders ? dbOrders.find(o => o.orderId === orderId) : null;
+        // FIX: Match both order_id (DB) and orderId (Local)
+        let order = dbOrders ? dbOrders.find(o => (o.order_id === orderId || o.orderId === orderId)) : null;
 
         if (!order) {
             const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
@@ -4617,14 +4618,18 @@ async function handleStatusCheck() {
             const status = order.status || 'Eingegangen';
             badge.innerText = status;
             
+            // Verfeinerte Farben für verschiedene Statusse
             if (status.includes('Versendet')) {
-                badge.style.background = '#d4edda';
+                badge.style.background = '#d4edda'; // Hellgrün
                 badge.style.color = '#155724';
-            } else if (status.includes('Bearbeitung') || status.includes('Gedruckt')) {
-                badge.style.background = '#fff3cd';
+            } else if (status.includes('Gedruckt')) {
+                badge.style.background = '#cce5ff'; // Hellblau
+                badge.style.color = '#004085';
+            } else if (status.includes('Bearbeitung')) {
+                badge.style.background = '#fff3cd'; // Gelb
                 badge.style.color = '#856404';
             } else {
-                badge.style.background = '#e9ecef';
+                badge.style.background = '#e9ecef'; // Grau
                 badge.style.color = '#495057';
             }
         } else {
