@@ -1673,46 +1673,57 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', title = '') {
+    const container = document.getElementById('toast-container');
+    if (!container) {
+        console.error('Toast container not found');
+        return;
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.style.position = 'fixed';
-    toast.style.bottom = '20px';
-    toast.style.right = '20px';
-    toast.style.padding = '1rem 2rem';
-    toast.style.borderRadius = '8px';
-    toast.style.color = 'white';
-    toast.style.zIndex = '100000';
-    toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-    toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-    toast.style.transform = 'translateY(100%)';
-    toast.style.opacity = '0';
+    
+    let icon = 'ℹ️';
+    if (type === 'success') icon = '✅';
+    if (type === 'error') icon = '❌';
+    if (type === 'warning') icon = '⚠️';
 
-    if (type === 'success') toast.style.backgroundColor = 'var(--primary-blue)';
-    else if (type === 'error') toast.style.backgroundColor = '#d9534f';
-    else if (type === 'warning') toast.style.backgroundColor = '#f0ad4e';
-    else toast.style.backgroundColor = '#2563eb';
+    if (!title) {
+        if (type === 'success') title = 'Erfolg';
+        else if (type === 'error') title = 'Fehler';
+        else if (type === 'warning') title = 'Warnung';
+        else title = 'Info';
+    }
 
-    toast.textContent = message;
-    document.body.appendChild(toast);
+    toast.innerHTML = `
+        <div class="toast-icon">${icon}</div>
+        <div class="toast-content">
+            <div class="toast-title">${title}</div>
+            <div class="toast-message">${message}</div>
+        </div>
+        <button class="toast-close">&times;</button>
+    `;
 
-    // Trigger animation
-    requestAnimationFrame(() => {
-        toast.style.transform = 'translateY(0)';
-        toast.style.opacity = '1';
-    });
+    container.appendChild(toast);
+
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.onclick = () => {
+        toast.classList.add('toast-out');
+        setTimeout(() => toast.remove(), 300);
+    };
 
     setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateY(100%)';
-        setTimeout(() => toast.remove(), 300);
-    }, 6000);
+        if (toast.parentElement) {
+            toast.classList.add('toast-out');
+            setTimeout(() => toast.remove(), 300);
+        }
+    }, 5000);
 }
 
-function showSuccess(msg) { showNotification(msg, 'success'); }
-function showError(msg) { showNotification(msg, 'error'); }
-function showWarning(msg) { showNotification(msg, 'warning'); }
-function showInfo(msg) { showNotification(msg, 'info'); }
+function showSuccess(msg, title = 'Erfolg') { showNotification(msg, 'success', title); }
+function showError(msg, title = 'Fehler') { showNotification(msg, 'error', title); }
+function showWarning(msg, title = 'Warnung') { showNotification(msg, 'warning', title); }
+function showInfo(msg, title = 'Info') { showNotification(msg, 'info', title); }
 
 function setError(input, message) {
     if (!input) return;
@@ -1730,40 +1741,56 @@ function setSuccess(input) {
     if (errorSpan) errorSpan.textContent = '';
 }
 
-
 // --- js/db.js ---
 // js/db.js
 
 // --- Supabase Setup ---
-// NOTE: Replace these with your actual Supabase URL and anonymous key
 const SUPABASE_URL = 'https://ezwmsguucjzqovypmggk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6d21zZ3V1Y2p6cW92eXBtZ2drIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzg5MDEsImV4cCI6MjA5MDk1NDkwMX0.H4quCJTA75tZhWwJDkCrvM2Y7_aPhf2YLmvSDCZdgeU';
 
 let supabaseClient = null;
 
-// Only initialize if Supabase library is loaded
 function initDB() {
+    console.log("DB: Versuche Supabase zu initialisieren...");
     if (window.supabase) {
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        console.log("Supabase Client initialized");
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("✅ Supabase Client erfolgreich initialisiert.");
+            window.supabaseStatus = "Verbunden";
+            
+            // Sofortige Synchronisation beim Start versuchen
+            setTimeout(() => syncLocalStorageToDB(), 2000);
+        } catch (err) {
+            console.error("❌ Fehler bei der Supabase-Initialisierung:", err);
+            window.supabaseStatus = "Fehler: " + err.message;
+        }
     } else {
-        console.warn("Supabase library not found. Running in local-only mode.");
+        console.warn("⚠️ Supabase Bibliothek nicht gefunden. Die Seite läuft im lokalen Modus.");
+        window.supabaseStatus = "Nicht gefunden (CDN fehlt)";
     }
 }
 
 // --- Orders ---
 async function saveOrderToDB(orderData) {
-    if (!supabaseClient) return false;
+    if (!supabaseClient) {
+        console.warn("Bestellung wurde lokal gespeichert (Keine Supabase Verbindung).");
+        return false;
+    }
 
     try {
+        console.log("DB: Sende Bestellung nach Supabase...", orderData.order_id);
         const { data, error } = await supabaseClient
             .from('orders')
             .insert([orderData]);
 
-        if (error) throw error;
+        if (error) {
+            console.error("❌ Supabase Fehler (Orders):", error.message, error.details);
+            return false;
+        }
+        console.log("✅ Bestellung erfolgreich nach Supabase übertragen.");
         return true;
     } catch (e) {
-        console.error("Error saving order to DB:", e);
+        console.error("❌ Schwerer Fehler beim Speichern der Bestellung:", e);
         return false;
     }
 }
@@ -1840,10 +1867,8 @@ async function addSubscriberToDB(email) {
             .insert([{ email }]);
 
         if (error) {
-            // Check for unique constraint violation (already subscribed)
-            if (error.code === '23505') {
-                return 'exists';
-            }
+            if (error.code === '23505') return 'exists';
+            console.error("❌ Supabase Fehler (Subscribers):", error.message);
             throw error;
         }
         return true;
@@ -1870,7 +1895,10 @@ async function saveNewsToDB(content) {
     if (!supabaseClient) return false;
     try {
         const { error } = await supabaseClient.from('news').insert([{ content }]);
-        if (error) throw error;
+        if (error) {
+            console.error("❌ Supabase Fehler (News):", error.message);
+            throw error;
+        }
         return true;
     } catch(e) {
         console.error("Error saving news:", e);
@@ -1954,8 +1982,6 @@ async function loadAnalyticsFromDB() {
 async function trackAnalyticInDB(itemId, type, value = 1) {
     if (!supabaseClient) return false;
     try {
-        // Since we allow inserts/updates, we need to try selecting first or using an RPC/upsert
-        // Supabase upsert works well if item_id is unique
         let currentViews = 0, currentPurchases = 0, currentRevenue = 0;
         
         const { data: existing } = await supabaseClient.from('analytics').select('*').eq('item_id', itemId).maybeSingle();
@@ -1983,8 +2009,9 @@ async function trackAnalyticInDB(itemId, type, value = 1) {
 
 // --- Synchronization ---
 async function syncLocalStorageToDB() {
-    if (!supabaseClient) return { success: false, message: "Supabase not initialized." };
+    if (!supabaseClient) return { success: false, message: "Supabase nicht initialisiert." };
 
+    console.log("🔄 Synchronisation mit Supabase gestartet...");
     let syncCount = { orders: 0, subs: 0, reviews: 0 };
     let errors = [];
 
@@ -1993,11 +2020,25 @@ async function syncLocalStorageToDB() {
         const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
         const toSync = localOrders.filter(o => !o.synced);
         for (const order of toSync) {
-            // Remove the temporary 'synced' flag before sending to DB if it exists
+            console.log("DB: Synchronisiere Bestellung...", order.orderId);
             const cleanOrder = { ...order };
             delete cleanOrder.synced;
+            delete cleanOrder.date;
             
-            const success = await saveOrderToDB(cleanOrder);
+            const dbPayload = {
+                order_id: cleanOrder.orderId,
+                customer_name: cleanOrder.name,
+                customer_email: cleanOrder.email,
+                total_price: cleanOrder.totalPrice,
+                status: cleanOrder.status,
+                order_data: {
+                    message: cleanOrder.message,
+                    coupon: cleanOrder.coupon,
+                    cart: cleanOrder.items
+                }
+            };
+
+            const success = await saveOrderToDB(dbPayload);
             if (success) {
                 order.synced = true;
                 syncCount.orders++;
@@ -2022,24 +2063,26 @@ async function syncLocalStorageToDB() {
 
     // 3. Sync Reviews
     try {
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('druckbau_reviews_')) {
-                const productId = key.replace('druckbau_reviews_', '');
-                const reviews = JSON.parse(localStorage.getItem(key) || '[]');
-                const toSync = reviews.filter(r => !r.synced);
-                
-                for (const review of toSync) {
-                    const success = await saveReviewToDB(productId, review.name, review.text, review.rating);
-                    if (success) {
-                        review.synced = true;
-                        syncCount.reviews++;
-                    }
+        const allReviews = JSON.parse(localStorage.getItem('productReviews') || '{}');
+        for (const productId in allReviews) {
+            const reviews = allReviews[productId];
+            const toSync = reviews.filter(r => !r.synced);
+            for (const review of toSync) {
+                const success = await saveReviewToDB(productId, review.author, review.text, review.rating);
+                if (success) {
+                    review.synced = true;
+                    syncCount.reviews++;
                 }
-                localStorage.setItem(key, JSON.stringify(reviews));
             }
         }
+        localStorage.setItem('productReviews', JSON.stringify(allReviews));
     } catch (e) { errors.push("Review sync failed: " + e.message); }
+
+    if (syncCount.orders > 0 || syncCount.subs > 0 || syncCount.reviews > 0) {
+        console.log(`✅ Synchronisation abgeschlossen: ${syncCount.orders} Bestellungen, ${syncCount.subs} Abonnenten, ${syncCount.reviews} Bewertungen.`);
+    } else {
+        console.log("ℹ️ Keine neuen Daten zum Synchronisieren.");
+    }
 
     return { 
         success: errors.length === 0, 
@@ -2049,7 +2092,7 @@ async function syncLocalStorageToDB() {
     };
 }
 
-// Helper for reviews (if not already defined)
+// Helper for reviews
 async function saveReviewToDB(productId, name, text, rating) {
     if (!supabaseClient) return false;
     try {
@@ -2059,10 +2102,12 @@ async function saveReviewToDB(productId, name, text, rating) {
                 product_id: productId, 
                 name: name, 
                 text: text, 
-                rating: parseInt(rating),
-                created_at: new Date().toISOString()
+                rating: parseInt(rating)
             }]);
-        if (error) throw error;
+        if (error) {
+             console.error("❌ Supabase Fehler (Reviews):", error.message);
+             return false;
+        }
         return true;
     } catch (e) {
         console.error("Error saving review to DB:", e);
@@ -3099,16 +3144,18 @@ function openReviewListModal(productId, productName) {
     
     if (container) {
         if (reviews.length === 0) {
-            container.innerHTML = '<p>Bisher keine Bewertungen für dieses Produkt.</p>';
+            container.innerHTML = `<p>${t('review_empty') || 'Bisher keine Bewertungen für dieses Produkt.'}</p>`;
         } else {
             container.innerHTML = reviews.map(r => `
-                <div style="border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;">
+                <div style="border-bottom: 1px solid var(--border-color); padding-bottom: 15px; margin-bottom: 15px;">
                     <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
                         <strong>${escapeHtml(r.author || 'Anonym')}</strong>
                         <span style="color:var(--primary-blue);">${renderStars(r.rating)}</span>
                     </div>
-                    <p style="font-size:0.9rem; margin:0;">${escapeHtml(r.text)}</p>
-                    <small style="color:#999;">${r.date}</small>
+                    <p style="font-size:0.9rem; margin:0; line-height:1.4;">${escapeHtml(r.text)}</p>
+                    <div style="margin-top: 8px;">
+                        <small style="color:var(--text-light); font-size: 0.75rem;">${r.date}</small>
+                    </div>
                 </div>
             `).join('');
         }
@@ -3125,11 +3172,9 @@ function closeReviewModal() {
     if (modal) modal.classList.remove('show');
 }
 
-// Ensure background click closes modal but content click doesn't
 document.addEventListener('DOMContentLoaded', () => {
     const modal = document.getElementById('review-modal');
     if (modal) {
-
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 closeReviewModal();
@@ -3138,7 +3183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-function submitReview(e) {
+async function submitReview(e) {
     e.preventDefault();
     const productId = document.getElementById('review-product-id').value;
     const authorEl = document.getElementById('review-author');
@@ -3149,7 +3194,7 @@ function submitReview(e) {
     
     const ratingInput = document.querySelector('input[name="rating"]:checked');
     if (!ratingInput) {
-        alert("Bitte wählen Sie eine Sternebewertung aus.");
+        showNotification(t('review_no_rating') || "Bitte wählen Sie eine Sternebewertung aus.", 'warning');
         return;
     }
     const rating = parseInt(ratingInput.value);
@@ -3161,7 +3206,7 @@ function submitReview(e) {
         date: new Date().toLocaleDateString('de-DE')
     });
     
-    showNotification("Vielen Dank für Ihre Bewertung!", 'success');
+    showNotification(t('review_success') || "Vielen Dank für Ihre Bewertung!", 'success');
     closeReviewModal();
     renderProducts();
 }
@@ -4331,6 +4376,11 @@ async function init() {
 
     initAdminSystem();
     setupGlobalEventListeners();
+    
+    // Attempt sync after initialization
+    setTimeout(() => {
+        syncLocalStorageToDB();
+    }, 2000);
 }
 
 async function loadPublicNews() {
@@ -4534,8 +4584,6 @@ function setupGlobalEventListeners() {
         if (window.showSection) window.showSection(e.detail);
     });
 
-    // Language switcher logic will remain mostly global for now, handled here if needed
-
     const reviewForm = document.getElementById('review-form');
     if (reviewForm) {
         reviewForm.addEventListener('submit', submitReview);
@@ -4551,17 +4599,15 @@ async function handleStatusCheck() {
     const orderId = input.value.trim().replace('#', '').toUpperCase();
     if (!orderId) return;
 
-    badge.innerText = t('status_searching') || "Suche...";
+    badge.innerText = "Suche...";
     badge.style.background = "#eee";
     badge.style.color = "#333";
     resultDiv.style.display = 'block';
 
     try {
-        // 1. Try Supabase
         const dbOrders = await loadOrdersFromDB();
         let order = dbOrders ? dbOrders.find(o => o.orderId === orderId) : null;
 
-        // 2. Fallback LocalStorage
         if (!order) {
             const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
             order = localOrders.find(o => o.orderId === orderId);
@@ -4571,7 +4617,6 @@ async function handleStatusCheck() {
             const status = order.status || 'Eingegangen';
             badge.innerText = status;
             
-            // Nice coloring
             if (status.includes('Versendet')) {
                 badge.style.background = '#d4edda';
                 badge.style.color = '#155724';
@@ -4583,7 +4628,7 @@ async function handleStatusCheck() {
                 badge.style.color = '#495057';
             }
         } else {
-            badge.innerText = t('status_not_found') || "Nicht gefunden";
+            badge.innerText = "Nicht gefunden";
             badge.style.background = '#f8d7da';
             badge.style.color = '#721c24';
         }
@@ -4594,7 +4639,6 @@ async function handleStatusCheck() {
 }
 
 function initOrderStatusChecker() {
-    // Basic setup if needed, most is handled via event delegation now
     console.log("Order Status Checker initialized");
 }
 

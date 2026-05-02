@@ -2,25 +2,28 @@
 import { showNotification } from './utils.js';
 
 // --- Supabase Setup ---
-// NOTE: These are your current credentials. 
 const SUPABASE_URL = 'https://ezwmsguucjzqovypmggk.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6d21zZ3V1Y2p6cW92eXBtZ2drIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUzNzg5MDEsImV4cCI6MjA5MDk1NDkwMX0.H4quCJTA75tZhWwJDkCrvM2Y7_aPhf2YLmvSDCZdgeU';
 
 let supabaseClient = null;
 
 export function initDB() {
+    console.log("DB: Versuche Supabase zu initialisieren...");
     if (window.supabase) {
         try {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
             console.log("✅ Supabase Client erfolgreich initialisiert.");
+            window.supabaseStatus = "Verbunden";
             
             // Sofortige Synchronisation beim Start versuchen
             setTimeout(() => syncLocalStorageToDB(), 2000);
         } catch (err) {
             console.error("❌ Fehler bei der Supabase-Initialisierung:", err);
+            window.supabaseStatus = "Fehler: " + err.message;
         }
     } else {
-        console.warn("⚠️ Supabase Bibliothek nicht gefunden. Die Seite läuft im lokalen Modus (Daten werden nur auf diesem Gerät gespeichert).");
+        console.warn("⚠️ Supabase Bibliothek nicht gefunden. Die Seite läuft im lokalen Modus.");
+        window.supabaseStatus = "Nicht gefunden (CDN fehlt)";
     }
 }
 
@@ -32,6 +35,7 @@ export async function saveOrderToDB(orderData) {
     }
 
     try {
+        console.log("DB: Sende Bestellung nach Supabase...", orderData.order_id);
         const { data, error } = await supabaseClient
             .from('orders')
             .insert([orderData]);
@@ -273,11 +277,11 @@ export async function syncLocalStorageToDB() {
         const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
         const toSync = localOrders.filter(o => !o.synced);
         for (const order of toSync) {
+            console.log("DB: Synchronisiere Bestellung...", order.orderId);
             const cleanOrder = { ...order };
             delete cleanOrder.synced;
-            delete cleanOrder.date; // Supabase uses created_at
+            delete cleanOrder.date;
             
-            // Map Local Format to DB Format
             const dbPayload = {
                 order_id: cleanOrder.orderId,
                 customer_name: cleanOrder.name,
