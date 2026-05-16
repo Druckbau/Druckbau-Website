@@ -274,6 +274,31 @@ export function renderCart() {
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
 
+    summary.innerHTML = `
+        <div style="background: var(--accent-blue); padding: 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid rgba(37, 99, 235, 0.2); display: flex; gap: 10px; align-items: flex-start;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <p style="font-size: 0.85rem; color: var(--text-dark); margin: 0; line-height: 1.4;">${t('cart_production_info')}</p>
+        </div>
+        <div class="summary-row">
+            <span>${t('cart_subtotal')}</span>
+            <span id="subtotal"></span>
+        </div>
+        <div class="summary-row" id="discount-row" style="display: none;">
+            <span>${t('cart_coupon')}</span>
+            <span id="discount" style="color: var(--success-color);"></span>
+        </div>
+        <div class="summary-row">
+            <span id="shipping-label">${t('checkout_step_2')}</span>
+            <span id="shipping"></span>
+        </div>
+        <div id="coupon-section"></div>
+        <div class="summary-row total">
+            <span>${t('cart_total')}</span>
+            <span id="total-sum"></span>
+        </div>
+        <button type="button" class="checkout-btn" data-i18n="checkout_title">${t('checkout_title')}</button>
+    `;
+
     const subtotalEl = document.getElementById('subtotal');
     if (subtotalEl) {
         subtotalEl.innerHTML = `${formatCurrency(subtotal)} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-light);">${t('price_hint')}</span>`;
@@ -339,6 +364,13 @@ export function updateCartIcon() {
     }
 }
 
+export function updateWishlistIcon() {
+    const count = document.getElementById('wishlist-count');
+    if (count) {
+        count.textContent = state.wishlist.length;
+    }
+}
+
 export function toggleWishlist(productId) {
     const index = state.wishlist.indexOf(productId);
     const product = products.find(p => p.id === productId);
@@ -352,6 +384,7 @@ export function toggleWishlist(productId) {
     }
 
     saveWishlistToStorage();
+    updateWishlistIcon();
 
     // We defer renderProducts and updateWishlistIcon to main script to avoid circular dependency
     document.dispatchEvent(new CustomEvent('wishlist-updated'));

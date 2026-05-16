@@ -144,11 +144,11 @@
                 <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-blue);"
                     data-i18n="home_order_status">Bestellstatus prüfen
                 </h3>
-                <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
+                <div class="status-check-container" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
                     <input type="text" id="status-order-id" placeholder="Bestellnummer (z.B. #123456)"
                         data-i18n="home_order_placeholder"
                         style="flex: 1; padding: 0.6rem; border-radius: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">
-                    <button id="check-status-btn" class="nav-trigger" data-i18n="home_check_btn"
+                    <button id="check-status-btn" class="status-btn" data-i18n="home_check_btn"
                         style="padding: 0.6rem 1rem; background: var(--primary-blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">Prüfen</button>
                 </div>
                 <div id="status-result" style="display: none; padding-top: 0.5rem; font-size: 0.9rem;">
@@ -263,10 +263,10 @@
             <h2 class="section-title" data-i18n="workshop_title">Die Werkstatt</h2>
             <div class="about-container">
                 <div class="about-text">
-                    <h3>Mit Leidenschaft gedruckt</h3>
-                    <p>Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine
+                    <h3 data-i18n="workshop_subtitle">Mit Leidenschaft gedruckt</h3>
+                    <p data-i18n="workshop_text1">Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine
                         kleine Manufaktur für individuelle 3D-Druck-Lösungen.</p>
-                    <p>In meiner Werkstatt setze ich auf moderne Drucker und hochwertige Materialien, um Ihre Ideen
+                    <p data-i18n="workshop_text2">In meiner Werkstatt setze ich auf moderne Drucker und hochwertige Materialien, um Ihre Ideen
                         bestmöglich umzusetzen – egal ob Einzelstück oder Kleinserie.</p>
                     <a href="#" class="btn contact-trigger" data-target="contact"
                         style="margin-top: 1rem; display:inline-block;">Projekt anfragen</a>
@@ -824,6 +824,8 @@
             </div>
             <div class="footer-col">
                 <h3 data-i18n="footer_legal">Rechtliches</h3>
+                <a href="agb.html" class="footer-link" data-i18n="footer_agb">AGB</a>
+                <a href="versand.html" class="footer-link" data-i18n="footer_shipping">Versand & Zahlung</a>
                 <a href="impressum.html" class="footer-link" data-i18n="footer_impressum">Impressum</a>
                 <a href="datenschutz.html" class="footer-link" data-i18n="footer_privacy">Datenschutz</a>
                 <a href="widerruf.html" class="footer-link" data-i18n="footer_returns">Widerrufsbelehrung</a>
@@ -866,26 +868,7 @@
         </div>
     </footer>
 
-    <!-- Cookie Modal -->
-    <div id="cookie-overlay" class="cookie-overlay">
-        <div class="cookie-modal">
-            <div class="cookie-icon">🍪</div>
-            <h3>Wir verwenden Cookies</h3>
-            <p>
-                Um Ihnen das bestmögliche Erlebnis auf unserer Webseite zu bieten (z.B. Warenkorb merken, schöne
-                Schriftarten), nutzen wir Technologien wie Cookies.
-                <br><br>
-                Sind Sie damit einverstanden?
-            </p>
-            <div class="cookie-actions">
-                <button id="accept-cookies" class="cookie-btn-primary">Alles klar!</button>
-                <button id="decline-cookies" class="cookie-btn-secondary"
-                    style="border: 1px solid var(--text-light); background: transparent; color: var(--text-light);">Ablehnen</button>
-                <a href="datenschutz.html" class="cookie-btn-secondary"
-                    style="text-decoration:none; display:flex; align-items:center; justify-content:center;">Infos</a>
-            </div>
-        </div>
-    </div>
+
 
     <!-- Review Modal -->
     <div id="review-modal" class="modal-overlay">
@@ -1091,16 +1074,43 @@
             <!-- Step 4: Review -->
             <div class="checkout-step" id="checkout-step-4" style="display: none;">
                 <div id="checkout-summary"
-                    style="margin-bottom: 2rem; background: var(--bg-light); padding: 1rem; border-radius: 8px;">
+                    style="margin-bottom: 1.5rem; background: var(--bg-light); padding: 1rem; border-radius: 8px;">
                     <!-- Populated by JS -->
                 </div>
+                
+                <div class="form-group gdpr-group" style="text-align: left; margin-bottom: 0.5rem; display: flex; align-items: flex-start;">
+                    <input type="checkbox" id="checkout-agb" required style="width: auto; margin-right: 0.5rem; margin-top: 4px;">
+                    <label for="checkout-agb" style="display: inline; font-size: 0.85rem; line-height: 1.4;" data-i18n="checkout_agb_checkbox">
+                        Ich habe die <a href="agb.html" target="_blank">AGB</a> gelesen und stimme diesen zu.
+                    </label>
+                </div>
+                
+                <div class="form-group gdpr-group" style="text-align: left; margin-bottom: 1.5rem; display: flex; align-items: flex-start;">
+                    <input type="checkbox" id="checkout-revocation" required style="width: auto; margin-right: 0.5rem; margin-top: 4px;">
+                    <label for="checkout-revocation" style="display: inline; font-size: 0.85rem; line-height: 1.4;" data-i18n="checkout_revocation_checkbox">
+                        Ich habe die <a href="widerruf.html" target="_blank">Widerrufsbelehrung</a> zur Kenntnis genommen.
+                    </label>
+                </div>
+
                 <div class="checkout-actions" style="display: flex; gap: 1rem;">
                     <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
                         data-i18n="checkout_back">Zurück</button>
-                    <a class="contact-btn" style="flex: 2; text-decoration: none; display: flex; align-items: center; justify-content: center; text-align: center;" id="final-checkout-btn"
-                        data-i18n="checkout_submit">Bestellung abschließen</a>
+                    <button class="contact-btn" style="flex: 2; display: flex; align-items: center; justify-content: center; text-align: center; border: none; cursor: pointer;" id="final-checkout-btn"
+                        data-i18n="checkout_submit">Bestellung abschließen</button>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div id="cookie-banner" class="cookie-banner">
+        <div class="cookie-content">
+            <h3 data-i18n="cookie_title">Datenschutz & Cookies</h3>
+            <p data-i18n="cookie_text">Wir nutzen Cookies und lokale Speicherung, um Ihr Einkaufserlebnis zu verbessern und unsere Dienste sicher bereitzustellen.</p>
+        </div>
+        <div class="cookie-actions">
+            <button id="cookie-accept" class="cookie-btn cookie-accept" data-i18n="cookie_accept">Akzeptieren</button>
+            <a href="#" class="cookie-btn cookie-settings nav-link" data-target="privacy" data-i18n="cookie_settings">Datenschutzerklärung</a>
         </div>
     </div>
 
@@ -1113,6 +1123,12 @@
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="bundled.js"></script>
+    <!-- Lightbox --> 
+    <div id="lightbox" class="modal-overlay" onclick="closeLightbox()"> 
+        <button class="modal-close" onclick="closeLightbox()">&times;</button> 
+        <button id="prev-img" class="gallery-nav prev">&lt;</button><img id="lightbox-img" src="" alt="Zoom"><button id="next-img" class="gallery-nav next">&gt;</button> 
+    </div> 
+
 </body>
 
 </html>

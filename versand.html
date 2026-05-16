@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Druckbau - Versand & Zahlung</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- Security Headers -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <style>
+        .legal-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: var(--primary-blue);
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+        }
+
+        p, ul {
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        ul {
+            padding-left: 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .back-home-fixed {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #00AEEF;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            font-size: 0.9rem;
+            transition: transform 0.2s;
+        }
+
+        .back-home-fixed:hover {
+            transform: scale(1.05);
+            background: #0096ce;
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-home-fixed">← Zur Startseite</a>
+    <nav>
+        <div class="nav-left">
+            <a href="index.html" style="text-decoration:none; color:inherit;">
+                <h2 style="margin:0; color: var(--primary-blue);">Druckbau</h2>
+            </a>
+        </div>
+    </nav>
+
+    <main>
+        <div class="legal-content">
+            <h1>Versand- und Zahlungsbedingungen</h1>
+
+            <h2>Zahlungsbedingungen</h2>
+            <p>Für Lieferungen bieten wir folgende Zahlungsmöglichkeiten an, sofern in der jeweiligen Produktdarstellung im Angebot nichts anderes bestimmt ist:</p>
+            <ul>
+                <li><strong>Vorkasse per Banküberweisung:</strong> Sie überweisen den Rechnungsbetrag nach Erhalt unserer Auftragsbestätigung.</li>
+                <li><strong>PayPal:</strong> Zahlen Sie bequem und sicher über Ihr PayPal-Konto. (Inklusive Kreditkarte, Lastschrift etc. über PayPal).</li>
+            </ul>
+
+            <h2>Versandbedingungen</h2>
+            <p>Die Lieferung unserer Artikel kann derzeit nur nach Deutschland erfolgen.</p>
+            
+            <h3>Versandkosten</h3>
+            <p>Die Versandkosten betragen pauschal <strong>4,90 €</strong> pro Bestellung.</p>
+            <p>Ab einem Bruttobestellwert von <strong>50,00 €</strong> versenden wir <strong>versandkostenfrei</strong>.</p>
+            
+            <h3>Lieferzeiten</h3>
+            <p>Soweit im jeweiligen Angebot keine andere Frist angegeben ist, erfolgt die Lieferung der Ware in Deutschland innerhalb von 3 - 5 Tagen nach Vertragsschluss (bei vereinbarter Vorauszahlung nach dem Zeitpunkt Ihrer Zahlungsanweisung).</p>
+            <p>Bitte beachten Sie, dass an Sonn- und Feiertagen keine Zustellung erfolgt. Bei individuellen Sonderanfertigungen (Custom Orders) richtet sich die Lieferzeit nach der benötigten Herstellungsdauer, die wir Ihnen im individuellen Angebot mitteilen.</p>
+
+            <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+        </div>
+    </main>
+</body>
+
+</html>

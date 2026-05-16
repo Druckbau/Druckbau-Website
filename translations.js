@@ -21,10 +21,11 @@ window.translations = {
         home_hero_desc: "Von individuellen Prototypen bis hin zu Serienproduktionen – wir bringen Ihre Ideen in die dritte Dimension.",
         preview_title: "Interaktive 3D-Vorschau",
         workshop_title: "Die Werkstatt",
-        product_wishlist_btn: "Auf die Wunschliste",
-
-        // Products
-        products_title: "Unsere Produkte",
+        workshop_subtitle: "Echte Handarbeit aus der Region",
+        workshop_text1: "Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine kleine Manufaktur für individuelle 3D-Druck-Lösungen.",
+        workshop_text2: "In meiner Werkstatt setze ich auf einen einzelnen, hochpräzisen Drucker. Da jedes Stück individuell für Sie gefertigt wird und keine Massenware ist, kann die Lieferzeit je nach Auslastung variieren. Qualität braucht eben seine Zeit!",
+        product_manufacturing_note: "Individualfertigung – Jedes Teil ein Einzelstück",
+        cart_production_info: "Hinweis: Wir fertigen jedes Teil individuell auf Bestellung an. Bei hoher Druckerauslastung kann sich die Lieferzeit geringfügig verlängern.",
         product_add_cart: "In den Warenkorb",
         product_quantity: "Menge",
         product_color: "Farbe",
@@ -35,8 +36,8 @@ window.translations = {
         catalog_fidget_name: "Fidget Klicker",
         catalog_poop_name: "Hundekotbeutelspender",
         catalog_poop_desc: "fasst 5 Beutel",
-        catalog_vase_name: "Vase",
-        catalog_vase_desc: "20cm groß, Lochdurchmesser 2,5cm",
+
+
         catalog_pen_name: "Stifthalter",
         catalog_pen_desc: "10cm groß",
         catalog_custom_name: "Auftragsarbeit",
@@ -107,8 +108,12 @@ window.translations = {
 
         // Legal / Price Hints
         price_hint: "inkl. MwSt.",
-        shipping_hint: "zzgl. Versandkosten",
+        shipping_hint: "zzgl. <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">Versandkosten</a>",
         shipping_info: "Versandkosten: 4.90€ (versichert)",
+        cookie_title: "Datenschutz & Cookies",
+        cookie_text: "Wir nutzen Cookies und lokale Speicherung, um Ihr Einkaufserlebnis zu verbessern und unsere Dienste (Supabase, EmailJS) sicher bereitzustellen. Durch die Nutzung der Seite stimmen Sie dem zu.",
+        cookie_accept: "Akzeptieren",
+        cookie_settings: "Datenschutzerklärung",
 
         // Footer
         footer_navigation: "Navigation",
@@ -183,7 +188,7 @@ window.translations = {
         checkout_back: "Zurück",
         checkout_next_shipping: "Weiter zu Versand",
         checkout_next_preview: "Weiter zur Übersicht",
-        checkout_submit: "Bestellung abschließen",
+        checkout_submit: "Zahlungspflichtig bestellen",
         checkout_name_label: "Vollständiger Name",
         checkout_email_label: "E-Mail-Adresse",
         checkout_address_label: "Straße und Hausnummer",
@@ -225,7 +230,7 @@ window.translations = {
         // FAQ Section
         faq_title: "Häufig gestellte Fragen",
         faq_acc_q1: "Wie lange dauert ein Druck?",
-        faq_acc_a1: "Das hängt stark von der Größe und Komplexität ab. Kleine Teile sind in wenigen Stunden fertig, große Projekte können 1-3 Tage dauern. Wir geben Ihnen bei der Anfrage immer eine Schätzung ab.",
+        faq_acc_a1: "Das hängt stark von der Größe und Komplexität ab. Da wir jedes Teil individuell auf einem einzelnen Drucker fertigen, dauert es in der Regel 1-3 Tage. Bei hoher Auslastung informieren wir Sie vorab über eventuelle Verzögerungen.",
         faq_acc_q2: "Kann ich eigene Dateien (STL) schicken?",
         faq_acc_a2: "Ja, absolut! Laden Sie Ihre .stl oder .obj Dateien einfach bei der 'Sonderanfertigung' hoch. Wir prüfen die Druckbarkeit kostenlos für Sie.",
         faq_acc_q3_extra: "Kann ich eigene Modelle drucken lassen?",
@@ -279,7 +284,12 @@ window.translations = {
         footer_impressum: "Impressum",
         footer_privacy: "Datenschutz",
         footer_returns: "Widerrufsbelehrung",
+        footer_agb: "AGB",
+        footer_shipping: "Versand & Zahlung",
         nav_reviews: "Bewertungen",
+        checkout_agb_checkbox: "Ich habe die <a href='agb.html' target='_blank'>AGB</a> gelesen und stimme diesen zu.",
+        checkout_revocation_checkbox: "Ich habe die <a href='widerruf.html' target='_blank'>Widerrufsbelehrung</a> zur Kenntnis genommen.",
+        alert_error_agb: "Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.",
         notif_title: "🔔 Benachrichtigungen aktivieren?",
         notif_allow: "Erlauben",
         notif_later: "Später",
@@ -318,10 +328,11 @@ window.translations = {
         home_hero_desc: "From individual prototypes to serial production – we bring your ideas into the third dimension.",
         preview_title: "Interactive 3D Preview",
         workshop_title: "The Workshop",
-        product_wishlist_btn: "Add to Wishlist",
-
-        // Products
-        products_title: "Our Products",
+        workshop_subtitle: "Genuine craftsmanship from the region",
+        workshop_text1: "Druckbau is born from a true passion for technology. What started as a hobby has grown into a small manufactory for individual 3D printing solutions.",
+        workshop_text2: "In my workshop, I rely on a single, high-precision printer. Since every piece is custom-made for you and not mass-produced, delivery times may vary depending on workload. Quality takes time!",
+        product_manufacturing_note: "Custom Production – Every piece is unique",
+        cart_production_info: "Note: We produce every part individually upon order. During high printer workload, delivery times may slightly increase.",
         product_add_cart: "Add to Cart",
         product_quantity: "Quantity",
         product_color: "Color",
@@ -332,8 +343,8 @@ window.translations = {
         catalog_fidget_name: "Fidget Clicker",
         catalog_poop_name: "Poop Bag Dispenser",
         catalog_poop_desc: "fits 5 bags",
-        catalog_vase_name: "Vase",
-        catalog_vase_desc: "20cm tall, 2.5cm hole diameter",
+
+
         catalog_pen_name: "Pen Holder",
         catalog_pen_desc: "10cm tall",
         catalog_custom_name: "Custom Order",
@@ -399,8 +410,12 @@ window.translations = {
 
         // Legal / Price Hints
         price_hint: "incl. VAT",
-        shipping_hint: "plus shipping",
-        shipping_info: "Shipping costs: 4.90€ (insured)",
+        shipping_hint: "plus <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">shipping</a>",
+        shipping_info: "Shipping: 4.90€ (insured)",
+        cookie_title: "Privacy & Cookies",
+        cookie_text: "We use cookies and local storage to improve your shopping experience and provide our services (Supabase, EmailJS) securely. By using the site, you agree to this.",
+        cookie_accept: "Accept",
+        cookie_settings: "Privacy Policy",
 
         // Footer
         footer_navigation: "Navigation",
@@ -417,6 +432,11 @@ window.translations = {
         footer_impressum: "Legal Notice",
         footer_privacy: "Privacy Policy",
         footer_returns: "Returns Policy",
+        footer_agb: "Terms and Conditions",
+        footer_shipping: "Shipping & Payment",
+        checkout_agb_checkbox: "I have read and agree to the <a href='agb.html' target='_blank'>Terms and Conditions</a>.",
+        checkout_revocation_checkbox: "I acknowledge the <a href='widerruf.html' target='_blank'>Right of Withdrawal</a>.",
+        alert_error_agb: "Please accept the Terms and Conditions and Right of Withdrawal to proceed.",
 
         // Guarantee
         guarantee_title: "100% Satisfaction Guarantee",
@@ -434,7 +454,7 @@ window.translations = {
         checkout_back: "Back",
         checkout_next_shipping: "Next to Shipping",
         checkout_next_preview: "Next to Preview",
-        checkout_submit: "Complete Order",
+        checkout_submit: "Buy Now",
         checkout_name_label: "Full Name",
         checkout_email_label: "Email Address",
         checkout_address_label: "Street and House Number",
@@ -475,7 +495,7 @@ window.translations = {
 
         // FAQ Accordion (Details Section)
         faq_acc_q1: "How long does a print take?",
-        faq_acc_a1: "It depends strongly on size and complexity. Small parts take a few hours, large projects can take 1-3 days. We always give you an estimate.",
+        faq_acc_a1: "This depends heavily on size and complexity. Since we produce every part individually on a single printer, it usually takes 1-3 days. If workload is high, we will inform you in advance about potential delays.",
         faq_acc_q2: "Can I send own files (STL)?",
         faq_acc_a2: "Yes, absolutely! Just upload your .stl or .obj files in the 'Custom Order' section. we check printability for free.",
         faq_acc_q3: "Which colors are possible?",
@@ -777,7 +797,7 @@ export function initTranslations() {
         const fallbackProducts = [
             { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
             { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-            { id: 'c', nameKey: 'catalog_vase_name', price: 11.99, descKey: 'catalog_vase_desc', images: ['vase_1.jpg', 'vase_2.jpg'] },
+
             { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
             { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
         ];
@@ -1280,7 +1300,9 @@ export function initTranslations() {
             const total = subtotal - discount + 4.90;
             const orderId = "DB-" + Date.now().toString().slice(-6);
             
-            let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
+            const currentLang = document.documentElement.lang === 'en' ? 'Englisch' : 'Deutsch';
+            
+            let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nSprache des Nutzers: ${currentLang}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
             cart.forEach(item => {
                 body += `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€\n`;
             });

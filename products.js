@@ -79,16 +79,16 @@ export function renderProducts() {
         }
 
         return `
-        <div class="product-card" data-product-id="${product.id}">
+        <div class="product-card" data-product-id="${product.id}" style="position: relative;"><button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg></button>
             <div class="product-gallery">
                 <div class="main-image-container">
-                    <div id="tint-layer-${product.id}" class="tint-layer"></div>
+                    <div id="tint-layer-${product.id}" class="tint-layer"></div><div class="zoom-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
                     <img src="${product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg'}" alt="${t(product.nameKey)}" class="product-img main-img" id="main-img-${product.id}">
                 </div>
                 <div class="thumbnail-row">
                     ${(product.images || []).map((img, index) => `
                         <img src="${img}" class="thumbnail ${index === 0 ? 'active' : ''}" 
-                             data-src="${img}" data-id="${product.id}" onclick="window.switchGalleryImage('${img}', this)">
+                             data-src="${img}" data-id="${product.id}">
                     `).join('')}
                 </div>
             </div>
@@ -97,6 +97,10 @@ export function renderProducts() {
                 <h3>${t(product.nameKey)}</h3>
                 ${ratingHtml}
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
+                <div class="manufacturing-note" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success-color); margin-bottom: 0.8rem; font-weight: 500;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    ${t('product_manufacturing_note')}
+                </div>
                 <div class="price">${product.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
                 
                 <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">

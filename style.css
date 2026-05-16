@@ -831,6 +831,11 @@ select,
         justify-content: center;
     }
     
+    .dropdown {
+        width: 100%;
+        text-align: center;
+    }
+    
     .dropdown-menu {
         position: static;
         transform: none;
@@ -841,6 +846,7 @@ select,
         height: 0;
         overflow: hidden;
         padding: 0;
+        width: 100%;
     }
     .dropdown.show .dropdown-menu {
         visibility: visible;
@@ -1525,121 +1531,6 @@ model-viewer {
     color: var(--text-light);
 }
 
-/* Cookie Modal Overlay */
-.cookie-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 10000;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.3s ease-out forwards;
-}
-
-.cookie-overlay.show {
-    display: flex;
-}
-
-/* Cookie Modal Content */
-.cookie-modal {
-    background: var(--bg-white);
-    padding: 2.5rem;
-    border-radius: 20px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-    text-align: center;
-    border: 1px solid var(--border-color);
-    transform: scale(0.9);
-    opacity: 0;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards 0.2s;
-}
-
-@keyframes popIn {
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
-
-.cookie-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    display: inline-block;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-
-    0%,
-    20%,
-    50%,
-    80%,
-    100% {
-        transform: translateY(0);
-    }
-
-    40% {
-        transform: translateY(-10px);
-    }
-
-    60% {
-        transform: translateY(-5px);
-    }
-}
-
-.cookie-modal h3 {
-    color: var(--text-dark);
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.cookie-modal p {
-    color: var(--text-light);
-    margin-bottom: 2rem;
-    line-height: 1.6;
-    font-size: 0.95rem;
-}
-
-.cookie-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.cookie-btn-primary {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: var(--transition);
-    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
-    flex: 1;
-}
-
-.cookie-btn-primary:hover {
-    background-color: var(--secondary-blue);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-}
-
-.cookie-btn-secondary {
-    background-color: transparent;
-    color: var(--text-light);
-    border: 1px solid var(--border-color);
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
     transition: var(--transition);
@@ -3030,3 +2921,260 @@ model-viewer {
     }
 }
 
+
+/* --- Mobile Fixes 2026 --- */
+@media (max-width: 768px) {
+    .status-check-container {
+        display: flex;
+        flex-direction: column !important;
+        gap: 1rem !important;
+    }
+    
+    #status-order-id {
+        width: 100% !important;
+        font-size: 1.1rem !important;
+        padding: 0.8rem !important;
+    }
+    
+    #check-status-btn {
+        width: 100% !important;
+        padding: 0.8rem !important;
+    }
+
+    .modal-overlay {
+        z-index: 12000 !important;
+    }
+
+    .modal-content {
+        width: 95% !important;
+        padding: 1.5rem !important;
+    }
+}
+
+#lightbox {
+    z-index: 13000 !important;
+}
+
+#lightbox-img {
+    max-width: 95% !important;
+    max-height: 85vh !important;
+    object-fit: contain !important;
+}
+
+/* --- Gallery & Thumbnail Optimization --- */
+.thumbnail {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    padding: 2px;
+}
+
+.thumbnail:hover {
+    transform: scale(1.1);
+    border-color: var(--primary-blue);
+}
+
+.thumbnail.active {
+    border-color: var(--primary-blue);
+    background: var(--accent-blue);
+    transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+    .thumbnail-row {
+        gap: 0.8rem !important;
+        padding: 0.5rem 0 !important;
+        overflow-x: auto;
+        justify-content: flex-start !important;
+    }
+
+    .thumbnail {
+        width: 60px !important;
+        height: 60px !important;
+        flex-shrink: 0;
+    }
+}
+
+/* --- Zoom Button & Gallery Nav --- */
+.main-image-container {
+    position: relative;
+    cursor: pointer;
+}
+
+.zoom-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    z-index: 5;
+    transition: all 0.3s ease;
+    pointer-events: none; /* Let the click through to container or handle specifically */
+}
+
+.main-image-container:hover .zoom-icon {
+    transform: scale(1.1);
+    background: var(--primary-blue);
+    color: white;
+}
+
+.gallery-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    font-size: 2rem;
+    padding: 1.5rem 1rem;
+    cursor: pointer;
+    z-index: 13001;
+    backdrop-filter: blur(5px);
+    transition: all 0.3s ease;
+}
+
+.gallery-nav:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+.gallery-nav.prev { left: 20px; border-radius: 0 10px 10px 0; }
+.gallery-nav.next { right: 20px; border-radius: 10px 0 0 10px; }
+
+@media (max-width: 768px) {
+    .gallery-nav {
+        padding: 1rem 0.5rem;
+        font-size: 1.5rem;
+    }
+}
+
+/* --- Fix: No white buttons on hover --- */
+.add-btn:hover, 
+.contact-btn:hover, 
+.add-to-cart-btn:hover, 
+.add-custom-btn:hover,
+#check-status-btn:hover,
+#final-checkout-btn:hover {
+    background-color: var(--primary-dark) !important;
+    color: white !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+/* --- Fix: Zoom Icon visibility --- */
+.zoom-icon {
+    background: rgba(0, 0, 0, 0.5) !important;
+    color: white !important;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px);
+    padding: 8px;
+    border-radius: 50%;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+}
+
+.zoom-icon svg {
+    width: 20px;
+    height: 20px;
+    fill: white;
+}
+
+/* --- Fix: Wishlist Button Hover --- */
+.wishlist-btn:hover {
+    background: #fff0f0 !important;
+    transform: scale(1.1);
+}
+/* Cookie Banner */
+.cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 450px;
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    z-index: 9999;
+    display: none;
+    animation: slideUp 0.5s ease;
+}
+
+[data-theme="dark"] .cookie-banner {
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+}
+
+@keyframes slideUp {
+    from { transform: translateY(100px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.cookie-content h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    color: var(--primary-blue);
+}
+
+.cookie-content p {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 1.2rem;
+    line-height: 1.4;
+}
+
+.cookie-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.cookie-btn {
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.cookie-accept {
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    flex: 2;
+}
+
+.cookie-accept:hover {
+    background: var(--primary-dark);
+}
+
+.cookie-settings {
+    background: transparent;
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+    flex: 1;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cookie-settings:hover {
+    background: var(--bg-light);
+}
+
+@media (max-width: 600px) {
+    .cookie-banner {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        max-width: none;
+    }
+}

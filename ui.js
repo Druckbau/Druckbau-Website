@@ -1,6 +1,9 @@
 // js/ui.js
 import { escapeHtml, showNotification, t } from './utils.js';
 
+let currentGallery = [];
+let currentImgIndex = 0;
+
 export function setupThemeToggle() {
     const themeBtn = document.getElementById('theme-toggle');
     if (!themeBtn) return;
@@ -15,7 +18,6 @@ export function setupThemeToggle() {
         updateThemeIcon(newTheme);
     });
 
-    // Init theme
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     const savedTheme = localStorage.getItem('druckbau_theme');
     
@@ -29,7 +31,6 @@ export function setupThemeToggle() {
     document.documentElement.setAttribute('data-theme', initialTheme);
     updateThemeIcon(initialTheme);
 
-    // Listen for system changes
     systemPrefersDark.addEventListener('change', (e) => {
         if (!localStorage.getItem('druckbau_theme')) {
             const newTheme = e.matches ? 'dark' : 'light';
@@ -100,14 +101,6 @@ export function setupChat() {
         }
     };
 
-    window.sendQuickReply = (text) => {
-        appendMessage(text, 'user');
-        setTimeout(() => {
-            const response = getBotResponse(text);
-            appendMessage(response, 'bot');
-        }, 1000);
-    };
-
     const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         chatInput.addEventListener('keypress', (e) => {
@@ -117,10 +110,9 @@ export function setupChat() {
         });
     }
 
-    // Quick replies
     document.querySelectorAll('.quick-reply-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            sendQuickReply(btn.innerText);
+            window.sendQuickReply(btn.innerText);
         });
     });
 }
@@ -141,44 +133,71 @@ function appendMessage(text, sender) {
 
 function getBotResponse(text) {
     const t = text.toLowerCase();
-
     if (t.includes('lieferung') || t.includes('versand') || t.includes('dauer')) {
         return "Unsere Lieferzeit beträgt in der Regel 3-5 Werktage nach Zahlungseingang.";
     } else if (t.includes('kosten') || t.includes('preis') || t.includes('euro')) {
         return "Die Standardversandkosten betragen 4,90€. Spezifische Produktpreise findest du im Katalog.";
-    } else if (t.includes('auftrag') || t.includes('speziell') || t.includes('design')) {
-        return "Für Auftragsarbeiten kontaktiere uns bitte über das Formular oder füge das Produkt 'Auftragsarbeit' zum Warenkorb hinzu!";
     } else {
-        return "Vielen Dank für deine Nachricht. Unser Support-Team (ich, Philipp) meldet sich bald bei dir. Du kannst mich auch über das Kontaktformular erreichen.";
+        return "Vielen Dank für deine Nachricht. Unser Support-Team meldet sich bald bei dir.";
     }
 }
 
 export function setupLightbox() {
-    window.openLightbox = (imgSrc) => {
+    window.openLightbox = (imgList, startIndex = 0) => {
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
-        if (lightbox && lightboxImg) {
-            lightboxImg.src = imgSrc;
-            lightbox.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
+        if (!lightbox || !lightboxImg) return;
+
+        currentGallery = Array.isArray(imgList) ? imgList : [imgList];
+        currentImgIndex = startIndex;
+
+        updateLightboxImage();
+        lightbox.classList.add('show');
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     };
 
     window.closeLightbox = () => {
         const lightbox = document.getElementById('lightbox');
         if (lightbox) {
             lightbox.classList.remove('show');
+            lightbox.style.display = 'none';
             document.body.style.overflow = '';
         }
     };
 
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
+    const nextBtn = document.getElementById('next-img');
+    const prevBtn = document.getElementById('prev-img');
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentImgIndex = (currentImgIndex + 1) % currentGallery.length;
+            updateLightboxImage();
         });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentImgIndex = (currentImgIndex - 1 + currentGallery.length) % currentGallery.length;
+            updateLightboxImage();
+        });
+    }
+
+    function updateLightboxImage() {
+        const lightboxImg = document.getElementById('lightbox-img');
+        if (lightboxImg) {
+            lightboxImg.src = currentGallery[currentImgIndex];
+        }
+        
+        const nextBtn = document.getElementById('next-img');
+        const prevBtn = document.getElementById('prev-img');
+        if (nextBtn && prevBtn) {
+            const isSingle = currentGallery.length <= 1;
+            nextBtn.style.display = isSingle ? 'none' : 'block';
+            prevBtn.style.display = isSingle ? 'none' : 'block';
+        }
     }
 }
 
@@ -187,16 +206,6 @@ export function setupFAQ() {
         button.addEventListener('click', () => {
             const faqItem = button.parentElement;
             const faqAnswer = button.nextElementSibling;
-
-            // Close others
-            document.querySelectorAll('.faq-item').forEach(item => {
-                if (item !== faqItem && item.classList.contains('active')) {
-                    item.classList.remove('active');
-                    item.querySelector('.faq-answer').style.maxHeight = null;
-                }
-            });
-
-            // Toggle current
             faqItem.classList.toggle('active');
             if (faqItem.classList.contains('active')) {
                 faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
@@ -210,39 +219,12 @@ export function setupFAQ() {
 export function setupNavigation() {
     document.body.addEventListener('click', (e) => {
         const link = e.target.closest('.nav-link, .cart-icon-container, .wishlist-icon-container, .footer-link.nav-trigger, .contact-trigger, .nav-trigger');
-
         if (!link) return;
-
         const targetId = link.getAttribute('data-target');
-
         if (targetId) {
             e.preventDefault();
             showSection(targetId);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    });
-
-    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-        toggle.addEventListener('click', (e) => {
-            const dropdown = toggle.parentElement;
-            if (dropdown.classList.contains('dropdown')) {
-                e.preventDefault();
-                document.querySelectorAll('.dropdown').forEach(d => {
-                    if (d !== dropdown) d.classList.remove('show');
-                });
-                dropdown.classList.toggle('show');
-                const targetId = toggle.getAttribute('data-target');
-                if (targetId) {
-                    showSection(targetId);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            }
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
         }
     });
 
@@ -260,16 +242,4 @@ export function showSection(id) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
         setTimeout(() => target.classList.add('active'), 10);
     }
-
-    document.querySelectorAll('.nav-link, .nav-trigger').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-target') === id) {
-            link.classList.add('active');
-        }
-    });
-
-    if (id === 'cart' && window.renderCart) window.renderCart();
-    if (id === 'wishlist' && window.renderWishlist) window.renderWishlist();
-
-    document.dispatchEvent(new CustomEvent('section-shown', { detail: { id } }));
 }

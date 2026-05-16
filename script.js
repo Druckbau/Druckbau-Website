@@ -1,7 +1,7 @@
 // script.js - Main Application Entry Point
 import { loadCartFromStorage, loadWishlistFromStorage, initCoupons } from './js/store.js';
 import { renderProducts, addPrintTimeBadges, updateColorPreview, switchGalleryImage } from './js/products.js';
-import { renderCart, updateCartIcon, addToCart, addCustomToCart, toggleWishlist, removeFromCart, applyCoupon, removeCoupon, renderWishlist, addToCartFromWishlist } from './js/cart.js';
+import { renderCart, updateCartIcon, updateWishlistIcon, addToCart, addCustomToCart, toggleWishlist, removeFromCart, applyCoupon, removeCoupon, renderWishlist, addToCartFromWishlist } from './js/cart.js';
 import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevCheckoutStep } from './js/checkout.js';
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
@@ -12,10 +12,17 @@ import { initTranslations } from './translations.js';
 async function init() {
     initTranslations();
     initDB();
+    
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init("0proWevyCc_hMFYs1"); 
+    }
+
     setupNavigation();
     setupThemeToggle();
     setupChat();
     setupLightbox();
+    setupCookieBanner();
+    setupGlobalEventListeners();
     
     await initCoupons();
     await loadPublicNews();
@@ -26,12 +33,9 @@ async function init() {
         addPrintTimeBadges();
         renderProducts();
         updateCartIcon();
-
         setupFAQ();
-        initOrderStatusChecker();
     }
 
-    // Pass global utilities that inline HTML or older scripts might need
     window.updateColorPreview = updateColorPreview;
     window.switchGalleryImage = switchGalleryImage;
     window.renderProducts = renderProducts;
@@ -43,12 +47,17 @@ async function init() {
     window.closeCheckoutModal = closeCheckoutModal;
     window.triggerAdminRefresh = triggerAdminRefresh;
 
-    window.trackYouTubeClick = trackYouTubeClick;
-
     initAdminSystem();
     setupGlobalEventListeners();
     
-    // Attempt sync after initialization
+    document.addEventListener('wishlist-updated', () => {
+        renderProducts();
+        renderWishlist();
+        updateCartIcon();
+        updateWishlistIcon();
+        setupFAQ();
+    });
+    
     setTimeout(() => {
         syncLocalStorageToDB();
     }, 2000);
@@ -61,8 +70,6 @@ async function loadPublicNews() {
     if (!newsSection || !newsText) return;
 
     let newsList = await loadNewsFromDB();
-    
-    // Fallback if DB is empty/fails
     if (!newsList || newsList.length === 0) {
         newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
     }
@@ -70,14 +77,9 @@ async function loadPublicNews() {
     if (newsList && newsList.length > 0) {
         const latestInfo = newsList[0];
         const content = latestInfo.content || latestInfo.text;
-        
         if (content) {
             newsSection.style.display = 'block';
-            let displayContent = content;
-            if (content.startsWith('[OFFER]')) {
-                displayContent = content.replace('[OFFER] ', '').replace('|', ':');
-            }
-            newsText.innerHTML = displayContent.replace(/\n/g, '<br>');
+            newsText.innerHTML = content.replace(/\n/g, '<br>');
             if (newsDate) {
                 const date = latestInfo.created_at || latestInfo.date;
                 newsDate.textContent = date ? new Date(date).toLocaleDateString('de-DE') : '';
@@ -85,82 +87,58 @@ async function loadPublicNews() {
         }
     } else {
         newsSection.style.display = 'none';
-        newsText.innerHTML = "Aktuell keine Neuigkeiten.";
-        if (newsDate) newsDate.textContent = "";
     }
+}
+
+function setupCookieBanner() {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('cookie-accept');
+    
+    if (!banner || !acceptBtn) return;
+
+    const consent = localStorage.getItem('druckbau_cookie_consent');
+    if (!consent) {
+        setTimeout(() => {
+            banner.style.display = 'block';
+        }, 1000);
+    }
+
+    acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('druckbau_cookie_consent', 'accepted');
+        banner.style.animation = 'slideUp 0.5s ease reverse forwards';
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 500);
+    });
 }
 
 function setupGlobalEventListeners() {
     document.body.addEventListener('click', (e) => {
         const target = e.target;
 
-        if (target.closest('.next-step-btn')) {
-            nextCheckoutStep();
-            return;
-        }
-        if (target.closest('.back-step-btn')) {
-            prevCheckoutStep();
-            return;
-        }
-        if (target.closest('#close-checkout')) {
-            closeCheckoutModal();
-            return;
-        }
-        if (target.closest('#final-checkout-btn')) {
-            e.preventDefault();
-            console.log('Final checkout initiated');
+        if (target.id === 'final-checkout-btn' || target.closest('#final-checkout-btn')) {
+            const agbCheckbox = document.getElementById('checkout-agb');
+            const revCheckbox = document.getElementById('checkout-revocation');
             
-            // Gather fresh data
-            const name = document.getElementById('checkout-name')?.value || '';
-            const email = document.getElementById('checkout-email')?.value || '';
-            const address = document.getElementById('checkout-address')?.value || '';
-            const zip = document.getElementById('checkout-zip')?.value || '';
-            const city = document.getElementById('checkout-city')?.value || '';
+            if ((agbCheckbox && !agbCheckbox.checked) || (revCheckbox && !revCheckbox.checked)) {
+                // If utils.js has showWarning, use it, else alert
+                if (typeof showWarning === 'function') {
+                    showWarning('Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.');
+                } else {
+                    alert('Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.');
+                }
+                return;
+            }
             
-            // Re-calculate total
-            const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const total = subtotal + 5.90; // Simplified total for mail template
-            
-            const orderId = "DB-" + Date.now().toString().slice(-6);
-
-            const mailBody = `Hallo Druckbau Team,\n\n` +
-                `Bestellung: ${orderId}\n\n` +
-                `Kundendaten:\n${name}\n${email}\n${address}, ${zip} ${city}\n\n` +
-                `Produkte:\n` + state.cart.map(item => `- ${item.qty}x ${item.name}`).join('\n') +
-                `\n\nGesamtbetrag: ${total.toFixed(2)} EUR\n\nBitte senden Sie mir die Zahlungsdetails zu.`;
-
-            const subject = `Neue Bestellung ${orderId}`;
-            const mailto = `mailto:druckbau@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailBody).replace(/%0A/g, '%0D%0A')}`;
-            
-            console.log('Triggering mailto...');
-            window.location.href = mailto;
-            
-            // Continue with background log
-            if (typeof submitCheckout === 'function') submitCheckout();
+            if (typeof submitCheckout === 'function') {
+                submitCheckout();
+            }
             return;
         }
 
-        if (target.closest('#checkout-btn')) {
-            console.log('Checkout button clicked');
-            checkout();
-            return;
-        }
-
-        if (target.closest('.rate-btn')) {
-            e.stopPropagation();
-            const btn = target.closest('.rate-btn');
-            console.log('Rate button clicked for:', btn.dataset.id);
-            openReviewModal(btn.dataset.id, btn.dataset.name);
-            return;
-        }
-        if (target.closest('.view-reviews-btn')) {
-            e.stopPropagation();
-            const btn = target.closest('.view-reviews-btn');
-            openReviewListModal(btn.dataset.id, btn.dataset.name);
-            return;
-        }
-        if (target.closest('#review-modal .close-modal')) {
-            closeReviewModal();
+        // PRIORITIZE BUTTONS (Wishlist, Add to Cart, etc.)
+        if (target.closest('.wishlist-btn')) {
+            toggleWishlist(target.closest('.wishlist-btn').dataset.id);
             return;
         }
 
@@ -168,26 +146,31 @@ function setupGlobalEventListeners() {
             addToCart(target.closest('.add-to-cart-btn').dataset.id);
             return;
         }
+        
         if (target.closest('.add-custom-btn')) {
             addCustomToCart(target.closest('.add-custom-btn').dataset.id);
             return;
         }
-        if (target.closest('.wishlist-btn')) {
-            e.preventDefault();
-            toggleWishlist(target.closest('.wishlist-btn').dataset.id);
-            return;
-        }
-        if (target.closest('.remove-btn') && target.closest('.remove-btn').dataset.index !== undefined) {
-            removeFromCart(parseInt(target.closest('.remove-btn').dataset.index));
+
+        if (target.closest('.rate-btn')) {
+            const btn = target.closest('.rate-btn');
+            openReviewModal(btn.dataset.id, btn.dataset.name);
             return;
         }
 
-        if (target.closest('#apply-coupon-btn')) {
-            applyCoupon();
+        if (target.closest('.view-reviews-btn')) {
+            const btn = target.closest('.view-reviews-btn');
+            openReviewListModal(btn.dataset.id, btn.dataset.name);
             return;
         }
-        if (target.closest('#remove-coupon-btn')) {
-            removeCoupon();
+
+        if (target.closest('#check-status-btn')) {
+            handleStatusCheck();
+            return;
+        }
+
+        if (target.closest('.wishlist-remove-btn')) {
+            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
             return;
         }
 
@@ -195,44 +178,41 @@ function setupGlobalEventListeners() {
             addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
             return;
         }
-        if (target.closest('.wishlist-remove-btn')) {
-            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
-            return;
-        }
 
-        if (target.closest('.main-img')) {
+        // IMAGE GALLERY / LIGHTBOX
+        if (target.closest('.main-image-container')) {
             const card = target.closest('.product-card');
             if (card) {
                 const id = card.dataset.productId;
-                if (window.openLightbox) window.openLightbox(target.closest('.main-img').src);
+                const thumbs = Array.from(card.querySelectorAll('.thumbnail'));
+                const imgList = thumbs.map(t => t.getAttribute('data-src') || t.src);
+                
+                const activeThumb = card.querySelector('.thumbnail.active');
+                const startIndex = activeThumb ? thumbs.indexOf(activeThumb) : 0;
+
+                if (window.openLightbox) window.openLightbox(imgList, startIndex);
                 trackProductView(id);
             }
             return;
         }
-        
+
         if (target.closest('.thumbnail')) {
             const card = target.closest('.product-card');
             if (card) {
                 const thumb = target.closest('.thumbnail');
                 const src = thumb.getAttribute('data-src') || thumb.src;
                 if (window.switchGalleryImage) window.switchGalleryImage(src, thumb);
-                trackProductView(card.dataset.productId);
             }
             return;
         }
+
+        if (target.closest('.wishlist-remove-btn')) {
+            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
+            return;
+        }
         
-        if (target.closest('.youtube-link')) {
-            trackYouTubeClick();
-            return;
-        }
-
-        if (target.innerText && target.innerText.includes('Export') && target.classList.contains('contact-btn')) {
-            exportOrdersToCSV();
-            return;
-        }
-
-        if (target.closest('#check-status-btn')) {
-            handleStatusCheck();
+        if (target.closest('.wishlist-add-to-cart-btn')) {
+            addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
             return;
         }
     });
@@ -242,23 +222,6 @@ function setupGlobalEventListeners() {
             updateColorPreview(e.target, e.target.dataset.id);
         }
     });
-
-    document.addEventListener('wishlist-updated', () => {
-        renderProducts();
-        if (document.getElementById('wishlist').classList.contains('active')) {
-            renderWishlist();
-        }
-    });
-
-    // Custom Event listener for navigating via code
-    document.addEventListener('navigate', (e) => {
-        if (window.showSection) window.showSection(e.detail);
-    });
-
-    const reviewForm = document.getElementById('review-form');
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', submitReview);
-    }
 }
 
 async function handleStatusCheck() {
@@ -271,63 +234,27 @@ async function handleStatusCheck() {
     if (!orderId) return;
 
     badge.innerText = "Suche...";
-    badge.style.background = "#eee";
-    badge.style.color = "#333";
     resultDiv.style.display = 'block';
 
     try {
         const dbOrders = await loadOrdersFromDB();
-        let order = dbOrders ? dbOrders.find(o => (o.order_id === orderId || o.orderId === orderId)) : null;
-
+        let order = dbOrders ? dbOrders.find(o => o.order_id === orderId) : null;
         if (!order) {
-            const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
-            order = localOrders.find(o => o.orderId === orderId);
+            const locals = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+            order = locals.find(o => o.orderId === orderId);
         }
 
         if (order) {
-            const status = order.status || 'Eingegangen';
-            badge.innerText = status;
-            
-            if (status.includes('Versendet')) {
-                badge.style.background = '#d4edda';
-                badge.style.color = '#155724';
-            } else if (status.includes('Gedruckt')) {
-                badge.style.background = '#cce5ff';
-                badge.style.color = '#004085';
-            } else if (status.includes('Abholbereit')) {
-                badge.style.background = '#e0cffc'; // Lila
-                badge.style.color = '#5a34a2';
-            } else if (status.includes('Bearbeitung')) {
-                badge.style.background = '#fff3cd';
-                badge.style.color = '#856404';
-            } else if (status.includes('ausstehend')) {
-                badge.style.background = '#ffeeba'; // Orange/Gelb
-                badge.style.color = '#856404';
-            } else if (status.includes('Storniert')) {
-                badge.style.background = '#f8d7da'; // Rot
-                badge.style.color = '#721c24';
-            } else {
-                badge.style.background = '#e9ecef';
-                badge.style.color = '#495057';
-            }
+            badge.innerText = order.status || 'Eingegangen';
+            badge.style.background = '#cce5ff';
+            badge.style.color = '#004085';
         } else {
             badge.innerText = "Nicht gefunden";
             badge.style.background = '#f8d7da';
-            badge.style.color = '#721c24';
         }
     } catch (err) {
-        console.error("Status check failed", err);
-        badge.innerText = "Fehler bei der Abfrage.";
+        badge.innerText = "Fehler.";
     }
 }
 
-function initOrderStatusChecker() {
-    console.log("Order Status Checker initialized");
-}
-
-// Start App
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
+init();

@@ -23,10 +23,11 @@ window.translations = {
         home_hero_desc: "Von individuellen Prototypen bis hin zu Serienproduktionen – wir bringen Ihre Ideen in die dritte Dimension.",
         preview_title: "Interaktive 3D-Vorschau",
         workshop_title: "Die Werkstatt",
-        product_wishlist_btn: "Auf die Wunschliste",
-
-        // Products
-        products_title: "Unsere Produkte",
+        workshop_subtitle: "Echte Handarbeit aus der Region",
+        workshop_text1: "Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine kleine Manufaktur für individuelle 3D-Druck-Lösungen.",
+        workshop_text2: "In meiner Werkstatt setze ich auf einen einzelnen, hochpräzisen Drucker. Da jedes Stück individuell für Sie gefertigt wird und keine Massenware ist, kann die Lieferzeit je nach Auslastung variieren. Qualität braucht eben seine Zeit!",
+        product_manufacturing_note: "Individualfertigung – Jedes Teil ein Einzelstück",
+        cart_production_info: "Hinweis: Wir fertigen jedes Teil individuell auf Bestellung an. Bei hoher Druckerauslastung kann sich die Lieferzeit geringfügig verlängern.",
         product_add_cart: "In den Warenkorb",
         product_quantity: "Menge",
         product_color: "Farbe",
@@ -37,8 +38,8 @@ window.translations = {
         catalog_fidget_name: "Fidget Klicker",
         catalog_poop_name: "Hundekotbeutelspender",
         catalog_poop_desc: "fasst 5 Beutel",
-        catalog_vase_name: "Vase",
-        catalog_vase_desc: "20cm groß, Lochdurchmesser 2,5cm",
+
+
         catalog_pen_name: "Stifthalter",
         catalog_pen_desc: "10cm groß",
         catalog_custom_name: "Auftragsarbeit",
@@ -109,8 +110,12 @@ window.translations = {
 
         // Legal / Price Hints
         price_hint: "inkl. MwSt.",
-        shipping_hint: "zzgl. Versandkosten",
+        shipping_hint: "zzgl. <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">Versandkosten</a>",
         shipping_info: "Versandkosten: 4.90€ (versichert)",
+        cookie_title: "Datenschutz & Cookies",
+        cookie_text: "Wir nutzen Cookies und lokale Speicherung, um Ihr Einkaufserlebnis zu verbessern und unsere Dienste (Supabase, EmailJS) sicher bereitzustellen. Durch die Nutzung der Seite stimmen Sie dem zu.",
+        cookie_accept: "Akzeptieren",
+        cookie_settings: "Datenschutzerklärung",
 
         // Footer
         footer_navigation: "Navigation",
@@ -185,7 +190,7 @@ window.translations = {
         checkout_back: "Zurück",
         checkout_next_shipping: "Weiter zu Versand",
         checkout_next_preview: "Weiter zur Übersicht",
-        checkout_submit: "Bestellung abschließen",
+        checkout_submit: "Zahlungspflichtig bestellen",
         checkout_name_label: "Vollständiger Name",
         checkout_email_label: "E-Mail-Adresse",
         checkout_address_label: "Straße und Hausnummer",
@@ -227,7 +232,7 @@ window.translations = {
         // FAQ Section
         faq_title: "Häufig gestellte Fragen",
         faq_acc_q1: "Wie lange dauert ein Druck?",
-        faq_acc_a1: "Das hängt stark von der Größe und Komplexität ab. Kleine Teile sind in wenigen Stunden fertig, große Projekte können 1-3 Tage dauern. Wir geben Ihnen bei der Anfrage immer eine Schätzung ab.",
+        faq_acc_a1: "Das hängt stark von der Größe und Komplexität ab. Da wir jedes Teil individuell auf einem einzelnen Drucker fertigen, dauert es in der Regel 1-3 Tage. Bei hoher Auslastung informieren wir Sie vorab über eventuelle Verzögerungen.",
         faq_acc_q2: "Kann ich eigene Dateien (STL) schicken?",
         faq_acc_a2: "Ja, absolut! Laden Sie Ihre .stl oder .obj Dateien einfach bei der 'Sonderanfertigung' hoch. Wir prüfen die Druckbarkeit kostenlos für Sie.",
         faq_acc_q3_extra: "Kann ich eigene Modelle drucken lassen?",
@@ -281,7 +286,12 @@ window.translations = {
         footer_impressum: "Impressum",
         footer_privacy: "Datenschutz",
         footer_returns: "Widerrufsbelehrung",
+        footer_agb: "AGB",
+        footer_shipping: "Versand & Zahlung",
         nav_reviews: "Bewertungen",
+        checkout_agb_checkbox: "Ich habe die <a href='agb.html' target='_blank'>AGB</a> gelesen und stimme diesen zu.",
+        checkout_revocation_checkbox: "Ich habe die <a href='widerruf.html' target='_blank'>Widerrufsbelehrung</a> zur Kenntnis genommen.",
+        alert_error_agb: "Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.",
         notif_title: "🔔 Benachrichtigungen aktivieren?",
         notif_allow: "Erlauben",
         notif_later: "Später",
@@ -320,10 +330,11 @@ window.translations = {
         home_hero_desc: "From individual prototypes to serial production – we bring your ideas into the third dimension.",
         preview_title: "Interactive 3D Preview",
         workshop_title: "The Workshop",
-        product_wishlist_btn: "Add to Wishlist",
-
-        // Products
-        products_title: "Our Products",
+        workshop_subtitle: "Genuine craftsmanship from the region",
+        workshop_text1: "Druckbau is born from a true passion for technology. What started as a hobby has grown into a small manufactory for individual 3D printing solutions.",
+        workshop_text2: "In my workshop, I rely on a single, high-precision printer. Since every piece is custom-made for you and not mass-produced, delivery times may vary depending on workload. Quality takes time!",
+        product_manufacturing_note: "Custom Production – Every piece is unique",
+        cart_production_info: "Note: We produce every part individually upon order. During high printer workload, delivery times may slightly increase.",
         product_add_cart: "Add to Cart",
         product_quantity: "Quantity",
         product_color: "Color",
@@ -334,8 +345,8 @@ window.translations = {
         catalog_fidget_name: "Fidget Clicker",
         catalog_poop_name: "Poop Bag Dispenser",
         catalog_poop_desc: "fits 5 bags",
-        catalog_vase_name: "Vase",
-        catalog_vase_desc: "20cm tall, 2.5cm hole diameter",
+
+
         catalog_pen_name: "Pen Holder",
         catalog_pen_desc: "10cm tall",
         catalog_custom_name: "Custom Order",
@@ -401,8 +412,12 @@ window.translations = {
 
         // Legal / Price Hints
         price_hint: "incl. VAT",
-        shipping_hint: "plus shipping",
-        shipping_info: "Shipping costs: 4.90€ (insured)",
+        shipping_hint: "plus <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">shipping</a>",
+        shipping_info: "Shipping: 4.90€ (insured)",
+        cookie_title: "Privacy & Cookies",
+        cookie_text: "We use cookies and local storage to improve your shopping experience and provide our services (Supabase, EmailJS) securely. By using the site, you agree to this.",
+        cookie_accept: "Accept",
+        cookie_settings: "Privacy Policy",
 
         // Footer
         footer_navigation: "Navigation",
@@ -419,6 +434,11 @@ window.translations = {
         footer_impressum: "Legal Notice",
         footer_privacy: "Privacy Policy",
         footer_returns: "Returns Policy",
+        footer_agb: "Terms and Conditions",
+        footer_shipping: "Shipping & Payment",
+        checkout_agb_checkbox: "I have read and agree to the <a href='agb.html' target='_blank'>Terms and Conditions</a>.",
+        checkout_revocation_checkbox: "I acknowledge the <a href='widerruf.html' target='_blank'>Right of Withdrawal</a>.",
+        alert_error_agb: "Please accept the Terms and Conditions and Right of Withdrawal to proceed.",
 
         // Guarantee
         guarantee_title: "100% Satisfaction Guarantee",
@@ -436,7 +456,7 @@ window.translations = {
         checkout_back: "Back",
         checkout_next_shipping: "Next to Shipping",
         checkout_next_preview: "Next to Preview",
-        checkout_submit: "Complete Order",
+        checkout_submit: "Buy Now",
         checkout_name_label: "Full Name",
         checkout_email_label: "Email Address",
         checkout_address_label: "Street and House Number",
@@ -477,7 +497,7 @@ window.translations = {
 
         // FAQ Accordion (Details Section)
         faq_acc_q1: "How long does a print take?",
-        faq_acc_a1: "It depends strongly on size and complexity. Small parts take a few hours, large projects can take 1-3 days. We always give you an estimate.",
+        faq_acc_a1: "This depends heavily on size and complexity. Since we produce every part individually on a single printer, it usually takes 1-3 days. If workload is high, we will inform you in advance about potential delays.",
         faq_acc_q2: "Can I send own files (STL)?",
         faq_acc_a2: "Yes, absolutely! Just upload your .stl or .obj files in the 'Custom Order' section. we check printability for free.",
         faq_acc_q3: "Which colors are possible?",
@@ -779,7 +799,7 @@ function initTranslations() {
         const fallbackProducts = [
             { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
             { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-            { id: 'c', nameKey: 'catalog_vase_name', price: 11.99, descKey: 'catalog_vase_desc', images: ['vase_1.jpg', 'vase_2.jpg'] },
+
             { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
             { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
         ];
@@ -1282,7 +1302,9 @@ function initTranslations() {
             const total = subtotal - discount + 4.90;
             const orderId = "DB-" + Date.now().toString().slice(-6);
             
-            let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
+            const currentLang = document.documentElement.lang === 'en' ? 'Englisch' : 'Deutsch';
+            
+            let body = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nSprache des Nutzers: ${currentLang}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n`;
             cart.forEach(item => {
                 body += `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€\n`;
             });
@@ -1770,6 +1792,20 @@ function initDB() {
     }
 }
 
+// --- Auth ---
+async function signInAdmin(email, password) {
+    if (!supabaseClient) return { error: "Supabase nicht initialisiert" };
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+        return { data, error };
+    } catch (e) {
+        return { error: e.message };
+    }
+}
+
 // --- Orders ---
 async function saveOrderToDB(orderData) {
     if (!supabaseClient) {
@@ -2121,7 +2157,6 @@ async function saveReviewToDB(productId, name, text, rating) {
 const products = [
     { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
     { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-    { id: 'c', nameKey: 'catalog_vase_name', price: 11.99, descKey: 'catalog_vase_desc', images: ['vase_1.jpg', 'vase_2.jpg'] },
     { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
     { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
 ];
@@ -2316,16 +2351,16 @@ function renderProducts() {
         }
 
         return `
-        <div class="product-card" data-product-id="${product.id}">
+        <div class="product-card" data-product-id="${product.id}" style="position: relative;"><button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg></button>
             <div class="product-gallery">
                 <div class="main-image-container">
-                    <div id="tint-layer-${product.id}" class="tint-layer"></div>
+                    <div id="tint-layer-${product.id}" class="tint-layer"></div><div class="zoom-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
                     <img src="${product.images && product.images.length > 0 ? product.images[0] : 'placeholder.jpg'}" alt="${t(product.nameKey)}" class="product-img main-img" id="main-img-${product.id}">
                 </div>
                 <div class="thumbnail-row">
                     ${(product.images || []).map((img, index) => `
                         <img src="${img}" class="thumbnail ${index === 0 ? 'active' : ''}" 
-                             data-src="${img}" data-id="${product.id}" onclick="window.switchGalleryImage('${img}', this)">
+                             data-src="${img}" data-id="${product.id}">
                     `).join('')}
                 </div>
             </div>
@@ -2334,6 +2369,10 @@ function renderProducts() {
                 <h3>${t(product.nameKey)}</h3>
                 ${ratingHtml}
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
+                <div class="manufacturing-note" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success-color); margin-bottom: 0.8rem; font-weight: 500;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                    ${t('product_manufacturing_note')}
+                </div>
                 <div class="price">${product.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
                 
                 <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
@@ -2702,6 +2741,31 @@ function renderCart() {
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
 
+    summary.innerHTML = `
+        <div style="background: var(--accent-blue); padding: 1.2rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid rgba(37, 99, 235, 0.2); display: flex; gap: 10px; align-items: flex-start;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <p style="font-size: 0.85rem; color: var(--text-dark); margin: 0; line-height: 1.4;">${t('cart_production_info')}</p>
+        </div>
+        <div class="summary-row">
+            <span>${t('cart_subtotal')}</span>
+            <span id="subtotal"></span>
+        </div>
+        <div class="summary-row" id="discount-row" style="display: none;">
+            <span>${t('cart_coupon')}</span>
+            <span id="discount" style="color: var(--success-color);"></span>
+        </div>
+        <div class="summary-row">
+            <span id="shipping-label">${t('checkout_step_2')}</span>
+            <span id="shipping"></span>
+        </div>
+        <div id="coupon-section"></div>
+        <div class="summary-row total">
+            <span>${t('cart_total')}</span>
+            <span id="total-sum"></span>
+        </div>
+        <button type="button" class="checkout-btn" data-i18n="checkout_title">${t('checkout_title')}</button>
+    `;
+
     const subtotalEl = document.getElementById('subtotal');
     if (subtotalEl) {
         subtotalEl.innerHTML = `${formatCurrency(subtotal)} <span style="font-size:0.75rem; font-weight:normal; color:var(--text-light);">${t('price_hint')}</span>`;
@@ -2767,6 +2831,13 @@ function updateCartIcon() {
     }
 }
 
+function updateWishlistIcon() {
+    const count = document.getElementById('wishlist-count');
+    if (count) {
+        count.textContent = state.wishlist.length;
+    }
+}
+
 function toggleWishlist(productId) {
     const index = state.wishlist.indexOf(productId);
     const product = products.find(p => p.id === productId);
@@ -2780,6 +2851,7 @@ function toggleWishlist(productId) {
     }
 
     saveWishlistToStorage();
+    updateWishlistIcon();
 
     // We defer renderProducts and updateWishlistIcon to main script to avoid circular dependency
     document.dispatchEvent(new CustomEvent('wishlist-updated'));
@@ -2957,7 +3029,7 @@ function validateCheckoutStep(step) {
             setSuccess(zipInput);
         }
 
-        if (cityInput && cityInput.value.trim().length < 2) {
+        if (cityInput && cityInput.value.trim().length < 1) {
             setError(cityInput, 'Bitte Ihren Ort eingeben.');
             isValid = false;
         } else if (cityInput) {
@@ -3071,7 +3143,7 @@ async function submitCheckout() {
         }
     };
 
-    // 3. Background tasks
+    // 3. Background tasks (Supabase)
     try {
         await saveOrderToDB(orderData);
     } catch (dbErr) {
@@ -3080,7 +3152,39 @@ async function submitCheckout() {
 
     logOrder(name, email, orderId, "E-Mail Bestellung", null, total, state.cart);
 
-    // 4. Delay UI cleanup to ensure mail app had time to register
+    // 4. Send Email via EmailJS
+    let orderDetails = state.cart.map(item => {
+        if (item.isCustom) {
+            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
+        } else {
+            return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
+        }
+    }).join('\n');
+    
+    if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
+    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
+
+    const templateParams = {
+        order_id: orderId,
+        customer_name: name,
+        customer_email: email,
+        customer_address: `${address}, ${zip} ${city}`,
+        order_details: orderDetails,
+        total_price: `${total.toFixed(2)}€`
+    };
+
+    try {
+        if (typeof emailjs !== 'undefined') {
+            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
+            console.log("EmailJS: Bestätigung gesendet.");
+        } else {
+            console.warn("EmailJS ist nicht geladen.");
+        }
+    } catch (emailErr) {
+        console.error("Fehler beim E-Mail-Versand:", emailErr);
+    }
+
+    // 5. Cleanup UI
     setTimeout(() => {
         state.cart = [];
         saveCartToStorage();
@@ -3214,6 +3318,9 @@ async function submitReview(e) {
 // --- js/ui.js ---
 // js/ui.js
 
+let currentGallery = [];
+let currentImgIndex = 0;
+
 function setupThemeToggle() {
     const themeBtn = document.getElementById('theme-toggle');
     if (!themeBtn) return;
@@ -3228,7 +3335,6 @@ function setupThemeToggle() {
         updateThemeIcon(newTheme);
     });
 
-    // Init theme
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)');
     const savedTheme = localStorage.getItem('druckbau_theme');
     
@@ -3242,7 +3348,6 @@ function setupThemeToggle() {
     document.documentElement.setAttribute('data-theme', initialTheme);
     updateThemeIcon(initialTheme);
 
-    // Listen for system changes
     systemPrefersDark.addEventListener('change', (e) => {
         if (!localStorage.getItem('druckbau_theme')) {
             const newTheme = e.matches ? 'dark' : 'light';
@@ -3313,14 +3418,6 @@ function setupChat() {
         }
     };
 
-    window.sendQuickReply = (text) => {
-        appendMessage(text, 'user');
-        setTimeout(() => {
-            const response = getBotResponse(text);
-            appendMessage(response, 'bot');
-        }, 1000);
-    };
-
     const chatInput = document.getElementById('chat-input');
     if (chatInput) {
         chatInput.addEventListener('keypress', (e) => {
@@ -3330,10 +3427,9 @@ function setupChat() {
         });
     }
 
-    // Quick replies
     document.querySelectorAll('.quick-reply-btn').forEach(btn => {
         btn.addEventListener('click', () => {
-            sendQuickReply(btn.innerText);
+            window.sendQuickReply(btn.innerText);
         });
     });
 }
@@ -3354,44 +3450,71 @@ function appendMessage(text, sender) {
 
 function getBotResponse(text) {
     const t = text.toLowerCase();
-
     if (t.includes('lieferung') || t.includes('versand') || t.includes('dauer')) {
         return "Unsere Lieferzeit beträgt in der Regel 3-5 Werktage nach Zahlungseingang.";
     } else if (t.includes('kosten') || t.includes('preis') || t.includes('euro')) {
         return "Die Standardversandkosten betragen 4,90€. Spezifische Produktpreise findest du im Katalog.";
-    } else if (t.includes('auftrag') || t.includes('speziell') || t.includes('design')) {
-        return "Für Auftragsarbeiten kontaktiere uns bitte über das Formular oder füge das Produkt 'Auftragsarbeit' zum Warenkorb hinzu!";
     } else {
-        return "Vielen Dank für deine Nachricht. Unser Support-Team (ich, Philipp) meldet sich bald bei dir. Du kannst mich auch über das Kontaktformular erreichen.";
+        return "Vielen Dank für deine Nachricht. Unser Support-Team meldet sich bald bei dir.";
     }
 }
 
 function setupLightbox() {
-    window.openLightbox = (imgSrc) => {
+    window.openLightbox = (imgList, startIndex = 0) => {
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
-        if (lightbox && lightboxImg) {
-            lightboxImg.src = imgSrc;
-            lightbox.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
+        if (!lightbox || !lightboxImg) return;
+
+        currentGallery = Array.isArray(imgList) ? imgList : [imgList];
+        currentImgIndex = startIndex;
+
+        updateLightboxImage();
+        lightbox.classList.add('show');
+        lightbox.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
     };
 
     window.closeLightbox = () => {
         const lightbox = document.getElementById('lightbox');
         if (lightbox) {
             lightbox.classList.remove('show');
+            lightbox.style.display = 'none';
             document.body.style.overflow = '';
         }
     };
 
-    const lightbox = document.getElementById('lightbox');
-    if (lightbox) {
-        lightbox.addEventListener('click', (e) => {
-            if (e.target === lightbox) {
-                closeLightbox();
-            }
+    const nextBtn = document.getElementById('next-img');
+    const prevBtn = document.getElementById('prev-img');
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentImgIndex = (currentImgIndex + 1) % currentGallery.length;
+            updateLightboxImage();
         });
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            currentImgIndex = (currentImgIndex - 1 + currentGallery.length) % currentGallery.length;
+            updateLightboxImage();
+        });
+    }
+
+    function updateLightboxImage() {
+        const lightboxImg = document.getElementById('lightbox-img');
+        if (lightboxImg) {
+            lightboxImg.src = currentGallery[currentImgIndex];
+        }
+        
+        const nextBtn = document.getElementById('next-img');
+        const prevBtn = document.getElementById('prev-img');
+        if (nextBtn && prevBtn) {
+            const isSingle = currentGallery.length <= 1;
+            nextBtn.style.display = isSingle ? 'none' : 'block';
+            prevBtn.style.display = isSingle ? 'none' : 'block';
+        }
     }
 }
 
@@ -3400,16 +3523,6 @@ function setupFAQ() {
         button.addEventListener('click', () => {
             const faqItem = button.parentElement;
             const faqAnswer = button.nextElementSibling;
-
-            // Close others
-            document.querySelectorAll('.faq-item').forEach(item => {
-                if (item !== faqItem && item.classList.contains('active')) {
-                    item.classList.remove('active');
-                    item.querySelector('.faq-answer').style.maxHeight = null;
-                }
-            });
-
-            // Toggle current
             faqItem.classList.toggle('active');
             if (faqItem.classList.contains('active')) {
                 faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
@@ -3423,39 +3536,12 @@ function setupFAQ() {
 function setupNavigation() {
     document.body.addEventListener('click', (e) => {
         const link = e.target.closest('.nav-link, .cart-icon-container, .wishlist-icon-container, .footer-link.nav-trigger, .contact-trigger, .nav-trigger');
-
         if (!link) return;
-
         const targetId = link.getAttribute('data-target');
-
         if (targetId) {
             e.preventDefault();
             showSection(targetId);
             window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    });
-
-    document.querySelectorAll('.dropdown-toggle').forEach(toggle => {
-        toggle.addEventListener('click', (e) => {
-            const dropdown = toggle.parentElement;
-            if (dropdown.classList.contains('dropdown')) {
-                e.preventDefault();
-                document.querySelectorAll('.dropdown').forEach(d => {
-                    if (d !== dropdown) d.classList.remove('show');
-                });
-                dropdown.classList.toggle('show');
-                const targetId = toggle.getAttribute('data-target');
-                if (targetId) {
-                    showSection(targetId);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                }
-            }
-        });
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.dropdown')) {
-            document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('show'));
         }
     });
 
@@ -3473,18 +3559,6 @@ function showSection(id) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
         setTimeout(() => target.classList.add('active'), 10);
     }
-
-    document.querySelectorAll('.nav-link, .nav-trigger').forEach(link => {
-        link.classList.remove('active');
-        if (link.getAttribute('data-target') === id) {
-            link.classList.add('active');
-        }
-    });
-
-    if (id === 'cart' && window.renderCart) window.renderCart();
-    if (id === 'wishlist' && window.renderWishlist) window.renderWishlist();
-
-    document.dispatchEvent(new CustomEvent('section-shown', { detail: { id } }));
 }
 
 // --- js/admin.js ---
@@ -3496,13 +3570,26 @@ let revenueChart = null;
 function initAdminSystem() {
     const adminTrigger = document.getElementById('admin-trigger');
     if (adminTrigger) {
-        adminTrigger.addEventListener('click', () => {
+        adminTrigger.addEventListener('click', async () => {
+            const email = prompt("Admin E-Mail (Supabase):");
+            if (!email) return;
             const pass = prompt("Admin Passwort:");
-            if (pass === 'dbadmin') {
+            if (!pass) return;
+            
+            const { data, error } = await signInAdmin(email, pass);
+            
+            if (error) {
+                // Fallback for local testing or if auth isn't set up yet
+                if (pass === 'dbadmin') {
+                    console.warn("Lokales Admin-Passwort verwendet. (Unsicher für Produktion!)");
+                    showSection('admin');
+                    loadAdminData();
+                } else {
+                    alert("Login fehlgeschlagen: " + error);
+                }
+            } else {
                 showSection('admin');
                 loadAdminData();
-            } else {
-                alert("Falsches Passwort!");
             }
         });
     }
@@ -3885,10 +3972,17 @@ function trackYouTubeClick() {
 async function init() {
     initTranslations();
     initDB();
+    
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init("0proWevyCc_hMFYs1"); 
+    }
+
     setupNavigation();
     setupThemeToggle();
     setupChat();
     setupLightbox();
+    setupCookieBanner();
+    setupGlobalEventListeners();
     
     await initCoupons();
     await loadPublicNews();
@@ -3899,12 +3993,9 @@ async function init() {
         addPrintTimeBadges();
         renderProducts();
         updateCartIcon();
-
         setupFAQ();
-        initOrderStatusChecker();
     }
 
-    // Pass global utilities that inline HTML or older scripts might need
     window.updateColorPreview = updateColorPreview;
     window.switchGalleryImage = switchGalleryImage;
     window.renderProducts = renderProducts;
@@ -3916,12 +4007,17 @@ async function init() {
     window.closeCheckoutModal = closeCheckoutModal;
     window.triggerAdminRefresh = triggerAdminRefresh;
 
-    window.trackYouTubeClick = trackYouTubeClick;
-
     initAdminSystem();
     setupGlobalEventListeners();
     
-    // Attempt sync after initialization
+    document.addEventListener('wishlist-updated', () => {
+        renderProducts();
+        renderWishlist();
+        updateCartIcon();
+        updateWishlistIcon();
+        setupFAQ();
+    });
+    
     setTimeout(() => {
         syncLocalStorageToDB();
     }, 2000);
@@ -3934,8 +4030,6 @@ async function loadPublicNews() {
     if (!newsSection || !newsText) return;
 
     let newsList = await loadNewsFromDB();
-    
-    // Fallback if DB is empty/fails
     if (!newsList || newsList.length === 0) {
         newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
     }
@@ -3943,14 +4037,9 @@ async function loadPublicNews() {
     if (newsList && newsList.length > 0) {
         const latestInfo = newsList[0];
         const content = latestInfo.content || latestInfo.text;
-        
         if (content) {
             newsSection.style.display = 'block';
-            let displayContent = content;
-            if (content.startsWith('[OFFER]')) {
-                displayContent = content.replace('[OFFER] ', '').replace('|', ':');
-            }
-            newsText.innerHTML = displayContent.replace(/\n/g, '<br>');
+            newsText.innerHTML = content.replace(/\n/g, '<br>');
             if (newsDate) {
                 const date = latestInfo.created_at || latestInfo.date;
                 newsDate.textContent = date ? new Date(date).toLocaleDateString('de-DE') : '';
@@ -3958,82 +4047,58 @@ async function loadPublicNews() {
         }
     } else {
         newsSection.style.display = 'none';
-        newsText.innerHTML = "Aktuell keine Neuigkeiten.";
-        if (newsDate) newsDate.textContent = "";
     }
+}
+
+function setupCookieBanner() {
+    const banner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('cookie-accept');
+    
+    if (!banner || !acceptBtn) return;
+
+    const consent = localStorage.getItem('druckbau_cookie_consent');
+    if (!consent) {
+        setTimeout(() => {
+            banner.style.display = 'block';
+        }, 1000);
+    }
+
+    acceptBtn.addEventListener('click', () => {
+        localStorage.setItem('druckbau_cookie_consent', 'accepted');
+        banner.style.animation = 'slideUp 0.5s ease reverse forwards';
+        setTimeout(() => {
+            banner.style.display = 'none';
+        }, 500);
+    });
 }
 
 function setupGlobalEventListeners() {
     document.body.addEventListener('click', (e) => {
         const target = e.target;
 
-        if (target.closest('.next-step-btn')) {
-            nextCheckoutStep();
-            return;
-        }
-        if (target.closest('.back-step-btn')) {
-            prevCheckoutStep();
-            return;
-        }
-        if (target.closest('#close-checkout')) {
-            closeCheckoutModal();
-            return;
-        }
-        if (target.closest('#final-checkout-btn')) {
-            e.preventDefault();
-            console.log('Final checkout initiated');
+        if (target.id === 'final-checkout-btn' || target.closest('#final-checkout-btn')) {
+            const agbCheckbox = document.getElementById('checkout-agb');
+            const revCheckbox = document.getElementById('checkout-revocation');
             
-            // Gather fresh data
-            const name = document.getElementById('checkout-name')?.value || '';
-            const email = document.getElementById('checkout-email')?.value || '';
-            const address = document.getElementById('checkout-address')?.value || '';
-            const zip = document.getElementById('checkout-zip')?.value || '';
-            const city = document.getElementById('checkout-city')?.value || '';
+            if ((agbCheckbox && !agbCheckbox.checked) || (revCheckbox && !revCheckbox.checked)) {
+                // If utils.js has showWarning, use it, else alert
+                if (typeof showWarning === 'function') {
+                    showWarning('Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.');
+                } else {
+                    alert('Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.');
+                }
+                return;
+            }
             
-            // Re-calculate total
-            const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            const total = subtotal + 5.90; // Simplified total for mail template
-            
-            const orderId = "DB-" + Date.now().toString().slice(-6);
-
-            const mailBody = `Hallo Druckbau Team,\n\n` +
-                `Bestellung: ${orderId}\n\n` +
-                `Kundendaten:\n${name}\n${email}\n${address}, ${zip} ${city}\n\n` +
-                `Produkte:\n` + state.cart.map(item => `- ${item.qty}x ${item.name}`).join('\n') +
-                `\n\nGesamtbetrag: ${total.toFixed(2)} EUR\n\nBitte senden Sie mir die Zahlungsdetails zu.`;
-
-            const subject = `Neue Bestellung ${orderId}`;
-            const mailto = `mailto:druckbau@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(mailBody).replace(/%0A/g, '%0D%0A')}`;
-            
-            console.log('Triggering mailto...');
-            window.location.href = mailto;
-            
-            // Continue with background log
-            if (typeof submitCheckout === 'function') submitCheckout();
+            if (typeof submitCheckout === 'function') {
+                submitCheckout();
+            }
             return;
         }
 
-        if (target.closest('#checkout-btn')) {
-            console.log('Checkout button clicked');
-            checkout();
-            return;
-        }
-
-        if (target.closest('.rate-btn')) {
-            e.stopPropagation();
-            const btn = target.closest('.rate-btn');
-            console.log('Rate button clicked for:', btn.dataset.id);
-            openReviewModal(btn.dataset.id, btn.dataset.name);
-            return;
-        }
-        if (target.closest('.view-reviews-btn')) {
-            e.stopPropagation();
-            const btn = target.closest('.view-reviews-btn');
-            openReviewListModal(btn.dataset.id, btn.dataset.name);
-            return;
-        }
-        if (target.closest('#review-modal .close-modal')) {
-            closeReviewModal();
+        // PRIORITIZE BUTTONS (Wishlist, Add to Cart, etc.)
+        if (target.closest('.wishlist-btn')) {
+            toggleWishlist(target.closest('.wishlist-btn').dataset.id);
             return;
         }
 
@@ -4041,26 +4106,31 @@ function setupGlobalEventListeners() {
             addToCart(target.closest('.add-to-cart-btn').dataset.id);
             return;
         }
+        
         if (target.closest('.add-custom-btn')) {
             addCustomToCart(target.closest('.add-custom-btn').dataset.id);
             return;
         }
-        if (target.closest('.wishlist-btn')) {
-            e.preventDefault();
-            toggleWishlist(target.closest('.wishlist-btn').dataset.id);
-            return;
-        }
-        if (target.closest('.remove-btn') && target.closest('.remove-btn').dataset.index !== undefined) {
-            removeFromCart(parseInt(target.closest('.remove-btn').dataset.index));
+
+        if (target.closest('.rate-btn')) {
+            const btn = target.closest('.rate-btn');
+            openReviewModal(btn.dataset.id, btn.dataset.name);
             return;
         }
 
-        if (target.closest('#apply-coupon-btn')) {
-            applyCoupon();
+        if (target.closest('.view-reviews-btn')) {
+            const btn = target.closest('.view-reviews-btn');
+            openReviewListModal(btn.dataset.id, btn.dataset.name);
             return;
         }
-        if (target.closest('#remove-coupon-btn')) {
-            removeCoupon();
+
+        if (target.closest('#check-status-btn')) {
+            handleStatusCheck();
+            return;
+        }
+
+        if (target.closest('.wishlist-remove-btn')) {
+            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
             return;
         }
 
@@ -4068,44 +4138,41 @@ function setupGlobalEventListeners() {
             addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
             return;
         }
-        if (target.closest('.wishlist-remove-btn')) {
-            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
-            return;
-        }
 
-        if (target.closest('.main-img')) {
+        // IMAGE GALLERY / LIGHTBOX
+        if (target.closest('.main-image-container')) {
             const card = target.closest('.product-card');
             if (card) {
                 const id = card.dataset.productId;
-                if (window.openLightbox) window.openLightbox(target.closest('.main-img').src);
+                const thumbs = Array.from(card.querySelectorAll('.thumbnail'));
+                const imgList = thumbs.map(t => t.getAttribute('data-src') || t.src);
+                
+                const activeThumb = card.querySelector('.thumbnail.active');
+                const startIndex = activeThumb ? thumbs.indexOf(activeThumb) : 0;
+
+                if (window.openLightbox) window.openLightbox(imgList, startIndex);
                 trackProductView(id);
             }
             return;
         }
-        
+
         if (target.closest('.thumbnail')) {
             const card = target.closest('.product-card');
             if (card) {
                 const thumb = target.closest('.thumbnail');
                 const src = thumb.getAttribute('data-src') || thumb.src;
                 if (window.switchGalleryImage) window.switchGalleryImage(src, thumb);
-                trackProductView(card.dataset.productId);
             }
             return;
         }
+
+        if (target.closest('.wishlist-remove-btn')) {
+            toggleWishlist(target.closest('.wishlist-remove-btn').dataset.productId);
+            return;
+        }
         
-        if (target.closest('.youtube-link')) {
-            trackYouTubeClick();
-            return;
-        }
-
-        if (target.innerText && target.innerText.includes('Export') && target.classList.contains('contact-btn')) {
-            exportOrdersToCSV();
-            return;
-        }
-
-        if (target.closest('#check-status-btn')) {
-            handleStatusCheck();
+        if (target.closest('.wishlist-add-to-cart-btn')) {
+            addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
             return;
         }
     });
@@ -4115,23 +4182,6 @@ function setupGlobalEventListeners() {
             updateColorPreview(e.target, e.target.dataset.id);
         }
     });
-
-    document.addEventListener('wishlist-updated', () => {
-        renderProducts();
-        if (document.getElementById('wishlist').classList.contains('active')) {
-            renderWishlist();
-        }
-    });
-
-    // Custom Event listener for navigating via code
-    document.addEventListener('navigate', (e) => {
-        if (window.showSection) window.showSection(e.detail);
-    });
-
-    const reviewForm = document.getElementById('review-form');
-    if (reviewForm) {
-        reviewForm.addEventListener('submit', submitReview);
-    }
 }
 
 async function handleStatusCheck() {
@@ -4144,63 +4194,27 @@ async function handleStatusCheck() {
     if (!orderId) return;
 
     badge.innerText = "Suche...";
-    badge.style.background = "#eee";
-    badge.style.color = "#333";
     resultDiv.style.display = 'block';
 
     try {
         const dbOrders = await loadOrdersFromDB();
-        let order = dbOrders ? dbOrders.find(o => (o.order_id === orderId || o.orderId === orderId)) : null;
-
+        let order = dbOrders ? dbOrders.find(o => o.order_id === orderId) : null;
         if (!order) {
-            const localOrders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
-            order = localOrders.find(o => o.orderId === orderId);
+            const locals = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+            order = locals.find(o => o.orderId === orderId);
         }
 
         if (order) {
-            const status = order.status || 'Eingegangen';
-            badge.innerText = status;
-            
-            if (status.includes('Versendet')) {
-                badge.style.background = '#d4edda';
-                badge.style.color = '#155724';
-            } else if (status.includes('Gedruckt')) {
-                badge.style.background = '#cce5ff';
-                badge.style.color = '#004085';
-            } else if (status.includes('Abholbereit')) {
-                badge.style.background = '#e0cffc'; // Lila
-                badge.style.color = '#5a34a2';
-            } else if (status.includes('Bearbeitung')) {
-                badge.style.background = '#fff3cd';
-                badge.style.color = '#856404';
-            } else if (status.includes('ausstehend')) {
-                badge.style.background = '#ffeeba'; // Orange/Gelb
-                badge.style.color = '#856404';
-            } else if (status.includes('Storniert')) {
-                badge.style.background = '#f8d7da'; // Rot
-                badge.style.color = '#721c24';
-            } else {
-                badge.style.background = '#e9ecef';
-                badge.style.color = '#495057';
-            }
+            badge.innerText = order.status || 'Eingegangen';
+            badge.style.background = '#cce5ff';
+            badge.style.color = '#004085';
         } else {
             badge.innerText = "Nicht gefunden";
             badge.style.background = '#f8d7da';
-            badge.style.color = '#721c24';
         }
     } catch (err) {
-        console.error("Status check failed", err);
-        badge.innerText = "Fehler bei der Abfrage.";
+        badge.innerText = "Fehler.";
     }
 }
 
-function initOrderStatusChecker() {
-    console.log("Order Status Checker initialized");
-}
-
-// Start App
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-} else {
-    init();
-}
+init();

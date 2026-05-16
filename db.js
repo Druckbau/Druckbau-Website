@@ -27,6 +27,20 @@ export function initDB() {
     }
 }
 
+// --- Auth ---
+export async function signInAdmin(email, password) {
+    if (!supabaseClient) return { error: "Supabase nicht initialisiert" };
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+        return { data, error };
+    } catch (e) {
+        return { error: e.message };
+    }
+}
+
 // --- Orders ---
 export async function saveOrderToDB(orderData) {
     if (!supabaseClient) {

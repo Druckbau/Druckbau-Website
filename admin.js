@@ -1,6 +1,6 @@
 // js/admin.js
 import { showNotification, escapeHtml, t } from './utils.js';
-import { loadOrdersFromDB, updateOrderStatus, loadAnalyticsFromDB, trackAnalyticInDB, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB, deleteAllOrdersFromDB, deleteCompletedOrdersFromDB } from './db.js';
+import { signInAdmin, loadOrdersFromDB, updateOrderStatus, loadAnalyticsFromDB, trackAnalyticInDB, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB, deleteAllOrdersFromDB, deleteCompletedOrdersFromDB } from './db.js';
 
 let ordersChart = null;
 let revenueChart = null;
@@ -8,13 +8,26 @@ let revenueChart = null;
 export function initAdminSystem() {
     const adminTrigger = document.getElementById('admin-trigger');
     if (adminTrigger) {
-        adminTrigger.addEventListener('click', () => {
+        adminTrigger.addEventListener('click', async () => {
+            const email = prompt("Admin E-Mail (Supabase):");
+            if (!email) return;
             const pass = prompt("Admin Passwort:");
-            if (pass === 'dbadmin') {
+            if (!pass) return;
+            
+            const { data, error } = await signInAdmin(email, pass);
+            
+            if (error) {
+                // Fallback for local testing or if auth isn't set up yet
+                if (pass === 'dbadmin') {
+                    console.warn("Lokales Admin-Passwort verwendet. (Unsicher für Produktion!)");
+                    showSection('admin');
+                    loadAdminData();
+                } else {
+                    alert("Login fehlgeschlagen: " + error);
+                }
+            } else {
                 showSection('admin');
                 loadAdminData();
-            } else {
-                alert("Falsches Passwort!");
             }
         });
     }

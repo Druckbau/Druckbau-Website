@@ -122,7 +122,7 @@ function validateCheckoutStep(step) {
             setSuccess(zipInput);
         }
 
-        if (cityInput && cityInput.value.trim().length < 2) {
+        if (cityInput && cityInput.value.trim().length < 1) {
             setError(cityInput, 'Bitte Ihren Ort eingeben.');
             isValid = false;
         } else if (cityInput) {
@@ -236,7 +236,7 @@ export async function submitCheckout() {
         }
     };
 
-    // 3. Background tasks
+    // 3. Background tasks (Supabase)
     try {
         await saveOrderToDB(orderData);
     } catch (dbErr) {
@@ -245,7 +245,39 @@ export async function submitCheckout() {
 
     logOrder(name, email, orderId, "E-Mail Bestellung", null, total, state.cart);
 
-    // 4. Delay UI cleanup to ensure mail app had time to register
+    // 4. Send Email via EmailJS
+    let orderDetails = state.cart.map(item => {
+        if (item.isCustom) {
+            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
+        } else {
+            return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
+        }
+    }).join('\n');
+    
+    if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
+    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
+
+    const templateParams = {
+        order_id: orderId,
+        customer_name: name,
+        customer_email: email,
+        customer_address: `${address}, ${zip} ${city}`,
+        order_details: orderDetails,
+        total_price: `${total.toFixed(2)}€`
+    };
+
+    try {
+        if (typeof emailjs !== 'undefined') {
+            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
+            console.log("EmailJS: Bestätigung gesendet.");
+        } else {
+            console.warn("EmailJS ist nicht geladen.");
+        }
+    } catch (emailErr) {
+        console.error("Fehler beim E-Mail-Versand:", emailErr);
+    }
+
+    // 5. Cleanup UI
     setTimeout(() => {
         state.cart = [];
         saveCartToStorage();
