@@ -76,6 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    const form = document.getElementById('review-form');
+    if (form) {
+        form.addEventListener('submit', submitReview);
+    }
 });
 
 export async function submitReview(e) {

@@ -858,6 +858,24 @@ select,
     #home h1 {
         font-size: 2.5rem;
     }
+
+    /* Increase image sizes on mobile by reducing padding */
+    section {
+        padding: 1rem 3%;
+    }
+
+    .products-grid {
+        gap: 1rem;
+    }
+
+    .product-card {
+        padding: 0.8rem;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+    }
 }
 
 /* Gallery Styles */

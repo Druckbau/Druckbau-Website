@@ -129,8 +129,8 @@ function validateCheckoutStep(step) {
             setSuccess(cityInput);
         }
     } else if (step === 3) {
-        const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
-        if (!paymentMethod) {
+        const paymentMethod = document.querySelector('input[name="payment-method"]');
+        if (!paymentMethod || !paymentMethod.value) {
             isValid = false;
         }
     }
@@ -197,7 +197,6 @@ function renderCheckoutSummary() {
 }
 
 export async function submitCheckout() {
-    // Background processing only (Mail trigger moved to script.js for synchronicity)
     const finalBtn = document.getElementById('final-checkout-btn');
     const orderId = finalBtn?.dataset.orderId || generateOrderId();
     
@@ -212,7 +211,31 @@ export async function submitCheckout() {
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
 
-    // 1. Mark coupon as used
+    // Construct order details
+    let orderDetails = state.cart.map(item => {
+        if (item.isCustom) {
+            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
+        } else {
+            return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
+        }
+    }).join('\n');
+    
+    if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
+    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
+
+    // 1. Open native email client synchronously first (to preserve user gesture click context)
+    const currentLang = document.documentElement.lang === 'en' ? 'Englisch' : 'Deutsch';
+    let mailtoBody = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nSprache des Nutzers: ${currentLang}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n${orderDetails}\n\nVielen Dank!`;
+
+    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(mailtoBody)}`;
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    // 2. Mark coupon as used
     if (state.appliedCoupon) {
         const usedCoupons = JSON.parse(localStorage.getItem('druckbau_used_coupons') || '[]');
         if (!usedCoupons.includes(state.appliedCoupon.code)) {
@@ -221,7 +244,7 @@ export async function submitCheckout() {
         }
     }
 
-    // 2. Prepare Order Data for background save
+    // 3. Prepare Order Data for background save
     const orderData = {
         order_id: orderId,
         customer_name: name,
@@ -236,7 +259,7 @@ export async function submitCheckout() {
         }
     };
 
-    // 3. Background tasks (Supabase)
+    // 4. Background database save
     try {
         await saveOrderToDB(orderData);
     } catch (dbErr) {
@@ -245,18 +268,7 @@ export async function submitCheckout() {
 
     logOrder(name, email, orderId, "E-Mail Bestellung", null, total, state.cart);
 
-    // 4. Send Email via EmailJS
-    let orderDetails = state.cart.map(item => {
-        if (item.isCustom) {
-            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
-        } else {
-            return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
-        }
-    }).join('\n');
-    
-    if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
-    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
-
+    // 5. Send Email via EmailJS in the background
     const templateParams = {
         order_id: orderId,
         customer_name: name,
@@ -277,7 +289,7 @@ export async function submitCheckout() {
         console.error("Fehler beim E-Mail-Versand:", emailErr);
     }
 
-    // 5. Cleanup UI
+    // 6. Cleanup UI
     setTimeout(() => {
         state.cart = [];
         saveCartToStorage();

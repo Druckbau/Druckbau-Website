@@ -1,5 +1,5 @@
-// js/ui.js
-import { escapeHtml, showNotification, t } from './utils.js';
+import { escapeHtml, showNotification, t, showSuccess, showWarning, showError } from './utils.js';
+import { logOrder } from './admin.js';
 
 let currentGallery = [];
 let currentImgIndex = 0;
@@ -241,5 +241,188 @@ export function showSection(id) {
     if (target) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
         setTimeout(() => target.classList.add('active'), 10);
+
+        // Render dynamic views on navigation
+        if (id === 'cart' && typeof window.renderCart === 'function') window.renderCart();
+        if (id === 'wishlist' && typeof window.renderWishlist === 'function') window.renderWishlist();
+    }
+}
+
+export async function sendEmail(event) {
+    if (event) event.preventDefault();
+
+    // Honeypot check
+    const hp = document.getElementById('hp_name')?.value || '';
+    if (hp) {
+        console.warn("Spam detected via honeypot.");
+        return;
+    }
+
+    // Consent check
+    const gdprCheckbox = document.getElementById('contact-gdpr');
+    if (gdprCheckbox && !gdprCheckbox.checked) {
+        showWarning("Bitte akzeptieren Sie die Datenschutzerklärung.");
+        return;
+    }
+
+    const name = document.getElementById('contact-name')?.value || '';
+    const email = document.getElementById('contact-email')?.value || '';
+    const message = document.getElementById('contact-message')?.value || '';
+
+    if (name.trim().length < 2) {
+        showWarning("Bitte geben Sie Ihren Namen ein (min. 2 Zeichen).");
+        return;
+    }
+
+    if (!email.includes('@') || email.length < 5) {
+        showWarning("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        return;
+    }
+
+    if (message.trim().length < 10) {
+        showWarning("Bitte geben Sie eine Nachricht ein (min. 10 Zeichen).");
+        return;
+    }
+
+    // Priority keyword analysis
+    const urgentKeywords = [
+        'dringend', 'sofort', 'defekt', 'kaputt', 'beschwerde', 'problem', 'hilfe', 'eilig', 'wichtig', 'notfall',
+        'reklamation', 'rückerstattung', 'stornierung', 'frist', 'deadline', 'fehler', 'falsch', 'nicht erhalten',
+        'vermisst', 'beschädigt', 'kaput', 'geld zurück', 'schaden', 'anzeige', 'mahnung'
+    ];
+    const mediumKeywords = ['frage', 'bestellung', 'status', 'wann', 'angebot', 'termin', 'lieferzeit', 'versand'];
+
+    let prioritySubject = "Anfrage über Webseite";
+    const lowerMsg = message.toLowerCase();
+    const isUrgent = urgentKeywords.some(keyword => lowerMsg.includes(keyword));
+    const isMedium = !isUrgent && mediumKeywords.some(keyword => lowerMsg.includes(keyword));
+
+    if (isUrgent) {
+        prioritySubject = "[HOHE PRIORITÄT] " + prioritySubject;
+    } else if (isMedium) {
+        prioritySubject = "[MITTLERE PRIORITÄT] " + prioritySubject;
+    }
+
+    // Generate reference ID
+    const inquiryId = `DB-REQ-${Date.now().toString().slice(-6)}`;
+
+    // 1. Open native email client synchronously first
+    const body = `Hallo Druckbau Team,\n\nIch habe eine Anfrage:\nReferenz: ${inquiryId}\n\nKundendaten:\nName: ${name}\nE-Mail: ${email}\n\nNachricht:\n${message}\n\nVielen Dank!`;
+    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=${encodeURIComponent(prioritySubject)}&body=${encodeURIComponent(body)}`;
+    
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    // 2. Log inquiry in database/local storage
+    logOrder(name, email, inquiryId, message, null, 0, []);
+
+    // 3. Send via EmailJS in the background
+    const templateParams = {
+        order_id: inquiryId,
+        customer_name: name,
+        customer_email: email,
+        customer_address: "Online-Kontaktformular",
+        order_details: message,
+        total_price: "-"
+    };
+
+    try {
+        if (typeof emailjs !== 'undefined') {
+            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
+            console.log("EmailJS: Kontaktanfrage gesendet.");
+        } else {
+            console.warn("EmailJS ist nicht geladen.");
+        }
+    } catch (emailErr) {
+        console.error("Fehler beim E-Mail-Versand (EmailJS):", emailErr);
+    }
+
+    showSuccess("Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die Nachricht ab!");
+    const form = document.querySelector('.contact-form');
+    if (form) form.reset();
+}
+
+export function initNewsletterSystem() {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('newsletter-email');
+        const email = emailInput ? emailInput.value.trim() : '';
+        const gdprCheckbox = document.getElementById('newsletter-gdpr');
+        const gdpr = gdprCheckbox ? gdprCheckbox.checked : false;
+
+        if (!email || !gdpr) return;
+
+        const subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+
+        if (subscribers.some(s => s.email === email)) {
+            showWarning("Diese E-Mail ist bereits angemeldet.");
+            return;
+        }
+
+        const newSub = {
+            email,
+            date: new Date().toLocaleDateString('de-DE'),
+            synced: false
+        };
+
+        subscribers.unshift(newSub);
+        localStorage.setItem('druckbau_subscribers', JSON.stringify(subscribers));
+
+        // Background sync to database
+        import('./db.js').then(async (db) => {
+            if (db && typeof db.syncLocalStorageToDB === 'function') {
+                await db.syncLocalStorageToDB();
+            }
+        }).catch(err => console.warn("Failed to dynamically load db.js for sync:", err));
+
+        // Refresh admin panel if open
+        import('./admin.js').then((admin) => {
+            if (admin && typeof admin.triggerAdminRefresh === 'function') {
+                admin.triggerAdminRefresh();
+            }
+        }).catch(err => console.warn("Failed to dynamically load admin.js for refresh:", err));
+
+        showSuccess("Vielen Dank! Sie sind nun für den Newsletter angemeldet.");
+        form.reset();
+    });
+
+    const unsubscribeBtn = document.getElementById('newsletter-unsubscribe-btn');
+    if (unsubscribeBtn) {
+        unsubscribeBtn.addEventListener('click', async () => {
+            const emailInput = document.getElementById('newsletter-email');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email) {
+                showWarning("Bitte geben Sie Ihre E-Mail-Adresse zum Abmelden ein.");
+                return;
+            }
+
+            if (confirm("Möchten Sie sich wirklich vom Newsletter abmelden?")) {
+                let subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+                const initialLength = subscribers.length;
+                subscribers = subscribers.filter(s => s.email !== email);
+
+                if (subscribers.length < initialLength) {
+                    localStorage.setItem('druckbau_subscribers', JSON.stringify(subscribers));
+                    
+                    import('./admin.js').then((admin) => {
+                        if (admin && typeof admin.triggerAdminRefresh === 'function') {
+                            admin.triggerAdminRefresh();
+                        }
+                    }).catch(err => console.warn("Failed to refresh admin panel:", err));
+
+                    showSuccess("Sie wurden erfolgreich vom Newsletter abgemeldet.");
+                    if (emailInput) emailInput.value = '';
+                } else {
+                    showWarning("Diese E-Mail-Adresse wurde nicht in unserer Liste gefunden.");
+                }
+            }
+        });
     }
 }

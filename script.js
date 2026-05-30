@@ -3,7 +3,7 @@ import { loadCartFromStorage, loadWishlistFromStorage, initCoupons } from './js/
 import { renderProducts, addPrintTimeBadges, updateColorPreview, switchGalleryImage } from './js/products.js';
 import { renderCart, updateCartIcon, updateWishlistIcon, addToCart, addCustomToCart, toggleWishlist, removeFromCart, applyCoupon, removeCoupon, renderWishlist, addToCartFromWishlist } from './js/cart.js';
 import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevCheckoutStep } from './js/checkout.js';
-import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation } from './js/ui.js';
+import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation, sendEmail, initNewsletterSystem } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
 import { initDB, loadNewsFromDB, syncLocalStorageToDB, loadOrdersFromDB } from './js/db.js';
 import { openReviewModal, openReviewListModal, closeReviewModal, submitReview } from './js/reviews.js';
@@ -23,6 +23,7 @@ async function init() {
     setupLightbox();
     setupCookieBanner();
     setupGlobalEventListeners();
+    initNewsletterSystem();
     
     await initCoupons();
     await loadPublicNews();
@@ -46,6 +47,7 @@ async function init() {
     window.prevCheckoutStep = prevCheckoutStep;
     window.closeCheckoutModal = closeCheckoutModal;
     window.triggerAdminRefresh = triggerAdminRefresh;
+    window.sendEmail = sendEmail;
 
     initAdminSystem();
     setupGlobalEventListeners();
@@ -176,6 +178,32 @@ function setupGlobalEventListeners() {
 
         if (target.closest('.wishlist-add-to-cart-btn')) {
             addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
+            return;
+        }
+
+        // Cart Actions (Remove Item, Apply/Remove Coupon, Checkout)
+        if (target.closest('.remove-btn')) {
+            const removeBtn = target.closest('.remove-btn');
+            const indexAttr = removeBtn.getAttribute('data-index') || removeBtn.dataset.index;
+            const index = parseInt(indexAttr);
+            if (!isNaN(index)) {
+                removeFromCart(index);
+            }
+            return;
+        }
+
+        if (target.id === 'apply-coupon-btn' || target.closest('#apply-coupon-btn')) {
+            applyCoupon();
+            return;
+        }
+
+        if (target.id === 'remove-coupon-btn' || target.closest('#remove-coupon-btn')) {
+            removeCoupon();
+            return;
+        }
+
+        if (target.classList.contains('checkout-btn') || target.closest('.checkout-btn')) {
+            checkout();
             return;
         }
 

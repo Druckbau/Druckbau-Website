@@ -403,3 +403,20 @@ export function trackProductPurchase(id) {
 export function trackYouTubeClick() {
     trackAnalyticInDB('youtube', 'view');
 }
+
+export function logOrder(name, email, orderId, message, couponInfo = null, totalPrice = 0, items = []) {
+    const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+    orders.unshift({
+        name,
+        email,
+        orderId,
+        message,
+        coupon: couponInfo,
+        totalPrice: parseFloat(totalPrice) || 0,
+        items: items || [],
+        date: new Date().toLocaleString('de-DE'),
+        status: 'Eingegangen'
+    });
+    localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+    triggerAdminRefresh();
+}

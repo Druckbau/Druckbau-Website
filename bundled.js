@@ -3104,7 +3104,6 @@ function renderCheckoutSummary() {
 }
 
 async function submitCheckout() {
-    // Background processing only (Mail trigger moved to script.js for synchronicity)
     const finalBtn = document.getElementById('final-checkout-btn');
     const orderId = finalBtn?.dataset.orderId || generateOrderId();
     
@@ -3119,7 +3118,31 @@ async function submitCheckout() {
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
 
-    // 1. Mark coupon as used
+    // Construct order details
+    let orderDetails = state.cart.map(item => {
+        if (item.isCustom) {
+            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
+        } else {
+            return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
+        }
+    }).join('\n');
+    
+    if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
+    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
+
+    // 1. Open native email client synchronously first (to preserve user gesture click context)
+    const currentLang = document.documentElement.lang === 'en' ? 'Englisch' : 'Deutsch';
+    let mailtoBody = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nSprache des Nutzers: ${currentLang}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n${orderDetails}\n\nVielen Dank!`;
+
+    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(mailtoBody)}`;
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    // 2. Mark coupon as used
     if (state.appliedCoupon) {
         const usedCoupons = JSON.parse(localStorage.getItem('druckbau_used_coupons') || '[]');
         if (!usedCoupons.includes(state.appliedCoupon.code)) {
@@ -3128,7 +3151,7 @@ async function submitCheckout() {
         }
     }
 
-    // 2. Prepare Order Data for background save
+    // 3. Prepare Order Data for background save
     const orderData = {
         order_id: orderId,
         customer_name: name,
@@ -3143,7 +3166,7 @@ async function submitCheckout() {
         }
     };
 
-    // 3. Background tasks (Supabase)
+    // 4. Background database save
     try {
         await saveOrderToDB(orderData);
     } catch (dbErr) {
@@ -3152,18 +3175,7 @@ async function submitCheckout() {
 
     logOrder(name, email, orderId, "E-Mail Bestellung", null, total, state.cart);
 
-    // 4. Send Email via EmailJS
-    let orderDetails = state.cart.map(item => {
-        if (item.isCustom) {
-            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
-        } else {
-            return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
-        }
-    }).join('\n');
-    
-    if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
-    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
-
+    // 5. Send Email via EmailJS in the background
     const templateParams = {
         order_id: orderId,
         customer_name: name,
@@ -3184,7 +3196,7 @@ async function submitCheckout() {
         console.error("Fehler beim E-Mail-Versand:", emailErr);
     }
 
-    // 5. Cleanup UI
+    // 6. Cleanup UI
     setTimeout(() => {
         state.cart = [];
         saveCartToStorage();
@@ -3316,7 +3328,6 @@ async function submitReview(e) {
 }
 
 // --- js/ui.js ---
-// js/ui.js
 
 let currentGallery = [];
 let currentImgIndex = 0;
@@ -3558,6 +3569,185 @@ function showSection(id) {
     if (target) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
         setTimeout(() => target.classList.add('active'), 10);
+    }
+}
+
+async function sendEmail(event) {
+    if (event) event.preventDefault();
+
+    // Honeypot check
+    const hp = document.getElementById('hp_name')?.value || '';
+    if (hp) {
+        console.warn("Spam detected via honeypot.");
+        return;
+    }
+
+    // Consent check
+    const gdprCheckbox = document.getElementById('contact-gdpr');
+    if (gdprCheckbox && !gdprCheckbox.checked) {
+        showWarning("Bitte akzeptieren Sie die Datenschutzerklärung.");
+        return;
+    }
+
+    const name = document.getElementById('contact-name')?.value || '';
+    const email = document.getElementById('contact-email')?.value || '';
+    const message = document.getElementById('contact-message')?.value || '';
+
+    if (name.trim().length < 2) {
+        showWarning("Bitte geben Sie Ihren Namen ein (min. 2 Zeichen).");
+        return;
+    }
+
+    if (!email.includes('@') || email.length < 5) {
+        showWarning("Bitte geben Sie eine gültige E-Mail-Adresse ein.");
+        return;
+    }
+
+    if (message.trim().length < 10) {
+        showWarning("Bitte geben Sie eine Nachricht ein (min. 10 Zeichen).");
+        return;
+    }
+
+    // Priority keyword analysis
+    const urgentKeywords = [
+        'dringend', 'sofort', 'defekt', 'kaputt', 'beschwerde', 'problem', 'hilfe', 'eilig', 'wichtig', 'notfall',
+        'reklamation', 'rückerstattung', 'stornierung', 'frist', 'deadline', 'fehler', 'falsch', 'nicht erhalten',
+        'vermisst', 'beschädigt', 'kaput', 'geld zurück', 'schaden', 'anzeige', 'mahnung'
+    ];
+    const mediumKeywords = ['frage', 'bestellung', 'status', 'wann', 'angebot', 'termin', 'lieferzeit', 'versand'];
+
+    let prioritySubject = "Anfrage über Webseite";
+    const lowerMsg = message.toLowerCase();
+    const isUrgent = urgentKeywords.some(keyword => lowerMsg.includes(keyword));
+    const isMedium = !isUrgent && mediumKeywords.some(keyword => lowerMsg.includes(keyword));
+
+    if (isUrgent) {
+        prioritySubject = "[HOHE PRIORITÄT] " + prioritySubject;
+    } else if (isMedium) {
+        prioritySubject = "[MITTLERE PRIORITÄT] " + prioritySubject;
+    }
+
+    // Generate reference ID
+    const inquiryId = `DB-REQ-${Date.now().toString().slice(-6)}`;
+
+    // 1. Open native email client synchronously first
+    const body = `Hallo Druckbau Team,\n\nIch habe eine Anfrage:\nReferenz: ${inquiryId}\n\nKundendaten:\nName: ${name}\nE-Mail: ${email}\n\nNachricht:\n${message}\n\nVielen Dank!`;
+    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=${encodeURIComponent(prioritySubject)}&body=${encodeURIComponent(body)}`;
+    
+    const tempLink = document.createElement('a');
+    tempLink.href = mailtoLink;
+    tempLink.style.display = 'none';
+    document.body.appendChild(tempLink);
+    tempLink.click();
+    document.body.removeChild(tempLink);
+
+    // 2. Log inquiry in database/local storage
+    logOrder(name, email, inquiryId, message, null, 0, []);
+
+    // 3. Send via EmailJS in the background
+    const templateParams = {
+        order_id: inquiryId,
+        customer_name: name,
+        customer_email: email,
+        customer_address: "Online-Kontaktformular",
+        order_details: message,
+        total_price: "-"
+    };
+
+    try {
+        if (typeof emailjs !== 'undefined') {
+            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
+            console.log("EmailJS: Kontaktanfrage gesendet.");
+        } else {
+            console.warn("EmailJS ist nicht geladen.");
+        }
+    } catch (emailErr) {
+        console.error("Fehler beim E-Mail-Versand (EmailJS):", emailErr);
+    }
+
+    showSuccess("Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die Nachricht ab!");
+    const form = document.querySelector('.contact-form');
+    if (form) form.reset();
+}
+
+function initNewsletterSystem() {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById('newsletter-email');
+        const email = emailInput ? emailInput.value.trim() : '';
+        const gdprCheckbox = document.getElementById('newsletter-gdpr');
+        const gdpr = gdprCheckbox ? gdprCheckbox.checked : false;
+
+        if (!email || !gdpr) return;
+
+        const subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+
+        if (subscribers.some(s => s.email === email)) {
+            showWarning("Diese E-Mail ist bereits angemeldet.");
+            return;
+        }
+
+        const newSub = {
+            email,
+            date: new Date().toLocaleDateString('de-DE'),
+            synced: false
+        };
+
+        subscribers.unshift(newSub);
+        localStorage.setItem('druckbau_subscribers', JSON.stringify(subscribers));
+
+        // Background sync to database
+        import('./db.js').then(async (db) => {
+            if (db && typeof db.syncLocalStorageToDB === 'function') {
+                await db.syncLocalStorageToDB();
+            }
+        }).catch(err => console.warn("Failed to dynamically load db.js for sync:", err));
+
+        // Refresh admin panel if open
+        import('./admin.js').then((admin) => {
+            if (admin && typeof admin.triggerAdminRefresh === 'function') {
+                admin.triggerAdminRefresh();
+            }
+        }).catch(err => console.warn("Failed to dynamically load admin.js for refresh:", err));
+
+        showSuccess("Vielen Dank! Sie sind nun für den Newsletter angemeldet.");
+        form.reset();
+    });
+
+    const unsubscribeBtn = document.getElementById('newsletter-unsubscribe-btn');
+    if (unsubscribeBtn) {
+        unsubscribeBtn.addEventListener('click', async () => {
+            const emailInput = document.getElementById('newsletter-email');
+            const email = emailInput ? emailInput.value.trim() : '';
+            if (!email) {
+                showWarning("Bitte geben Sie Ihre E-Mail-Adresse zum Abmelden ein.");
+                return;
+            }
+
+            if (confirm("Möchten Sie sich wirklich vom Newsletter abmelden?")) {
+                let subscribers = JSON.parse(localStorage.getItem('druckbau_subscribers') || '[]');
+                const initialLength = subscribers.length;
+                subscribers = subscribers.filter(s => s.email !== email);
+
+                if (subscribers.length < initialLength) {
+                    localStorage.setItem('druckbau_subscribers', JSON.stringify(subscribers));
+                    
+                    import('./admin.js').then((admin) => {
+                        if (admin && typeof admin.triggerAdminRefresh === 'function') {
+                            admin.triggerAdminRefresh();
+                        }
+                    }).catch(err => console.warn("Failed to refresh admin panel:", err));
+
+                    showSuccess("Sie wurden erfolgreich vom Newsletter abgemeldet.");
+                    if (emailInput) emailInput.value = '';
+                } else {
+                    showWarning("Diese E-Mail-Adresse wurde nicht in unserer Liste gefunden.");
+                }
+            }
+        });
     }
 }
 
@@ -3966,6 +4156,23 @@ function trackYouTubeClick() {
     trackAnalyticInDB('youtube', 'view');
 }
 
+function logOrder(name, email, orderId, message, couponInfo = null, totalPrice = 0, items = []) {
+    const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+    orders.unshift({
+        name,
+        email,
+        orderId,
+        message,
+        coupon: couponInfo,
+        totalPrice: parseFloat(totalPrice) || 0,
+        items: items || [],
+        date: new Date().toLocaleString('de-DE'),
+        status: 'Eingegangen'
+    });
+    localStorage.setItem('druckbau_orders', JSON.stringify(orders));
+    triggerAdminRefresh();
+}
+
 // --- script.js ---
 // script.js - Main Application Entry Point
 
@@ -3983,6 +4190,7 @@ async function init() {
     setupLightbox();
     setupCookieBanner();
     setupGlobalEventListeners();
+    initNewsletterSystem();
     
     await initCoupons();
     await loadPublicNews();
@@ -4006,6 +4214,7 @@ async function init() {
     window.prevCheckoutStep = prevCheckoutStep;
     window.closeCheckoutModal = closeCheckoutModal;
     window.triggerAdminRefresh = triggerAdminRefresh;
+    window.sendEmail = sendEmail;
 
     initAdminSystem();
     setupGlobalEventListeners();
