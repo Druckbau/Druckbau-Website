@@ -17,6 +17,7 @@ window.translations = {
         home_title: "Willkommen bei Druckbau",
         home_subtitle: "Ihr Partner für professionellen 3D Druck.",
         home_youtube: "Folgen Sie uns auf YouTube",
+        home_instagram: "Folgen Sie uns auf Instagram",
         home_order_status: "Bestellstatus prüfen",
         home_order_placeholder: "Bestellnummer (z.B. #123456)",
         home_check_btn: "Prüfen",
@@ -324,6 +325,7 @@ window.translations = {
         home_title: "Welcome to Druckbau",
         home_subtitle: "Your partner for professional 3D printing.",
         home_youtube: "Follow us on YouTube",
+        home_instagram: "Follow us on Instagram",
         home_order_status: "Check Order Status",
         home_order_placeholder: "Order Number (e.g. #123456)",
         home_check_btn: "Check",
@@ -756,34 +758,54 @@ function initTranslations() {
             messages.appendChild(userDiv);
             chatInput.value = '';
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot';
-                let response = t('chat_default_response');
-                const lowerText = text.toLowerCase();
-
-                // Advanced Chatbot Logic
-                if (lowerText.match(/hallo|hi|hey|servus|moin/)) {
-                    response = t('chat_bot_greeting');
-                } else if (lowerText.match(/preis|kosten|teuer|bezahlen|euro|price|cost|pay/)) {
-                    response = t('chat_reply_preise_response');
-                } else if (lowerText.match(/versand|dauer|lieferung|wann|lieferzeit|shipping|delivery|when/)) {
-                    response = t('chat_reply_lieferzeit_response');
-                } else if (lowerText.match(/material|farbe|pla|petg|tpu|filament|color/)) {
-                    response = t('chat_reply_materialien_response');
-                } else if (lowerText.match(/kontakt|hilfe|email|telefon|contact|help|problem/)) {
-                    response = t('chat_reply_kontakt_response');
-                } else if (lowerText.match(/wie geht|alles klar|how are you/)) {
-                    response = currentLanguage === 'de' ? "Mir geht es fantastisch! 🤖 Ich bin bereit, Ihre 3D-Druck-Träume wahr werden zu lassen. Wie kann ich Ihnen heute helfen?" : "I'm doing fantastic! 🤖 I'm ready to make your 3D printing dreams come true. How can I help you today?";
-                } else if (lowerText.match(/danke|thanks/)) {
-                    response = currentLanguage === 'de' ? "Sehr gerne! Falls Sie noch Fragen haben, bin ich jederzeit für Sie da. 😊" : "You're very welcome! If you have any more questions, I'm here for you at any time. 😊";
-                }
-
+                
                 botDiv.innerHTML = `
                     <div class="chat-avatar">🤖</div>
-                    <div class="chat-bubble">${response}</div>
+                    <div class="chat-bubble">...</div>
                 `;
                 messages.appendChild(botDiv);
+                messages.scrollTop = messages.scrollHeight;
+
+                try {
+                    // API Key für Gemini einfügen (hier muss der echte Key eingesetzt werden)
+                    const GEMINI_API_KEY = "AQ.Ab8RN6LKu1NzOdN9lOMvYnqX5pQMw1PmxIQH1x4n0J1po7lPhw";
+                    
+                    if (GEMINI_API_KEY === "DEIN_GEMINI_API_KEY") {
+                        botDiv.innerHTML = `
+                            <div class="chat-avatar">🤖</div>
+                            <div class="chat-bubble">Bitte fügen Sie Ihren Gemini API Key in translations.js (Zeile ~763) ein, um die KI zu aktivieren.</div>
+                        `;
+                        return;
+                    }
+
+                    const prompt = "Du bist der Support-Bot für die 3D-Druck Website Druckbau. Beantworte die folgende Frage des Nutzers kurz, freundlich und hilfreich: " + text;
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.candidates && data.candidates[0].content.parts[0].text) {
+                        const aiText = data.candidates[0].content.parts[0].text;
+                        botDiv.innerHTML = `
+                            <div class="chat-avatar">🤖</div>
+                            <div class="chat-bubble">${aiText}</div>
+                        `;
+                    } else {
+                        throw new Error("Invalid response");
+                    }
+                } catch (error) {
+                    botDiv.innerHTML = `
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-bubble">Entschuldigung, die KI ist momentan nicht erreichbar.</div>
+                    `;
+                }
                 messages.scrollTop = messages.scrollHeight;
             }, 600);
         };
@@ -3036,8 +3058,8 @@ function validateCheckoutStep(step) {
             setSuccess(cityInput);
         }
     } else if (step === 3) {
-        const paymentMethod = document.querySelector('input[name="payment-method"]:checked');
-        if (!paymentMethod) {
+        const paymentMethod = document.querySelector('input[name="payment-method"]');
+        if (!paymentMethod || !paymentMethod.value) {
             isValid = false;
         }
     }
@@ -3297,6 +3319,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    const form = document.getElementById('review-form');
+    if (form) {
+        form.addEventListener('submit', submitReview);
+    }
 });
 
 async function submitReview(e) {
@@ -3383,29 +3409,12 @@ function updateThemeIcon(theme) {
 }
 
 function setupChat() {
-    const toggleBtn = document.getElementById('chat-toggle');
     const closeBtn = document.querySelector('.chat-close-btn');
     const chatWindow = document.getElementById('chat-window');
-    const sendBtn = document.querySelector('.chat-send-btn');
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            if (chatWindow) {
-                const isVisible = chatWindow.style.display === 'flex';
-                chatWindow.style.display = isVisible ? 'none' : 'flex';
-            }
-        });
-    }
 
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
             if (chatWindow) chatWindow.style.display = 'none';
-        });
-    }
-    
-    if (sendBtn) {
-        sendBtn.addEventListener('click', () => {
-            sendChatMessage();
         });
     }
 
@@ -3414,35 +3423,6 @@ function setupChat() {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
         }
     };
-
-    window.sendChatMessage = () => {
-        const input = document.getElementById('chat-input');
-        const text = input ? input.value.trim() : '';
-        if (text) {
-            appendMessage(text, 'user');
-            input.value = '';
-
-            setTimeout(() => {
-                const response = getBotResponse(text);
-                appendMessage(response, 'bot');
-            }, 1000);
-        }
-    };
-
-    const chatInput = document.getElementById('chat-input');
-    if (chatInput) {
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-    }
-
-    document.querySelectorAll('.quick-reply-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            window.sendQuickReply(btn.innerText);
-        });
-    });
 }
 
 function appendMessage(text, sender) {
@@ -3530,17 +3510,29 @@ function setupLightbox() {
 }
 
 function setupFAQ() {
-    document.querySelectorAll('.faq-question').forEach(button => {
-        button.addEventListener('click', () => {
-            const faqItem = button.parentElement;
-            const faqAnswer = button.nextElementSibling;
-            faqItem.classList.toggle('active');
-            if (faqItem.classList.contains('active')) {
+    document.querySelectorAll('.faq-item').forEach(item => {
+        const button = item.querySelector('.faq-question');
+        const faqAnswer = item.querySelector('.faq-answer');
+        
+        if (button && faqAnswer) {
+            item.addEventListener('mouseenter', () => {
+                item.classList.add('active');
                 faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
-            } else {
+            });
+            item.addEventListener('mouseleave', () => {
+                item.classList.remove('active');
                 faqAnswer.style.maxHeight = null;
-            }
-        });
+            });
+            // Fallback for mobile/click
+            button.addEventListener('click', () => {
+                item.classList.toggle('active');
+                if (item.classList.contains('active')) {
+                    faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
+                } else {
+                    faqAnswer.style.maxHeight = null;
+                }
+            });
+        }
     });
 }
 
@@ -3569,6 +3561,18 @@ function showSection(id) {
     if (target) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
         setTimeout(() => target.classList.add('active'), 10);
+
+        // Update nav links active state
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-target') === id) {
+                link.classList.add('active');
+            }
+        });
+
+        // Render dynamic views on navigation
+        if (id === 'cart' && typeof window.renderCart === 'function') window.renderCart();
+        if (id === 'wishlist' && typeof window.renderWishlist === 'function') window.renderWishlist();
     }
 }
 
@@ -4345,6 +4349,32 @@ function setupGlobalEventListeners() {
 
         if (target.closest('.wishlist-add-to-cart-btn')) {
             addToCartFromWishlist(target.closest('.wishlist-add-to-cart-btn').dataset.productId);
+            return;
+        }
+
+        // Cart Actions (Remove Item, Apply/Remove Coupon, Checkout)
+        if (target.closest('.remove-btn')) {
+            const removeBtn = target.closest('.remove-btn');
+            const indexAttr = removeBtn.getAttribute('data-index') || removeBtn.dataset.index;
+            const index = parseInt(indexAttr);
+            if (!isNaN(index)) {
+                removeFromCart(index);
+            }
+            return;
+        }
+
+        if (target.id === 'apply-coupon-btn' || target.closest('#apply-coupon-btn')) {
+            applyCoupon();
+            return;
+        }
+
+        if (target.id === 'remove-coupon-btn' || target.closest('#remove-coupon-btn')) {
+            removeCoupon();
+            return;
+        }
+
+        if (target.classList.contains('checkout-btn') || target.closest('.checkout-btn')) {
+            checkout();
             return;
         }
 

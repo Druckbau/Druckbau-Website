@@ -80,7 +80,6 @@ async function loadPublicNews() {
         const latestInfo = newsList[0];
         const content = latestInfo.content || latestInfo.text;
         if (content) {
-            newsSection.style.display = 'block';
             newsText.innerHTML = content.replace(/\n/g, '<br>');
             if (newsDate) {
                 const date = latestInfo.created_at || latestInfo.date;
@@ -88,30 +87,65 @@ async function loadPublicNews() {
             }
         }
     } else {
-        newsSection.style.display = 'none';
+        newsText.innerHTML = 'Aktuell gibt es keine Neuigkeiten.';
+        if (newsDate) {
+            newsDate.textContent = '';
+        }
     }
+}
+
+function loadGoogleAnalytics() {
+    if (window.gaLoaded) return;
+    window.gaLoaded = true;
+    const scriptUrl = "https://www.googletagmanager.com/gtag/js?id=G-X13X2JLG7Y";
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = scriptUrl;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-X13X2JLG7Y', { 'anonymize_ip': true });
 }
 
 function setupCookieBanner() {
     const banner = document.getElementById('cookie-banner');
     const acceptBtn = document.getElementById('cookie-accept');
+    const declineBtn = document.getElementById('cookie-decline');
     
-    if (!banner || !acceptBtn) return;
-
     const consent = localStorage.getItem('druckbau_cookie_consent');
-    if (!consent) {
+    if (consent === 'accepted') {
+        loadGoogleAnalytics();
+    } else if (!consent && banner) {
         setTimeout(() => {
             banner.style.display = 'block';
         }, 1000);
     }
 
-    acceptBtn.addEventListener('click', () => {
-        localStorage.setItem('druckbau_cookie_consent', 'accepted');
-        banner.style.animation = 'slideUp 0.5s ease reverse forwards';
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('druckbau_cookie_consent', 'accepted');
+            loadGoogleAnalytics();
+            closeBanner(banner);
+        });
+    }
+
+    if (declineBtn) {
+        declineBtn.addEventListener('click', () => {
+            localStorage.setItem('druckbau_cookie_consent', 'declined');
+            closeBanner(banner);
+        });
+    }
+
+    function closeBanner(b) {
+        if (!b) return;
+        b.style.animation = 'slideUp 0.5s ease reverse forwards';
         setTimeout(() => {
-            banner.style.display = 'none';
+            b.style.display = 'none';
         }, 500);
-    });
+    }
 }
 
 function setupGlobalEventListeners() {

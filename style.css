@@ -298,7 +298,8 @@ section.active {
 }
 
 .youtube-link,
-.discord-link {
+.discord-link,
+.instagram-link {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -320,8 +321,14 @@ section.active {
     color: var(--white);
 }
 
+.instagram-link {
+    background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    color: var(--white);
+}
+
 .youtube-link:hover,
-.discord-link:hover {
+.discord-link:hover,
+.instagram-link:hover {
     transform: translateY(-3px);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }

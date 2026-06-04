@@ -2,8 +2,7 @@
 import { showNotification, escapeHtml, t } from './utils.js';
 import { signInAdmin, loadOrdersFromDB, updateOrderStatus, loadAnalyticsFromDB, trackAnalyticInDB, loadNewsFromDB, saveNewsToDB, deleteNewsFromDB, clearAllNewsFromDB, loadCouponsFromDB, saveCouponToDB, deleteCouponFromDB, deleteAllOrdersFromDB, deleteCompletedOrdersFromDB } from './db.js';
 
-let ordersChart = null;
-let revenueChart = null;
+
 
 export function initAdminSystem() {
     const adminTrigger = document.getElementById('admin-trigger');
@@ -60,12 +59,7 @@ export function initAdminSystem() {
         });
     }
 
-    const chartRange = document.getElementById('admin-chart-range');
-    if (chartRange) {
-        chartRange.addEventListener('change', () => {
-            renderOrdersChart();
-        });
-    }
+
 
     // Global listeners for tables (using delegation)
     document.body.addEventListener('click', async (e) => {
@@ -226,42 +220,9 @@ export async function loadAdminData() {
     }
 
     renderAdminCoupons();
-    renderOrdersChart();
-    renderStatsTable();
 }
 
-async function renderStatsTable() {
-    const dbStats = await loadAnalyticsFromDB();
-    const stats = JSON.parse(localStorage.getItem('druckbau_stats') || '{"views":{},"purchases":{},"revenue":{},"youtube_clicks":0}');
-    
-    if (dbStats && dbStats.length > 0) {
-        dbStats.forEach(s => {
-            if (s.item_id === 'youtube') stats.youtube_clicks = s.views;
-            else {
-                stats.purchases[s.item_id] = s.purchases;
-                stats.revenue[s.item_id] = parseFloat(s.revenue) || 0;
-                stats.views[s.item_id] = s.views;
-            }
-        });
-    }
 
-    const statsBody = document.querySelector('#stats-table tbody');
-    if (statsBody) {
-        // We'd need the products list here, for now use a simplified approach
-        const itemIds = Object.keys(stats.views);
-        if (itemIds.length === 0) {
-            statsBody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center;">Noch keine Daten vorhanden.</td></tr>';
-        } else {
-            statsBody.innerHTML = itemIds.map(id => `
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 0.8rem;">${id}</td>
-                    <td style="padding: 0.8rem;">${stats.purchases[id] || 0}</td>
-                    <td style="padding: 0.8rem; font-weight:bold;">${(stats.revenue[id] || 0).toFixed(2)} €</td>
-                </tr>
-            `).join('');
-        }
-    }
-}
 
 async function renderAdminCoupons() {
     const coupons = await loadCouponsFromDB() || [];
@@ -314,50 +275,7 @@ async function renderAdminCoupons() {
     });
 }
 
-function renderOrdersChart() {
-    const ctx = document.getElementById('admin-orders-chart');
-    if (!ctx || !window.Chart) return;
 
-    if (ordersChart) ordersChart.destroy();
-
-    const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
-    const range = document.getElementById('admin-chart-range')?.value || '1w';
-    
-    // Group orders by date
-    const grouped = {};
-    orders.forEach(o => {
-        const d = o.date.split(',')[0];
-        grouped[d] = (grouped[d] || 0) + 1;
-    });
-
-    const labels = Object.keys(grouped).sort();
-    const data = labels.map(l => grouped[l]);
-
-    ordersChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Bestellungen',
-                data: data,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: { beginAtZero: true, ticks: { precision: 0 } }
-            }
-        }
-    });
-}
 
 export function triggerAdminRefresh() {
     loadAdminData();

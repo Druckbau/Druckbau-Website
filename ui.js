@@ -55,29 +55,12 @@ function updateThemeIcon(theme) {
 }
 
 export function setupChat() {
-    const toggleBtn = document.getElementById('chat-toggle');
     const closeBtn = document.querySelector('.chat-close-btn');
     const chatWindow = document.getElementById('chat-window');
-    const sendBtn = document.querySelector('.chat-send-btn');
-
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', () => {
-            if (chatWindow) {
-                const isVisible = chatWindow.style.display === 'flex';
-                chatWindow.style.display = isVisible ? 'none' : 'flex';
-            }
-        });
-    }
 
     if (closeBtn) {
         closeBtn.addEventListener('click', () => {
             if (chatWindow) chatWindow.style.display = 'none';
-        });
-    }
-    
-    if (sendBtn) {
-        sendBtn.addEventListener('click', () => {
-            sendChatMessage();
         });
     }
 
@@ -86,35 +69,6 @@ export function setupChat() {
             chatWindow.style.display = chatWindow.style.display === 'flex' ? 'none' : 'flex';
         }
     };
-
-    window.sendChatMessage = () => {
-        const input = document.getElementById('chat-input');
-        const text = input ? input.value.trim() : '';
-        if (text) {
-            appendMessage(text, 'user');
-            input.value = '';
-
-            setTimeout(() => {
-                const response = getBotResponse(text);
-                appendMessage(response, 'bot');
-            }, 1000);
-        }
-    };
-
-    const chatInput = document.getElementById('chat-input');
-    if (chatInput) {
-        chatInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        });
-    }
-
-    document.querySelectorAll('.quick-reply-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            window.sendQuickReply(btn.innerText);
-        });
-    });
 }
 
 function appendMessage(text, sender) {
@@ -202,17 +156,29 @@ export function setupLightbox() {
 }
 
 export function setupFAQ() {
-    document.querySelectorAll('.faq-question').forEach(button => {
-        button.addEventListener('click', () => {
-            const faqItem = button.parentElement;
-            const faqAnswer = button.nextElementSibling;
-            faqItem.classList.toggle('active');
-            if (faqItem.classList.contains('active')) {
+    document.querySelectorAll('.faq-item').forEach(item => {
+        const button = item.querySelector('.faq-question');
+        const faqAnswer = item.querySelector('.faq-answer');
+        
+        if (button && faqAnswer) {
+            item.addEventListener('mouseenter', () => {
+                item.classList.add('active');
                 faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
-            } else {
+            });
+            item.addEventListener('mouseleave', () => {
+                item.classList.remove('active');
                 faqAnswer.style.maxHeight = null;
-            }
-        });
+            });
+            // Fallback for mobile/click
+            button.addEventListener('click', () => {
+                item.classList.toggle('active');
+                if (item.classList.contains('active')) {
+                    faqAnswer.style.maxHeight = faqAnswer.scrollHeight + "px";
+                } else {
+                    faqAnswer.style.maxHeight = null;
+                }
+            });
+        }
     });
 }
 
@@ -241,6 +207,14 @@ export function showSection(id) {
     if (target) {
         target.style.setProperty('display', (id === 'home' ? 'flex' : 'block'), 'important');
         setTimeout(() => target.classList.add('active'), 10);
+
+        // Update nav links active state
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+            if (link.getAttribute('data-target') === id) {
+                link.classList.add('active');
+            }
+        });
 
         // Render dynamic views on navigation
         if (id === 'cart' && typeof window.renderCart === 'function') window.renderCart();

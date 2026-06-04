@@ -15,6 +15,7 @@ window.translations = {
         home_title: "Willkommen bei Druckbau",
         home_subtitle: "Ihr Partner für professionellen 3D Druck.",
         home_youtube: "Folgen Sie uns auf YouTube",
+        home_instagram: "Folgen Sie uns auf Instagram",
         home_order_status: "Bestellstatus prüfen",
         home_order_placeholder: "Bestellnummer (z.B. #123456)",
         home_check_btn: "Prüfen",
@@ -322,6 +323,7 @@ window.translations = {
         home_title: "Welcome to Druckbau",
         home_subtitle: "Your partner for professional 3D printing.",
         home_youtube: "Follow us on YouTube",
+        home_instagram: "Follow us on Instagram",
         home_order_status: "Check Order Status",
         home_order_placeholder: "Order Number (e.g. #123456)",
         home_check_btn: "Check",
@@ -754,34 +756,54 @@ export function initTranslations() {
             messages.appendChild(userDiv);
             chatInput.value = '';
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 const botDiv = document.createElement('div');
                 botDiv.className = 'message bot';
-                let response = t('chat_default_response');
-                const lowerText = text.toLowerCase();
-
-                // Advanced Chatbot Logic
-                if (lowerText.match(/hallo|hi|hey|servus|moin/)) {
-                    response = t('chat_bot_greeting');
-                } else if (lowerText.match(/preis|kosten|teuer|bezahlen|euro|price|cost|pay/)) {
-                    response = t('chat_reply_preise_response');
-                } else if (lowerText.match(/versand|dauer|lieferung|wann|lieferzeit|shipping|delivery|when/)) {
-                    response = t('chat_reply_lieferzeit_response');
-                } else if (lowerText.match(/material|farbe|pla|petg|tpu|filament|color/)) {
-                    response = t('chat_reply_materialien_response');
-                } else if (lowerText.match(/kontakt|hilfe|email|telefon|contact|help|problem/)) {
-                    response = t('chat_reply_kontakt_response');
-                } else if (lowerText.match(/wie geht|alles klar|how are you/)) {
-                    response = currentLanguage === 'de' ? "Mir geht es fantastisch! 🤖 Ich bin bereit, Ihre 3D-Druck-Träume wahr werden zu lassen. Wie kann ich Ihnen heute helfen?" : "I'm doing fantastic! 🤖 I'm ready to make your 3D printing dreams come true. How can I help you today?";
-                } else if (lowerText.match(/danke|thanks/)) {
-                    response = currentLanguage === 'de' ? "Sehr gerne! Falls Sie noch Fragen haben, bin ich jederzeit für Sie da. 😊" : "You're very welcome! If you have any more questions, I'm here for you at any time. 😊";
-                }
-
+                
                 botDiv.innerHTML = `
                     <div class="chat-avatar">🤖</div>
-                    <div class="chat-bubble">${response}</div>
+                    <div class="chat-bubble">...</div>
                 `;
                 messages.appendChild(botDiv);
+                messages.scrollTop = messages.scrollHeight;
+
+                try {
+                    // API Key für Gemini einfügen (hier muss der echte Key eingesetzt werden)
+                    const GEMINI_API_KEY = "AQ.Ab8RN6LKu1NzOdN9lOMvYnqX5pQMw1PmxIQH1x4n0J1po7lPhw";
+                    
+                    if (GEMINI_API_KEY === "DEIN_GEMINI_API_KEY") {
+                        botDiv.innerHTML = `
+                            <div class="chat-avatar">🤖</div>
+                            <div class="chat-bubble">Bitte fügen Sie Ihren Gemini API Key in translations.js (Zeile ~763) ein, um die KI zu aktivieren.</div>
+                        `;
+                        return;
+                    }
+
+                    const prompt = "Du bist der Support-Bot für die 3D-Druck Website Druckbau. Beantworte die folgende Frage des Nutzers kurz, freundlich und hilfreich: " + text;
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    if (data.candidates && data.candidates[0].content.parts[0].text) {
+                        const aiText = data.candidates[0].content.parts[0].text;
+                        botDiv.innerHTML = `
+                            <div class="chat-avatar">🤖</div>
+                            <div class="chat-bubble">${aiText}</div>
+                        `;
+                    } else {
+                        throw new Error("Invalid response");
+                    }
+                } catch (error) {
+                    botDiv.innerHTML = `
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-bubble">Entschuldigung, die KI ist momentan nicht erreichbar.</div>
+                    `;
+                }
                 messages.scrollTop = messages.scrollHeight;
             }, 600);
         };
@@ -1615,16 +1637,7 @@ export function initTranslations() {
                                 }));
                             }
 
-                            // 4. Stats
-                            const stats = JSON.parse(localStorage.getItem('druckbau_stats')) || { views: {}, purchases: {}, revenue: {}, youtube_clicks: 0 };
-                            const statsBody = document.querySelector('#stats-table tbody');
-                            if (statsBody) {
-                                statsBody.innerHTML = fallbackProducts.map(p => {
-                                    const s = stats.purchases?.[p.id] || 0;
-                                    const r = stats.revenue?.[p.id] || 0;
-                                    return `<tr><td>${t(p.nameKey)}</td><td>${s}</td><td style="color:var(--primary-blue); font-weight:bold;">${r.toFixed(2)} €</td></tr>`;
-                                }).join('') + `<tr><td style="font-weight:bold;">YouTube Klicks</td><td>${stats.youtube_clicks || 0}</td><td>-</td></tr>`;
-                            }
+
                         };
 
                         // Helper for news saving in fallback
