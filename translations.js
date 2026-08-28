@@ -23,6 +23,9 @@ window.translations = {
         preview_title: "Interaktive 3D-Vorschau",
         workshop_title: "Die Werkstatt",
         workshop_subtitle: "Echte Handarbeit aus der Region",
+        usp_shipping: "Kostenloser Versand ab 50€",
+        usp_made_in: "Made in Germany",
+        usp_quality: "100% Zufriedenheit",
         workshop_text1: "Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine kleine Manufaktur für individuelle 3D-Druck-Lösungen.",
         workshop_text2: "In meiner Werkstatt setze ich auf einen einzelnen, hochpräzisen Drucker. Da jedes Stück individuell für Sie gefertigt wird und keine Massenware ist, kann die Lieferzeit je nach Auslastung variieren. Qualität braucht eben seine Zeit!",
         product_manufacturing_note: "Individualfertigung – Jedes Teil ein Einzelstück",
@@ -50,7 +53,8 @@ window.translations = {
         product_order_custom_from: "Von Wem (Schenkender/Auftraggeber):",
         product_order_custom_to: "Für Wen (Empfänger/Widmung):",
         chat_header: "Druckbau Support",
-        chat_welcome: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen?",
+        chat_welcome: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen? 💬 Für noch mehr Hilfe & direkten Austausch treten Sie gerne auch unserem <a href=\"https://discord.gg/6PPEYN9YKp\" target=\"_blank\" style=\"color:var(--primary-blue); font-weight:bold; text-decoration:underline;\">Discord-Server</a> bei!",
+        chat_discord_notice: "Für noch mehr Hilfe & Austausch besuchen Sie unseren Discord-Server.",
         chat_placeholder: "Nachricht eingeben...",
         chat_reply_shipping: "⏱️ Lieferzeit",
         chat_reply_pricing: "💰 Preise",
@@ -108,7 +112,7 @@ window.translations = {
         contact_gdpr: "Ich stimme der Verarbeitung meiner Daten gemäß der Datenschutzerklärung zu.",
 
         // Legal / Price Hints
-        price_hint: "inkl. MwSt.",
+        price_hint: "Gesamtpreis (gem. § 19 UStG ohne MwSt.-Ausweis)",
         shipping_hint: "zzgl. <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">Versandkosten</a>",
         shipping_info: "Versandkosten: 4.90€ (versichert)",
         cookie_title: "Datenschutz & Cookies",
@@ -254,6 +258,9 @@ window.translations = {
 
         // Wishlist Section
         wishlist_title: "Meine Wunschliste",
+        wishlist_empty: "Deine Wunschliste ist leer.",
+        product_wishlist_btn: "Auf die Wunschliste",
+        products_title: "Unsere Produkte",
 
         // Review Modal
         review_modal_title: "Produkt bewerten",
@@ -270,15 +277,17 @@ window.translations = {
         chat_header: "Druckbau Support",
         chat_subtitle: "Wir helfen Ihnen gerne!",
         chat_placeholder: "Nachricht eingeben...",
-        chat_bot_greeting: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen?",
+        chat_bot_greeting: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen? 💬 Für noch mehr Hilfe & direkten Austausch treten Sie gerne auch unserem <a href=\"https://discord.gg/6PPEYN9YKp\" target=\"_blank\" style=\"color:var(--primary-blue); font-weight:bold; text-decoration:underline;\">Discord-Server</a> bei!",
         chat_reply_shipping: "⏱️ Lieferzeit",
-        chat_reply_pricing: "💰 Preise",
-        chat_reply_materials: "🎨 Materialien",
-        chat_reply_contact: "📞 Kontakt",
-        chat_reply_lieferzeit_response: "Unsere Standard-Lieferzeit beträgt 3-5 Werktage. Express-Versand ist auf Anfrage möglich! 🚚",
+        chat_reply_benutzerdefiniert: "🛠️ Individuelle Anfrage",
+        chat_reply_lieferzeit_response: "Unsere Standard-Lieferzeit beträgt 8-12 Werktage. Express-Versand ist auf Anfrage möglich! 🚚",
         chat_reply_preise_response: "Unsere Preise variieren je nach Produkt und Menge. Schauen Sie sich unsere Produktseite an oder kontaktieren Sie uns für ein individuelles Angebot! 💰",
         chat_reply_materialien_response: "Wir verwenden hochwertige Materialien wie PLA, PETG, ABS und TPU. Jedes Material hat seine eigenen Eigenschaften - fragen Sie uns gerne! 🎨",
-        chat_reply_kontakt_response: "Sie erreichen uns per E-Mail unter druckbau@gmail.com oder nutzen Sie unser Kontaktformular. Wir antworten innerhalb von 24 Stunden! 📞",
+        chat_reply_kontakt_response: "Sie erreichen uns per E‑Mail unter druckbau@gmail.com oder nutzen Sie unser Kontaktformular. Wir antworten innerhalb von 24 Stunden! 📞",
+        chat_reply_faq_response: "Hier finden Sie häufig gestellte Fragen. Besuchen Sie unseren FAQ‑Bereich für detaillierte Informationen.",
+        chat_reply_benutzerdefiniert_response: "Für spezielle Anfragen können Sie uns direkt kontaktieren. Wir helfen Ihnen gerne weiter!",
+        chat_reply_discord_response: "Treten Sie unserem Discord-Server bei, um direkten Support und Community-Austausch zu erhalten.",
+        chat_reply_sonderanfertigung_response: "Für Sonderanfertigungen können Sie uns Ihre individuellen Anforderungen schildern – wir erstellen ein persönliches Angebot.",
         chat_default_response: "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze. 👋",
 
         // Legal Footer Extra
@@ -330,7 +339,10 @@ window.translations = {
         home_hero_desc: "From individual prototypes to serial production – we bring your ideas into the third dimension.",
         preview_title: "Interactive 3D Preview",
         workshop_title: "The Workshop",
-        workshop_subtitle: "Genuine craftsmanship from the region",
+        workshop_subtitle: "True craftsmanship from the region",
+        usp_shipping: "Free shipping from 50€",
+        usp_made_in: "Made in Germany",
+        usp_quality: "100% Satisfaction",
         workshop_text1: "Druckbau is born from a true passion for technology. What started as a hobby has grown into a small manufactory for individual 3D printing solutions.",
         workshop_text2: "In my workshop, I rely on a single, high-precision printer. Since every piece is custom-made for you and not mass-produced, delivery times may vary depending on workload. Quality takes time!",
         product_manufacturing_note: "Custom Production – Every piece is unique",
@@ -411,7 +423,7 @@ window.translations = {
         contact_gdpr: "I agree to the processing of my data according to the privacy policy.",
 
         // Legal / Price Hints
-        price_hint: "incl. VAT",
+        price_hint: "Total price (no VAT charged acc. to § 19 UStG)",
         shipping_hint: "plus <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">shipping</a>",
         shipping_info: "Shipping: 4.90€ (insured)",
         cookie_title: "Privacy & Cookies",
@@ -517,6 +529,9 @@ window.translations = {
 
         // Wishlist Section
         wishlist_title: "My Wishlist",
+        wishlist_empty: "Your wishlist is empty.",
+        product_wishlist_btn: "Add to wishlist",
+        products_title: "Our Products",
 
         // Review Modal
         review_modal_title: "Rate Product",
@@ -538,7 +553,7 @@ window.translations = {
         chat_reply_pricing: "💰 Pricing",
         chat_reply_materials: "🎨 Materials",
         chat_reply_contact: "📞 Contact",
-        chat_reply_lieferzeit_response: "Our standard shipping time is 3-5 business days. Express shipping is available on request! 🚚",
+        chat_reply_lieferzeit_response: "Our standard shipping time is 8-12 business days. Express shipping is available on request! 🚚",
         chat_reply_preise_response: "Our prices vary depending on the product and quantity. Take a look at our product page or contact us for an individual offer! 💰",
         chat_reply_materialien_response: "We use high-quality materials such as PLA, PETG, ABS and TPU. Each material has its own properties - feel free to ask us! 🎨",
         chat_reply_kontakt_response: "You can reach us by email at druckbau@gmail.com or use our contact form. We answer within 24 hours! 📞",
@@ -768,44 +783,38 @@ export function initTranslations() {
                 messages.scrollTop = messages.scrollHeight;
 
                 try {
-                    // API Key für Gemini einfügen (hier muss der echte Key eingesetzt werden)
                     const GEMINI_API_KEY = "AQ.Ab8RN6LKu1NzOdN9lOMvYnqX5pQMw1PmxIQH1x4n0J1po7lPhw";
-                    
-                    if (GEMINI_API_KEY === "DEIN_GEMINI_API_KEY") {
-                        botDiv.innerHTML = `
-                            <div class="chat-avatar">🤖</div>
-                            <div class="chat-bubble">Bitte fügen Sie Ihren Gemini API Key in translations.js (Zeile ~763) ein, um die KI zu aktivieren.</div>
-                        `;
-                        return;
-                    }
-
-                    const prompt = "Du bist der Support-Bot für die 3D-Druck Website Druckbau. Beantworte die folgende Frage des Nutzers kurz, freundlich und hilfreich: " + text;
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    if (data.candidates && data.candidates[0].content.parts[0].text) {
-                        const aiText = data.candidates[0].content.parts[0].text;
-                        botDiv.innerHTML = `
-                            <div class="chat-avatar">🤖</div>
-                            <div class="chat-bubble">${aiText}</div>
-                        `;
-                    } else {
-                        throw new Error("Invalid response");
+                    if (GEMINI_API_KEY && !GEMINI_API_KEY.startsWith("DEIN")) {
+                        const prompt = "Du bist der Support-Bot für die 3D-Druck Website Druckbau. Beantworte die folgende Frage des Nutzers kurz, freundlich und hilfreich: " + text;
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: prompt }] }]
+                            })
+                        });
+                        const data = await response.json();
+                        if (data.candidates && data.candidates[0].content.parts[0].text) {
+                            const aiText = data.candidates[0].content.parts[0].text;
+                            botDiv.innerHTML = `
+                                <div class="chat-avatar">🤖</div>
+                                <div class="chat-bubble">${aiText}</div>
+                            `;
+                            messages.scrollTop = messages.scrollHeight;
+                            return;
+                        }
                     }
                 } catch (error) {
-                    botDiv.innerHTML = `
-                        <div class="chat-avatar">🤖</div>
-                        <div class="chat-bubble">Entschuldigung, die KI ist momentan nicht erreichbar.</div>
-                    `;
+                    // Fallback to local smart bot matcher below
                 }
+
+                const localAnswer = typeof getBotResponse === 'function' ? getBotResponse(text) : "Vielen Dank für Ihre Frage! Schauen Sie gerne in unsere FAQ oder treten Sie unserem Discord-Server bei!";
+                botDiv.innerHTML = `
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble">${localAnswer}</div>
+                `;
                 messages.scrollTop = messages.scrollHeight;
-            }, 600);
+            }, 500);
         };
 
         if (chatSendBtn) chatSendBtn.addEventListener('click', handleSendMessage);
@@ -817,27 +826,16 @@ export function initTranslations() {
 
         // --- PRODUCT RENDERING FALLBACK (for file:// browsing) ---
         const fallbackProducts = [
-            { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
-            { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-
-            { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
+            { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
+            { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+            { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
             { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
         ];
 
         const fallbackColors = [
-            { name: 'Cyan-Blau (PLA)', value: 'blue' },
-            { name: 'Weiss (PLA)', value: 'white' },
             { name: 'Schwarz (PLA)', value: 'black' },
-            { name: 'Grün (PLA)', value: 'green' },
-            { name: 'Grün (PETG)', value: 'petg-green' },
-            { name: 'Orange (PLA)', value: 'orange' },
             { name: 'Grau (PLA)', value: 'grey' },
-            { name: 'Braun (PLA)', value: 'brown' },
-            { name: 'Transparent Blau (PLA)', value: 'trans-blue' },
-            { name: 'Transparent Grün (PLA)', value: 'trans-green' },
-            { name: 'Transparent Gelb (PLA)', value: 'trans-yellow' },
-            { name: 'Transparent Rot (PLA)', value: 'trans-red' },
-            { name: 'Eigene (Wunschfarbe)', value: 'custom' }
+            { name: 'Weiß (PLA)', value: 'white' }
         ];
 
         // Initialize default coupons for fallback if not found
@@ -865,7 +863,9 @@ export function initTranslations() {
                     return `
                         <div class="product-card" data-product-id="${p.id}" style="position: relative;">
                             <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlistFallback('${p.id}', this)" title="${t('product_wishlist_btn')}" style="position:absolute; top:10px; right:10px; z-index:5;">
-                                <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="${isInWishlist ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
                             </button>
                             <h3>${name}</h3>
                             <span class="price">${t('product_indiv')}</span>
@@ -896,7 +896,9 @@ export function initTranslations() {
                 return `
                     <div class="product-card" data-product-id="${p.id}" style="position: relative;">
                         <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlistFallback('${p.id}', this)" title="${t('product_wishlist_btn')}" style="position:absolute; top:10px; right:10px; z-index:5;">
-                            <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="${isInWishlist ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
                         </button>
                         <img src="${p.images[0]}" alt="${name}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
                         <h3>${name}</h3>
@@ -911,18 +913,35 @@ export function initTranslations() {
                         <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom:10px;">${t('price_hint')} ${t('shipping_hint')}</div>
 
                         <div class="product-actions" style="display:flex; flex-direction:column; gap:8px;">
-                            <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
-                                <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
-                                <select class="qty-input color-fallback-select" style="flex:1; padding:0.4rem; font-size:0.8rem;">
-                                    ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
-                                </select>
-                            </div>
+                            ${p.id === 'a' ? `
+                                <div style="display:flex; flex-direction:column; gap:5px; margin-bottom:5px;">
+                                    <div style="display:flex; align-items:center; gap:5px;">
+                                        <span style="font-size:0.75rem; font-weight:600; min-width:70px;">Unterteil:</span>
+                                        <select class="qty-input color-base-select" style="flex:1; padding:0.3rem; font-size:0.8rem;">
+                                            ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:5px;">
+                                        <span style="font-size:0.75rem; font-weight:600; min-width:70px;">Keycaps:</span>
+                                        <select class="qty-input color-keycaps-select" style="flex:1; padding:0.3rem; font-size:0.8rem;">
+                                            ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
+                                    <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
+                                </div>
+                            ` : `
+                                <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
+                                    <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
+                                    <select class="qty-input color-fallback-select" style="flex:1; padding:0.4rem; font-size:0.8rem;">
+                                        ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                    </select>
+                                </div>
+                            `}
                             <div style="display:flex; gap:5px;">
-                                <button class="add-btn" onclick="event.stopPropagation(); window.addToCartFallback('${p.id}', false, this)" style="flex:2; padding:0.5rem; font-size:0.8rem; margin:0;">
+                                <button class="add-btn" onclick="event.stopPropagation(); window.addToCartFallback('${p.id}', false, this)" style="flex:1; padding:0.5rem; font-size:0.8rem; margin:0;">
                                     ${t('product_add_cart')}
-                                </button>
-                                <button class="rate-btn" onclick="event.stopPropagation(); window.openReviewModalFallback('${p.id}')" style="flex:1; padding:0.5rem; font-size:0.8rem; margin:0; border:1px solid #ddd; background:white; color:#333;">
-                                    ${t('product_rate')}
                                 </button>
                             </div>
                         </div>
@@ -1075,9 +1094,19 @@ export function initTranslations() {
             } else if (btnElement) {
                 const card = btnElement.closest('.product-card');
                 const qtyIn = card.querySelector('input[type="number"]');
+                const baseSel = card.querySelector('.color-base-select');
+                const keycapsSel = card.querySelector('.color-keycaps-select');
                 const colorSel = card.querySelector('.color-fallback-select');
+                
                 if (qtyIn) qty = parseInt(qtyIn.value) || 1;
-                if (colorSel) colorName = colorSel.options[colorSel.selectedIndex].text;
+                
+                if (baseSel && keycapsSel) {
+                    const baseName = baseSel.options[baseSel.selectedIndex].text;
+                    const keycapsName = keycapsSel.options[keycapsSel.selectedIndex].text;
+                    colorName = `Unterteil: ${baseName}, Keycaps: ${keycapsName}`;
+                } else if (colorSel) {
+                    colorName = colorSel.options[colorSel.selectedIndex].text;
+                }
             }
 
             const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
@@ -1106,7 +1135,7 @@ export function initTranslations() {
         };
 
         window.renderWishlist = function() {
-            const container = document.getElementById('wishlist-grid');
+            const container = document.getElementById('wishlist-items');
             if (!container) return;
             const wishlist = JSON.parse(localStorage.getItem('druckbau_wishlist') || '[]');
             if (wishlist.length === 0) {
@@ -1143,6 +1172,8 @@ export function initTranslations() {
             if (!modal) return;
             modal.style.display = 'flex';
             modal.dataset.productId = productId;
+            const hiddenId = document.getElementById('review-product-id');
+            if (hiddenId) hiddenId.value = productId;
             
             // Setup stars
             const starsContainer = modal.querySelector('.star-rating-input');
@@ -1166,10 +1197,7 @@ export function initTranslations() {
             // Handle form submit
             const form = document.getElementById('review-form');
             if (form) {
-                form.onsubmit = (e) => {
-                    e.preventDefault();
-                    window.submitReviewFallback();
-                };
+                // Do not override onsubmit here to prevent conflicts with script.js which causes infinite loops or double submits.
             }
         };
 

@@ -6,7 +6,7 @@ import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevChe
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation, sendEmail, initNewsletterSystem } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
 import { initDB, loadNewsFromDB, syncLocalStorageToDB, loadOrdersFromDB } from './js/db.js';
-import { openReviewModal, openReviewListModal, closeReviewModal, submitReview } from './js/reviews.js';
+import { openReviewModal, openReviewListModal, closeReviewModal, submitReview, initReviews } from './js/reviews.js';
 import { initTranslations } from './translations.js';
 
 async function init() {
@@ -24,6 +24,7 @@ async function init() {
     setupCookieBanner();
     setupGlobalEventListeners();
     initNewsletterSystem();
+    initReviews();
     
     await initCoupons();
     await loadPublicNews();

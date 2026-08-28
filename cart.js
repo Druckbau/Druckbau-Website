@@ -18,18 +18,31 @@ export function addToCart(productId) {
         return;
     }
 
-    const colorSelect = document.getElementById(`color-${productId}`);
-    const colorValue = colorSelect ? colorSelect.value : 'pla';
-    const colorName = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : 'Standard';
+    const baseSelect = document.getElementById(`color-base-${productId}`);
+    const keycapSelect = document.getElementById(`color-keycaps-${productId}`);
 
+    let colorValue = '';
+    let colorName = '';
     let customColor = null;
-    if (colorValue === 'custom') {
-        const customInput = document.getElementById(`custom-color-input-${productId}`);
-        if (customInput && customInput.value.trim() !== '') {
-            customColor = customInput.value.trim();
-        } else {
-            alert("Bitte geben Sie Ihre Wunschfarbe ein.");
-            return;
+
+    if (baseSelect && keycapSelect) {
+        const baseColor = baseSelect.options[baseSelect.selectedIndex].text;
+        const keycapColor = keycapSelect.options[keycapSelect.selectedIndex].text;
+        colorName = `Unterteil: ${baseColor}, Keycaps: ${keycapColor}`;
+        colorValue = `base:${baseSelect.value}_keycaps:${keycapSelect.value}`;
+    } else {
+        const colorSelect = document.getElementById(`color-${productId}`);
+        colorValue = colorSelect ? colorSelect.value : 'black';
+        colorName = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : 'Standard';
+
+        if (colorValue === 'custom') {
+            const customInput = document.getElementById(`custom-color-input-${productId}`);
+            if (customInput && customInput.value.trim() !== '') {
+                customColor = customInput.value.trim();
+            } else {
+                alert("Bitte geben Sie Ihre Wunschfarbe ein.");
+                return;
+            }
         }
     }
 

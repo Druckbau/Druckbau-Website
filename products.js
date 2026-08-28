@@ -10,40 +10,15 @@ export function renderProducts() {
     grid.innerHTML = products.map(product => {
         const isWishlisted = state.wishlist.includes(product.id);
 
-        let avgRating = 0;
-        let reviewCount = 0;
-        let starsDisplay = '☆☆☆☆☆';
-
-        avgRating = getAverageRating(product.id);
-        const reviews = loadReviews()[product.id] || [];
-        reviewCount = reviews.length;
-        starsDisplay = renderStars(avgRating);
-
-        const ratingHtml = `
-            <div class="product-rating-summary" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.8rem;">
-                <div style="display:flex; gap:0.5rem; width:100%;">
-                    <button type="button" class="rate-btn" data-id="${product.id}" data-name="${escapeHtml(product.name || t(product.nameKey))}" 
-                        style="flex:1; background:var(--primary-blue); border:1px solid var(--primary-blue); color:white; padding:5px; border-radius:4px; font-size:0.85rem; cursor:pointer; transition: opacity 0.2s;">
-                        ${t('product_rate')}
-                    </button>
-                    <button type="button" class="view-reviews-btn" data-id="${product.id}" data-name="${escapeHtml(product.name || t(product.nameKey))}" 
-                        style="flex:1; background:white; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:5px; border-radius:4px; font-size:0.85rem; cursor:pointer; transition: background 0.2s;">
-                        ${t('product_view_reviews')} (${reviewCount})
-                    </button>
-                </div>
-            </div>
-        `;
-
         if (product.isCustom) {
             return `
             <div class="product-card" data-product-id="${product.id}" style="position: relative;">
                 <button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="${isWishlisted ? '#ff4757' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="${isWishlisted ? '#ff4757' : 'currentColor'}">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                     </svg>
                 </button>
                 <h3>${t(product.nameKey)}</h3>
-                ${ratingHtml}
                 <span class="price">${t('product_indiv')}</span>
                 
                 <div class="product-options">
@@ -79,7 +54,7 @@ export function renderProducts() {
         }
 
         return `
-        <div class="product-card" data-product-id="${product.id}" style="position: relative;"><button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg></button>
+        <div class="product-card" data-product-id="${product.id}" style="position: relative;"><button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}"><svg xmlns="http://www.w3.org/2000/svg" fill="${isWishlisted ? '#ff4757' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="${isWishlisted ? '#ff4757' : 'currentColor'}"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg></button>
             <div class="product-gallery">
                 <div class="main-image-container">
                     <div id="tint-layer-${product.id}" class="tint-layer"></div><div class="zoom-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
@@ -95,7 +70,6 @@ export function renderProducts() {
 
                 <div class="product-info">
                 <h3>${t(product.nameKey)}</h3>
-                ${ratingHtml}
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
                 <div class="manufacturing-note" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success-color); margin-bottom: 0.8rem; font-weight: 500;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -103,23 +77,46 @@ export function renderProducts() {
                 </div>
                 <div class="price">${product.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
                 
-                <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
-                    <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;">
-                    <select id="color-${product.id}" class="qty-input" style="flex:1; padding:0.5rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
-                        ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
-                    </select>
-                    <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
-                        ${t('product_add_cart')}
-                    </button>
-                </div>
-
-                <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none; margin-top:10px;">
-                    <label style="color: var(--primary-blue); font-size:0.8rem;">${t('product_custom_color_label')}</label>
-                    <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input" style="padding:0.4rem;">
-                    <div class="warning-msg" style="font-size:0.7rem; margin-top:5px;">
-                        <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
+                ${product.id === 'a' ? `
+                    <div class="klicker-color-options" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <label style="font-size:0.85rem; font-weight:600; min-width:80px; color:var(--text-dark);">Unterteil:</label>
+                            <select id="color-base-${product.id}" class="qty-input color-base-select" style="flex:1; padding:0.4rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
+                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <label style="font-size:0.85rem; font-weight:600; min-width:80px; color:var(--text-dark);">Keycaps:</label>
+                            <select id="color-keycaps-${product.id}" class="qty-input color-keycaps-select" style="flex:1; padding:0.4rem; font-size:0.85rem;">
+                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
                     </div>
-                </div>
+                    <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;" title="${t('product_quantity')}">
+                        <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
+                            ${t('product_add_cart')}
+                        </button>
+                    </div>
+                ` : `
+                    <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;" title="${t('product_quantity')}">
+                        <select id="color-${product.id}" class="qty-input" style="flex:1; padding:0.5rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
+                            ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                        </select>
+                        <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
+                            ${t('product_add_cart')}
+                        </button>
+                    </div>
+
+                    <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none; margin-top:10px;">
+                        <label style="color: var(--primary-blue); font-size:0.8rem;">${t('product_custom_color_label')}</label>
+                        <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input" style="padding:0.4rem;">
+                        <div class="warning-msg" style="font-size:0.7rem; margin-top:5px;">
+                            <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
+                        </div>
+                    </div>
+                `}
                 <div id="cart-animation-${product.id}" style="position: absolute; right: 20px; bottom: 80px; pointer-events: none;"></div>
             </div>
         </div>

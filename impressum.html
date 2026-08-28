@@ -4,126 +4,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Druckbau - Impressum</title>
+    <title>Druckbau - Impressum & Produktsicherheit (GPSR)</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     <style>
-        .legal-content {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        :root {
+            --legal-bg: #f8fafc;
+            --legal-card: #ffffff;
+            --legal-text: #1e293b;
+            --legal-muted: #64748b;
+            --legal-border: #e2e8f0;
+            --legal-primary: #2563eb;
         }
 
-        h1,
-        h2 {
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
-            margin-top: 2rem;
+        [data-theme="dark"] {
+            --legal-bg: #0f172a;
+            --legal-card: #1e293b;
+            --legal-text: #f8fafc;
+            --legal-muted: #94a3b8;
+            --legal-border: #334155;
+            --legal-primary: #3b82f6;
         }
 
-        p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        body {
+            background-color: var(--legal-bg);
+            color: var(--legal-text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        .back-link {
+        .legal-container {
+            max-width: 850px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: var(--legal-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--legal-border);
+        }
+
+        .legal-badge {
             display: inline-block;
-            margin-top: 2rem;
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: bold;
+            padding: 0.35rem 0.85rem;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--legal-primary);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
+
+        h1 {
+            color: var(--legal-text);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        h2 {
+            color: var(--legal-primary);
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--legal-border);
+            padding-bottom: 0.4rem;
+        }
+
+        p, ul {
+            color: var(--legal-text);
+            line-height: 1.7;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .notice-box {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--legal-text);
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
         .back-home-fixed {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #00AEEF;
+            background: var(--legal-primary);
             color: white;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
             z-index: 1000;
-            font-size: 0.9rem;
-            transition: transform 0.2s;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
         }
 
         .back-home-fixed:hover {
-            transform: scale(1.05);
-            background: #0096ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        a {
+            color: var(--legal-primary);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--legal-border);
+            font-size: 0.85rem;
+            color: var(--legal-muted);
         }
     </style>
 </head>
 
 <body>
     <a href="index.html" class="back-home-fixed">← Zur Startseite</a>
-    <nav>
-        <div class="nav-left">
-            <a href="index.html" style="text-decoration:none; color:inherit;">
-                <h2 style="margin:0; color: var(--primary-blue);">Druckbau</h2>
-            </a>
-        </div>
-    </nav>
 
     <main>
-        <div class="legal-content">
-            <div
-                style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.9rem;">
-                <strong>WICHTIG:</strong> Bitte ersetzen Sie alle Platzhalter (in eckigen Klammern `[...]`) durch Ihre
-                realen Geschäftsdaten, um Abmahnungen zu vermeiden.
-            </div>
+        <div class="legal-container">
+            <div class="legal-badge">Rechtliche Angaben & GPSR 2024/2026</div>
             <h1>Impressum</h1>
 
-            <h2>Angaben gemäß § 5 TMG</h2>
+            <h2>Angaben gemäß § 5 TMG / EU Digital Services Act (DSA)</h2>
+            <p>
+                <strong>Druckbau - 3D Druck Manufaktur</strong><br>
+                Inhaber: [Vorname] [Nachname]<br>
+                [Musterstraße 12]<br>
+                [12345 Musterstadt, Deutschland]
+            </p>
+
+            <h2>Kontakt & Zentrale Kontaktstelle</h2>
+            <p>
+                Telefon: [01234 / 567890]<br>
+                E-Mail: <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a><br>
+                Website: <a href="https://druckbau.de">https://druckbau.de</a>
+            </p>
+
+            <h2>Umsatzsteuer-Information</h2>
+            <p>
+                Gemäß § 19 UStG wird keine Umsatzsteuer berechnet und ausgewiesen (Kleinunternehmerregelung).<br>
+                <em>(Falls USt-IdNr. vorhanden: USt-IdNr. gemäß § 27a UStG: [DE000000000])</em>
+            </p>
+
+            <h2>Produktsicherheit & EU-Herstellerangaben (GPSR - EU 2023/988)</h2>
+            <div class="notice-box">
+                <strong>Gemäß der EU-Produktsicherheitsverordnung (GPSR - Verordnung (EU) 2023/988):</strong><br>
+                Verantwortliche Person & Hersteller für alle angebotenen 3D-Druck-Erzeugnisse in der Europäischen Union:<br>
+                <strong>Druckbau Manufaktur</strong>, E-Mail: <code>druckbau@gmail.com</code>.<br><br>
+                <strong>Sicherheits- & Handhabungshinweise:</strong>
+                <ul>
+                    <li>Sofern nicht ausdrücklich anders angegeben, sind 3D-Druckartikel kein Spielzeug für Kleinkinder unter 3 Jahren. Es besteht Erstickungsgefahr durch verschluckbare Kleinteile bei mechanischer Beschädigung.</li>
+                    <li>PLA-Erzeugnisse sind formstabil bis ca. 50-55°C. Nicht in die Spülmaschine, Mikrowelle oder direkte Sommerhitze im Auto legen.</li>
+                    <li>PETG-Erzeugnisse sind temperaturbeständig bis ca. 75-80°C und witterungsbeständig.</li>
+                </ul>
+            </div>
+
+            <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
             <p>
                 [Vorname] [Nachname]<br>
-                [Firmenname, falls vorhanden]<br>
-                [Straße] [Hausnummer]<br>
-                [PLZ] [Ort]
+                [Musterstraße 12]<br>
+                [12345 Musterstadt]
             </p>
 
-            <h2>Kontakt</h2>
+            <h2>EU-Streitschlichtung & Verbraucherstreitbeilegung</h2>
             <p>
-                Telefon: [Telefonnummer]<br>
-                E-Mail: druckbau@gmail.com
+                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
+                <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.<br>
+                Unsere E-Mail-Adresse finden Sie oben im Impressum.
             </p>
-
-            <h2>Umsatzsteuer-ID</h2>
             <p>
-                Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br>
-                [DE000000000 - oder "Kleinunternehmer gemäß § 19 UStG"]
+                Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
             </p>
 
-            <h2>Redaktionell verantwortlich</h2>
-            <p>
-                [Vorname] [Nachname]<br>
-                [Straße] [Hausnummer]<br>
-                [PLZ] [Ort]
-            </p>
-
-            <h2>EU-Streitschlichtung</h2>
-            <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a
-                    href="https://ec.europa.eu/consumers/odr/"
-                    target="_blank">https://ec.europa.eu/consumers/odr/</a>.<br> Unsere E-Mail-Adresse finden Sie oben
-                im Impressum.</p>
-
-            <h2>Verbraucherstreitbeilegung/Universalschlichtungsstelle</h2>
-            <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-                Verbraucherschlichtungsstelle teilzunehmen.</p>
-
-            <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+            <div class="footer-note">
+                <a href="index.html">← Zurück zur Hauptseite</a> | <a href="datenschutz.html">Datenschutz</a> | <a href="widerruf.html">Widerrufsbelehrung</a>
+            </div>
         </div>
     </main>
 </body>

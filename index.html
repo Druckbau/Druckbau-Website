@@ -104,66 +104,51 @@
         <!-- Home Section -->
         <section id="home" class="active" style="display: flex;">
             <div class="hero-content">
-                <h1 class="hero-title" data-i18n="home_title">Willkommen bei Druckbau</h1>
+                <div class="hero-badge">
+                    <span>✨ Professioneller 3D-Druck Service</span>
+                </div>
+                <h1 class="hero-title" data-i18n="home_title">Willkommen bei <span class="gradient-text">Druckbau</span></h1>
                 <p class="hero-subtitle" data-i18n="home_subtitle">Ihr Partner für professionellen 3D-Druck</p>
                 <p class="hero-description" data-i18n="home_hero_desc">
                     Von individuellen Prototypen bis hin zu Serienproduktionen – wir bringen Ihre Ideen in die dritte
                     Dimension.
                 </p>
 
-                <!-- Social Proof Counter -->
-
-
                 <div class="hero-buttons">
                     <a href="#" class="hero-btn primary nav-link" data-target="products"
-                        data-i18n="nav_products">Produkte ansehen</a>
+                        data-i18n="nav_products">Produkte ansehen →</a>
                     <a href="#" class="hero-btn secondary nav-link" data-target="contact"
                         data-i18n="nav_contact">Kontakt aufnehmen</a>
                 </div>
+                
+                <!-- USP Bar -->
+                <div class="usp-bar">
+                    <div class="usp-item"><span class="usp-icon">🚚</span> <span data-i18n="usp_shipping">Kostenloser Versand ab 50€</span></div>
+                    <div class="usp-item"><span class="usp-icon">🇩🇪</span> <span data-i18n="usp_made_in">Made in Germany</span></div>
+                    <div class="usp-item"><span class="usp-icon">⭐</span> <span data-i18n="usp_quality">100% Zufriedenheit</span></div>
+                </div>
             </div>
 
-            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                <a href="https://www.youtube.com/@Druckbau" target="_blank" rel="noopener noreferrer" class="youtube-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+            <div class="social-links-row">
+                <a href="https://www.youtube.com/@Druckbau" target="_blank" rel="noopener noreferrer" class="social-link-item youtube">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path
                             d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.007 2.007 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.007 2.007 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31.4 31.4 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.007 2.007 0 0 1-1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A99.788 99.788 0 0 1 7.858 2h.193zM6.4 5.209v4.818l4.157-2.408L6.4 5.209z" />
                     </svg>
-                    <span data-i18n="home_youtube">Folgen Sie uns auf YouTube</span>
+                    <span data-i18n="home_youtube">YouTube</span>
                 </a>
-                <a href="https://discord.gg/6PPEYN9YKp" target="_blank" rel="noopener noreferrer" class="discord-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <a href="https://discord.gg/6PPEYN9YKp" target="_blank" rel="noopener noreferrer" class="social-link-item discord">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M13.545 2.907a13.227 13.227 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.19 12.19 0 0 0-3.658 0 8.258 8.258 0 0 0-.412-.833.051.051 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.041.041 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032c.001.014.01.028.021.037a13.276 13.276 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019c.308-.42.582-.863.818-1.329a.05.05 0 0 0-.01-.059.051.051 0 0 0-.018-.011 8.875 8.875 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019c.084-.063.168-.129.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.052.052 0 0 1 .053.007c.08.066.164.132.248.195a.051.051 0 0 1-.004.085 8.254 8.254 0 0 1-1.249.594.05.05 0 0 0-.03.07.052.052 0 0 0 .003.012c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.235 13.235 0 0 0 4.001-2.02.049.049 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.034.034 0 0 0-.02-.019Zm-8.198 7.307c-.789 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Zm5.316 0c-.788 0-1.438-.724-1.438-1.612 0-.889.637-1.613 1.438-1.613.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612Z"/>
                     </svg>
-                    <span>Betreten Sie unseren Discord</span>
+                    <span>Discord</span>
                 </a>
-                <a href="https://www.instagram.com/druckbau_offical/" target="_blank" rel="noopener noreferrer" class="instagram-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                <a href="https://www.instagram.com/druckbau_offical/" target="_blank" rel="noopener noreferrer" class="social-link-item instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.036 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"/>
                     </svg>
-                    <span data-i18n="home_instagram">Folgen Sie uns auf Instagram</span>
+                    <span>Instagram</span>
                 </a>
-            </div>
-
-            <!-- Order Status Check -->
-            <div class="order-tracker"
-                style="margin-top: 3rem; padding: 1.5rem; background: var(--bg-light); border-radius: 12px; border: 1px solid #eee; width: 100%; max-width: 400px; text-align: center;">
-                <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-blue);"
-                    data-i18n="home_order_status">Bestellstatus prüfen
-                </h3>
-                <div class="status-check-container" style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-                    <input type="text" id="status-order-id" placeholder="Bestellnummer (z.B. #123456)"
-                        data-i18n="home_order_placeholder"
-                        style="flex: 1; padding: 0.6rem; border-radius: 6px; border: 1px solid #ddd; font-family: monospace; font-size: 0.85rem;">
-                    <button id="check-status-btn" class="status-btn" data-i18n="home_check_btn"
-                        style="padding: 0.6rem 1rem; background: var(--primary-blue); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem;">Prüfen</button>
-                </div>
-                <div id="status-result" style="display: none; padding-top: 0.5rem; font-size: 0.9rem;">
-                    <p style="color: #666; margin-bottom: 0.2rem;">Status Ihrer Bestellung:</p>
-                    <div id="status-badge"
-                        style="display: inline-block; padding: 0.3rem 1rem; border-radius: 20px; font-weight: bold; background: #eee; color: #333;">
-                        -
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -198,27 +183,40 @@
         <!-- Testimonials Section -->
         <section id="testimonials" class="testimonials-section">
             <h2 class="section-title" data-i18n="testimonials_title">Was unsere Kunden sagen</h2>
+            <p class="section-subtitle" style="text-align:center; margin-bottom:2rem; color: var(--text-light);">Vertrauen Sie auf die Erfahrung unserer Kunden.</p>
             <div class="testimonials-grid">
-                <div class="testimonial-card">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-card premium-card">
+                    <div class="quote-icon">"</div>
+                    <div class="stars">★★★★★</div>
                     <p class="quote" data-i18n="testimonial_sarah_quote">"Unglaubliche Qualität! Die Vase sieht in echt
                         noch besser aus als auf den Bildern.
                         Schneller Versand, gerne wieder."</p>
-                    <p class="author" data-i18n="testimonial_sarah_author">- Sarah M.</p>
+                    <div class="author-info">
+                        <div class="author-avatar">S</div>
+                        <p class="author" data-i18n="testimonial_sarah_author">Sarah M.</p>
+                    </div>
                 </div>
-                <div class="testimonial-card">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-card premium-card">
+                    <div class="quote-icon">"</div>
+                    <div class="stars">★★★★★</div>
                     <p class="quote" data-i18n="testimonial_thomas_quote">"Habe ein Ersatzteil für meinen Oldtimer
                         drucken lassen. Passt perfekt! Danke für
                         die tolle Beratung."</p>
-                    <p class="author" data-i18n="testimonial_thomas_author">- Thomas K.</p>
+                    <div class="author-info">
+                        <div class="author-avatar">T</div>
+                        <p class="author" data-i18n="testimonial_thomas_author">Thomas K.</p>
+                    </div>
                 </div>
-                <div class="testimonial-card">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                <div class="testimonial-card premium-card">
+                    <div class="quote-icon">"</div>
+                    <div class="stars">★★★★★</div>
                     <p class="quote" data-i18n="testimonial_julia_quote">"Super netter Kontakt und das personalisierte
                         Geschenk kam mega gut an. Die Farben
                         leuchten richtig."</p>
-                    <p class="author" data-i18n="testimonial_julia_author">- Julia & Ben</p>
+                    <div class="author-info">
+                        <div class="author-avatar">J</div>
+                        <p class="author" data-i18n="testimonial_julia_author">Julia & Ben</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -668,41 +666,7 @@
                     </div>
                 </div>
 
-                <div class="admin-group" style="margin-top: 2rem;">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4 style="margin: 0;">Bestellungen / Anfragen (Kontaktformular)</h4>
-                        <button class="contact-btn admin-export-btn"
-                            style="padding: 0.5rem 1rem; background: #5cb85c; border-color: #4cae4c;">CSV
-                            Export</button>
-                    </div>
-                    <div style="overflow-x: auto;">
-                        <table id="orders-table" style="width: 100%; border-collapse: collapse; margin-top: 1rem;">
-                            <thead>
-                                <tr style="background: var(--bg-light); text-align: left;">
-                                    <th style="padding: 0.5rem;">Datum</th>
-                                    <th style="padding: 0.5rem;">Name</th>
-                                    <th style="padding: 0.5rem;">Bestell-Nr.</th>
-                                    <th style="padding: 0.5rem;">Email</th>
-                                    <th style="padding: 0.5rem;">Nachricht</th>
-                                    <th style="padding: 0.5rem;">Produkte</th>
-                                    <th style="padding: 0.5rem;">Gesamtpreis</th>
-                                    <th style="padding: 0.5rem;">Tracking</th>
-                                    <th style="padding: 0.5rem;">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Orders inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <button id="clear-orders-btn"
-                        style="margin-top: 1rem; color: #d9534f; border: 1px solid #d9534f; background: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Alle
-                        löschen</button>
-                    <button id="delete-completed-orders-btn"
-                        style="margin-top: 1rem; margin-left: 0.5rem; color: #d9534f; border: 1px solid #d9534f; background: none; padding: 5px 10px; cursor: pointer; border-radius: 4px;">Erledigte
-                        löschen</button>
-                </div>
+
 
                 <div class="admin-group" style="margin-top: 2rem;">
                     <h4>Gutschein-Verwaltung</h4>
@@ -834,6 +798,10 @@
             </div>
         </div>
         <div class="footer-bottom">
+            <p style="font-size:0.75rem; opacity:0.8; margin-bottom:0.5rem; line-height:1.4;">
+                * Alle Preise sind Gesamtpreise in Euro (€). Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Zzgl. Versandkosten.<br>
+                Produktsicherheit & EU-Herstellerangaben gem. Verordnung (EU) 2023/988 (GPSR): Druckbau Manufaktur, E-Mail: druckbau@gmail.com
+            </p>
             <p class="copyright">&copy; 2026 Druckbau. Alle Rechte vorbehalten.</p>
         </div>
     </footer>
@@ -919,6 +887,7 @@
             </div>
 
             <div id="chat-messages" class="chat-messages">
+                <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="display: block; background: #5865F2; color: white; padding: 10px; text-align: center; text-decoration: none; font-weight: bold; margin-bottom: 10px; border-radius: 5px;">Für mehr Hilfe treten sie unserem Discord bei</a>
                 <div class="chat-message bot">
                     <div class="chat-avatar">🤖</div>
                     <div class="chat-bubble" data-i18n="chat_bot_greeting">
@@ -928,12 +897,13 @@
             </div>
 
             <div class="chat-quick-replies" id="chat-quick-replies">
-                <button class="quick-reply-btn" data-topic="Lieferzeit" data-i18n="chat_reply_shipping">⏱️
-                    Lieferzeit</button>
-                <button class="quick-reply-btn" data-topic="Preise" data-i18n="chat_reply_pricing">💰 Preise</button>
-                <button class="quick-reply-btn" data-topic="Materialien" data-i18n="chat_reply_materials">🎨
-                    Materialien</button>
-                <button class="quick-reply-btn" data-topic="Kontakt" data-i18n="chat_reply_contact">📞 Kontakt</button>
+                <button class="quick-reply-btn" data-topic="Lieferzeit" data-i18n="chat_reply_shipping">⏱️ Lieferzeit</button>
+                <button class="quick-reply-btn" data-topic="Preise" data-i18n="chat_reply_pricing">💰 Preise & Rabatte</button>
+                <button class="quick-reply-btn" data-topic="Materialien" data-i18n="chat_reply_materials">🎨 Materialien</button>
+                <button class="quick-reply-btn" data-topic="Sonderanfertigung">⚙️ Sonderanfertigung</button>
+                <button class="quick-reply-btn" data-topic="FAQ">❓ FAQ</button>
+                <button class="quick-reply-btn" data-topic="Kontakt">✉️ Kontakt/Anfrage</button>
+                <button class="quick-reply-btn" data-topic="Discord">💬 Discord & Support</button>
             </div>
 
             <div class="chat-input-container">

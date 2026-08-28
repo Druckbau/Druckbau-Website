@@ -4,113 +4,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Druckbau - AGB</title>
+    <title>Druckbau - Allgemeine Geschäftsbedingungen (AGB)</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     <style>
-        .legal-content {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        :root {
+            --legal-bg: #f8fafc;
+            --legal-card: #ffffff;
+            --legal-text: #1e293b;
+            --legal-muted: #64748b;
+            --legal-border: #e2e8f0;
+            --legal-primary: #2563eb;
         }
 
-        h1,
-        h2,
-        h3 {
-            color: var(--primary-blue);
-            margin-bottom: 1rem;
-            margin-top: 2rem;
+        [data-theme="dark"] {
+            --legal-bg: #0f172a;
+            --legal-card: #1e293b;
+            --legal-text: #f8fafc;
+            --legal-muted: #94a3b8;
+            --legal-border: #334155;
+            --legal-primary: #3b82f6;
         }
 
-        p {
-            margin-bottom: 1rem;
-            line-height: 1.6;
+        body {
+            background-color: var(--legal-bg);
+            color: var(--legal-text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
         }
 
-        .back-link {
+        .legal-container {
+            max-width: 850px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: var(--legal-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--legal-border);
+        }
+
+        .legal-badge {
             display: inline-block;
-            margin-top: 2rem;
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: bold;
+            padding: 0.35rem 0.85rem;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--legal-primary);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
         }
+
+        h1 {
+            color: var(--legal-text);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        h2 {
+            color: var(--legal-primary);
+            font-size: 1.25rem;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--legal-border);
+            padding-bottom: 0.4rem;
+        }
+
+        p, ul {
+            color: var(--legal-text);
+            line-height: 1.7;
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
         .back-home-fixed {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #00AEEF;
+            background: var(--legal-primary);
             color: white;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
             z-index: 1000;
-            font-size: 0.9rem;
-            transition: transform 0.2s;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
         }
 
         .back-home-fixed:hover {
-            transform: scale(1.05);
-            background: #0096ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        a {
+            color: var(--legal-primary);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--legal-border);
+            font-size: 0.85rem;
+            color: var(--legal-muted);
         }
     </style>
 </head>
 
 <body>
     <a href="index.html" class="back-home-fixed">← Zur Startseite</a>
-    <nav>
-        <div class="nav-left">
-            <a href="index.html" style="text-decoration:none; color:inherit;">
-                <h2 style="margin:0; color: var(--primary-blue);">Druckbau</h2>
-            </a>
-        </div>
-    </nav>
 
     <main>
-        <div class="legal-content">
-            <div
-                style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 1rem; border-radius: 8px; margin-bottom: 2rem; font-size: 0.9rem;">
-                <strong>WICHTIG:</strong> Dies ist ein Muster für die Allgemeinen Geschäftsbedingungen (AGB). Bitte prüfen und ersetzen Sie alle Platzhalter in eckigen Klammern durch Ihre realen Geschäftsdaten.
-            </div>
+        <div class="legal-container">
+            <div class="legal-badge">Vertragsbedingungen & E-Commerce Richtlinien</div>
             <h1>Allgemeine Geschäftsbedingungen (AGB)</h1>
 
-            <h2>1. Geltungsbereich</h2>
-            <p>Für alle Geschäftsbeziehungen zwischen Druckbau, [Ihr Name/Firmenname], [Ihre Straße Hausnummer], [Ihre PLZ und Ort] (im Folgenden „Verkäufer“ oder „wir“) und dem Kunden gelten ausschließlich die nachfolgenden Allgemeinen Geschäftsbedingungen in ihrer zum Zeitpunkt der Bestellung gültigen Fassung.</p>
+            <h2>1. Geltungsbereich & Anbieter</h2>
+            <p>
+                Für alle Bestellungen über unseren Online-Shop gelten die nachfolgenden AGB. Vertragspartner ist:
+                <br><strong>Druckbau Manufaktur</strong><br>
+                Inhaber: [Vorname] [Nachname], E-Mail: <code>druckbau@gmail.com</code>.
+            </p>
 
-            <h2>2. Vertragsschluss</h2>
-            <p>Die Präsentation der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot, sondern einen unverbindlichen Online-Katalog dar. Durch Anklicken des Buttons „Zahlungspflichtig bestellen“ geben Sie eine verbindliche Bestellung der im Warenkorb enthaltenen Waren ab.</p>
-            <p>Der Vertrag kommt zustande, wenn wir Ihre Bestellung durch eine Auftragsbestätigung per E-Mail nach dem Erhalt Ihrer Anfrage annehmen.</p>
+            <h2>2. Vertragsschluss & Bestellablauf</h2>
+            <p>
+                Die Darstellung der Produkte im Online-Shop stellt kein rechtlich bindendes Angebot, sondern einen unverbindlichen Online-Katalog dar. Durch Anklicken des Buttons „Zahlungspflichtig bestellen“ geben Sie eine verbindliche Bestellung ab. Die Auftragsbestätigung erfolgt unverzüglich per E-Mail.
+            </p>
 
-            <h2>3. Preise und Zahlungsbedingungen</h2>
-            <p>Die auf den Produktseiten genannten Preise enthalten die gesetzliche Mehrwertsteuer und sonstige Preisbestandteile. Zusätzlich zu den angegebenen Preisen berechnen wir für die Lieferung innerhalb Deutschlands Versandkosten, die dem Kunden im Bestellprozess deutlich mitgeteilt werden.</p>
-            <p>Die Zahlung erfolgt per [z.B. Vorkasse per Überweisung, PayPal].</p>
+            <h2>3. Preise, Versandkosten & § 19 UStG</h2>
+            <p>
+                Die angegebenen Preise verstehen sich als Gesamtpreise. Auf Grund des Kleinunternehmerstatus gemäß § 19 UStG wird keine Umsatzsteuer erhoben und ausgewiesen. Zusätzlich fallen Versandkosten gemäß unserer Versandübersicht an.
+            </p>
 
-            <h2>4. Lieferung und Eigentumsvorbehalt</h2>
-            <p>Die Lieferung erfolgt innerhalb der auf den Artikelseiten bzw. bei der Bestellzusammenfassung angegebenen Lieferzeit. Die Ware bleibt bis zur vollständigen Bezahlung unser Eigentum.</p>
+            <h2>4. Lieferbedingungen & Individuelle 3D-Drucke</h2>
+            <p>
+                Die Lieferung erfolgt innerhalb Deutschlands. Da 3D-Druckteile in Einzelfertigung erstellt werden, richten sich die Lieferzeiten nach der Auslastung und dem Materialbestand (standardmäßig 8-12 Werktage).
+            </p>
 
-            <h2>5. Widerrufsrecht / Ausschluss des Widerrufsrechts</h2>
-            <p>Verbrauchern steht grundsätzlich ein Widerrufsrecht zu. Das Widerrufsrecht besteht nicht bei Verträgen zur Lieferung von Waren, die nicht vorgefertigt sind und für deren Herstellung eine individuelle Auswahl oder Bestimmung durch den Verbraucher maßgeblich ist oder die eindeutig auf die persönlichen Bedürfnisse des Verbrauchers zugeschnitten sind (z. B. 3D-Drucke nach individuellen Kundenvorgaben).</p>
-            <p>Weitere Informationen finden Sie in unserer separaten <a href="widerruf.html">Widerrufsbelehrung</a>.</p>
+            <h2>5. Widerrufsrecht & Ausschluss bei Kundenanfertigungen</h2>
+            <p>
+                Verbrauchern steht das gesetzliche 14-tägige Widerrufsrecht zu. Das Widerrufsrecht ist gemäß § 312g Abs. 2 Nr. 1 BGB ausgeschlossen bei Verträgen zur Lieferung von Waren, die eindeutig auf die persönlichen Bedürfnisse des Kunden zugeschnitten wurden (Custom Orders).
+            </p>
 
-            <h2>6. Gewährleistung und Haftung</h2>
-            <p>Es gelten die gesetzlichen Gewährleistungsrechte. Für Schäden, die auf einer vorsätzlichen oder grob fahrlässigen Pflichtverletzung beruhen, haften wir nach den gesetzlichen Bestimmungen.</p>
+            <h2>6. Gewährleistung & Mängelhaftung</h2>
+            <p>
+                Es gelten die gesetzlichen Mängelhaftungsrechte. Geringfügige, technisch bedingte Oberflächenstrukturen (z. B. sichtbare Layer-Lines), die für das Fused Deposition Modeling (FDM) 3D-Druckverfahren typisch sind, stellen keinen Sachmangel dar.
+            </p>
 
-            <h2>7. Schlussbestimmungen</h2>
-            <p>Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts. Die Vertragssprache ist Deutsch.</p>
+            <h2>7. Produktsicherheit (GPSR)</h2>
+            <p>
+                Der Käufer verpflichtet sich, die den Produkten beigelegten oder auf der Website angegebenen Sicherheitshinweise bezüglich Temperaturbeständigkeit und Kleinteilen zu beachten.
+            </p>
 
-            <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+            <h2>8. EU-Streitschlichtung & Schlussbestimmungen</h2>
+            <p>
+                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.
+            </p>
+
+            <div class="footer-note">
+                <a href="index.html">← Zurück zur Hauptseite</a> | <a href="impressum.html">Impressum & GPSR</a> | <a href="datenschutz.html">Datenschutz</a> | <a href="widerruf.html">Widerrufsbelehrung</a>
+            </div>
         </div>
     </main>
 </body>

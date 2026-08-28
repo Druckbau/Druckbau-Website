@@ -2,26 +2,16 @@
 import { loadCouponsFromDB } from './db.js';
 
 export const products = [
-    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
-    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
+    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
+    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
     { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
 ];
 
 export const colors = [
-    { name: 'Cyan-Blau (PLA)', value: 'blue' },
-    { name: 'Weiss (PLA)', value: 'white' },
     { name: 'Schwarz (PLA)', value: 'black' },
-    { name: 'Grün (PLA)', value: 'green' },
-    { name: 'Grün (PETG)', value: 'petg-green' },
-    { name: 'Orange (PLA)', value: 'orange' },
     { name: 'Grau (PLA)', value: 'grey' },
-    { name: 'Braun (PLA)', value: 'brown' },
-    { name: 'Transparent Blau (PLA)', value: 'trans-blue' },
-    { name: 'Transparent Grün (PLA)', value: 'trans-green' },
-    { name: 'Transparent Gelb (PLA)', value: 'trans-yellow' },
-    { name: 'Transparent Rot (PLA)', value: 'trans-red' },
-    { name: 'Eigene (Wunschfarbe)', value: 'custom' }
+    { name: 'Weiß (PLA)', value: 'white' }
 ];
 
 export const SHIPPING_COST = 4.90;

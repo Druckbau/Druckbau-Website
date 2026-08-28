@@ -6,105 +6,184 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Druckbau - Versand & Zahlung</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
     <style>
-        .legal-content {
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        :root {
+            --legal-bg: #f8fafc;
+            --legal-card: #ffffff;
+            --legal-text: #1e293b;
+            --legal-muted: #64748b;
+            --legal-border: #e2e8f0;
+            --legal-primary: #2563eb;
         }
 
-        h1,
-        h2,
-        h3 {
-            color: var(--primary-blue);
+        [data-theme="dark"] {
+            --legal-bg: #0f172a;
+            --legal-card: #1e293b;
+            --legal-text: #f8fafc;
+            --legal-muted: #94a3b8;
+            --legal-border: #334155;
+            --legal-primary: #3b82f6;
+        }
+
+        body {
+            background-color: var(--legal-bg);
+            color: var(--legal-text);
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .legal-container {
+            max-width: 850px;
+            margin: 3rem auto;
+            padding: 2.5rem;
+            background: var(--legal-card);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--legal-border);
+        }
+
+        .legal-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--legal-primary);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
             margin-bottom: 1rem;
+        }
+
+        h1 {
+            color: var(--legal-text);
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+        }
+
+        h2 {
+            color: var(--legal-primary);
+            font-size: 1.25rem;
             margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+            border-bottom: 1px solid var(--legal-border);
+            padding-bottom: 0.4rem;
         }
 
         p, ul {
+            color: var(--legal-text);
+            line-height: 1.7;
+            font-size: 0.95rem;
             margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        
-        ul {
-            padding-left: 20px;
         }
 
-        .back-link {
-            display: inline-block;
-            margin-top: 2rem;
-            color: var(--primary-blue);
-            text-decoration: none;
-            font-weight: bold;
+        ul {
+            padding-left: 1.5rem;
         }
+
+        .highlight-card {
+            background: rgba(37, 99, 235, 0.05);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            padding: 1.2rem;
+            border-radius: 12px;
+            margin: 1.5rem 0;
+        }
+
         .back-home-fixed {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #00AEEF;
+            background: var(--legal-primary);
             color: white;
-            padding: 10px 20px;
+            padding: 10px 22px;
             border-radius: 50px;
             text-decoration: none;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
             z-index: 1000;
-            font-size: 0.9rem;
-            transition: transform 0.2s;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
         }
 
         .back-home-fixed:hover {
-            transform: scale(1.05);
-            background: #0096ce;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+        }
+
+        a {
+            color: var(--legal-primary);
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--legal-border);
+            font-size: 0.85rem;
+            color: var(--legal-muted);
         }
     </style>
 </head>
 
 <body>
     <a href="index.html" class="back-home-fixed">← Zur Startseite</a>
-    <nav>
-        <div class="nav-left">
-            <a href="index.html" style="text-decoration:none; color:inherit;">
-                <h2 style="margin:0; color: var(--primary-blue);">Druckbau</h2>
-            </a>
-        </div>
-    </nav>
 
     <main>
-        <div class="legal-content">
+        <div class="legal-container">
+            <div class="legal-badge">Preistransparenz & Logistik</div>
             <h1>Versand- und Zahlungsbedingungen</h1>
 
-            <h2>Zahlungsbedingungen</h2>
-            <p>Für Lieferungen bieten wir folgende Zahlungsmöglichkeiten an, sofern in der jeweiligen Produktdarstellung im Angebot nichts anderes bestimmt ist:</p>
+            <h2>Preise & Umsatzsteuer</h2>
+            <p>
+                Alle angegebenen Preise sind Gesamtpreise in Euro (€). Gemäß § 19 UStG erheben wir keine Umsatzsteuer und weisen diese folglich nicht aus (Kleinunternehmerstatus).
+            </p>
+
+            <h2>Zahlungsmöglichkeiten</h2>
+            <p>Wir bieten Ihnen folgende sichere Zahlungsmöglichkeiten an:</p>
             <ul>
-                <li><strong>Vorkasse per Banküberweisung:</strong> Sie überweisen den Rechnungsbetrag nach Erhalt unserer Auftragsbestätigung.</li>
-                <li><strong>PayPal:</strong> Zahlen Sie bequem und sicher über Ihr PayPal-Konto. (Inklusive Kreditkarte, Lastschrift etc. über PayPal).</li>
+                <li><strong>Vorkasse per Banküberweisung:</strong> Überweisen Sie den Betrag bequem auf unser Geschäftskonto nach Auftragsbestätigung.</li>
+                <li><strong>PayPal & Online-Zahlung:</strong> Schnelle und geschützte Abwicklung via PayPal.</li>
             </ul>
 
-            <h2>Versandbedingungen</h2>
-            <p>Die Lieferung unserer Artikel kann derzeit nur nach Deutschland erfolgen.</p>
-            
-            <h3>Versandkosten</h3>
-            <p>Die Versandkosten betragen pauschal <strong>4,90 €</strong> pro Bestellung.</p>
-            <p>Ab einem Bruttobestellwert von <strong>50,00 €</strong> versenden wir <strong>versandkostenfrei</strong>.</p>
-            
-            <h3>Lieferzeiten</h3>
-            <p>Soweit im jeweiligen Angebot keine andere Frist angegeben ist, erfolgt die Lieferung der Ware in Deutschland innerhalb von 3 - 5 Tagen nach Vertragsschluss (bei vereinbarter Vorauszahlung nach dem Zeitpunkt Ihrer Zahlungsanweisung).</p>
-            <p>Bitte beachten Sie, dass an Sonn- und Feiertagen keine Zustellung erfolgt. Bei individuellen Sonderanfertigungen (Custom Orders) richtet sich die Lieferzeit nach der benötigten Herstellungsdauer, die wir Ihnen im individuellen Angebot mitteilen.</p>
+            <h2>Versandkosten & Freigrenzen</h2>
+            <div class="highlight-card">
+                <p style="margin:0;">
+                    🚚 <strong>Standardversand Deutschland:</strong> Pauschal <strong>4,90 €</strong> pro Bestellung.<br>
+                    🎉 <strong>Kostenloser Versand:</strong> Ab einem Bestellwert von <strong>50,00 €</strong> versenden wir versandkostenfrei innerhalb Deutschlands.
+                </p>
+            </div>
 
-            <a href="index.html" class="back-link">← Zurück zur Startseite</a>
+            <h2>Lieferzeiten & Fertigung</h2>
+            <p>
+                Sofern im jeweiligen Angebot keine abweichende Frist angegeben ist, erfolgt die Lieferung lagernder Waren innerhalb von <strong>8 - 12 Werktagen</strong> nach Zahlungseingang.
+            </p>
+            <p>
+                Da wir jedes 3D-Druckteil individuell und präzise in unserer Manufaktur anfertigen, kann sich bei hoher Auslastung oder Sonderanfertigungen (Custom Orders) die Fertigungszeit geringfügig anpassen. Wir informieren Sie transparent über den aktuellen Fertigungsstatus.
+            </p>
+
+            <h2>Nachhaltige Verpackung & Produktsicherheit</h2>
+            <p>
+                Wir versenden mit umweltfreundlichen, recycelbaren Verpackungsmaterialien. Alle Sendungen erfüllen die Anforderungen der Verpackungsgesetze (VerpackG) sowie der EU-Produktsicherheitsverordnung (GPSR).
+            </p>
+
+            <div class="footer-note">
+                <a href="index.html">← Zurück zur Hauptseite</a> | <a href="impressum.html">Impressum & GPSR</a> | <a href="widerruf.html">Widerrufsbelehrung</a>
+            </div>
         </div>
     </main>
 </body>

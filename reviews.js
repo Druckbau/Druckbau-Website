@@ -67,7 +67,7 @@ export function closeReviewModal() {
     if (modal) modal.classList.remove('show');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+export function initReviews() {
     const modal = document.getElementById('review-modal');
     if (modal) {
         modal.addEventListener('click', (e) => {
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', submitReview);
     }
-});
+}
 
 export async function submitReview(e) {
     e.preventDefault();

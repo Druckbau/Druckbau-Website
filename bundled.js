@@ -25,6 +25,9 @@ window.translations = {
         preview_title: "Interaktive 3D-Vorschau",
         workshop_title: "Die Werkstatt",
         workshop_subtitle: "Echte Handarbeit aus der Region",
+        usp_shipping: "Kostenloser Versand ab 50€",
+        usp_made_in: "Made in Germany",
+        usp_quality: "100% Zufriedenheit",
         workshop_text1: "Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine kleine Manufaktur für individuelle 3D-Druck-Lösungen.",
         workshop_text2: "In meiner Werkstatt setze ich auf einen einzelnen, hochpräzisen Drucker. Da jedes Stück individuell für Sie gefertigt wird und keine Massenware ist, kann die Lieferzeit je nach Auslastung variieren. Qualität braucht eben seine Zeit!",
         product_manufacturing_note: "Individualfertigung – Jedes Teil ein Einzelstück",
@@ -110,7 +113,7 @@ window.translations = {
         contact_gdpr: "Ich stimme der Verarbeitung meiner Daten gemäß der Datenschutzerklärung zu.",
 
         // Legal / Price Hints
-        price_hint: "inkl. MwSt.",
+        price_hint: "Gesamtpreis (gem. § 19 UStG ohne MwSt.-Ausweis)",
         shipping_hint: "zzgl. <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">Versandkosten</a>",
         shipping_info: "Versandkosten: 4.90€ (versichert)",
         cookie_title: "Datenschutz & Cookies",
@@ -256,6 +259,9 @@ window.translations = {
 
         // Wishlist Section
         wishlist_title: "Meine Wunschliste",
+        wishlist_empty: "Deine Wunschliste ist leer.",
+        product_wishlist_btn: "Auf die Wunschliste",
+        products_title: "Unsere Produkte",
 
         // Review Modal
         review_modal_title: "Produkt bewerten",
@@ -277,7 +283,7 @@ window.translations = {
         chat_reply_pricing: "💰 Preise",
         chat_reply_materials: "🎨 Materialien",
         chat_reply_contact: "📞 Kontakt",
-        chat_reply_lieferzeit_response: "Unsere Standard-Lieferzeit beträgt 3-5 Werktage. Express-Versand ist auf Anfrage möglich! 🚚",
+        chat_reply_lieferzeit_response: "Unsere Standard-Lieferzeit beträgt 8-12 Werktage. Express-Versand ist auf Anfrage möglich! 🚚",
         chat_reply_preise_response: "Unsere Preise variieren je nach Produkt und Menge. Schauen Sie sich unsere Produktseite an oder kontaktieren Sie uns für ein individuelles Angebot! 💰",
         chat_reply_materialien_response: "Wir verwenden hochwertige Materialien wie PLA, PETG, ABS und TPU. Jedes Material hat seine eigenen Eigenschaften - fragen Sie uns gerne! 🎨",
         chat_reply_kontakt_response: "Sie erreichen uns per E-Mail unter druckbau@gmail.com oder nutzen Sie unser Kontaktformular. Wir antworten innerhalb von 24 Stunden! 📞",
@@ -332,7 +338,10 @@ window.translations = {
         home_hero_desc: "From individual prototypes to serial production – we bring your ideas into the third dimension.",
         preview_title: "Interactive 3D Preview",
         workshop_title: "The Workshop",
-        workshop_subtitle: "Genuine craftsmanship from the region",
+        workshop_subtitle: "True craftsmanship from the region",
+        usp_shipping: "Free shipping from 50€",
+        usp_made_in: "Made in Germany",
+        usp_quality: "100% Satisfaction",
         workshop_text1: "Druckbau is born from a true passion for technology. What started as a hobby has grown into a small manufactory for individual 3D printing solutions.",
         workshop_text2: "In my workshop, I rely on a single, high-precision printer. Since every piece is custom-made for you and not mass-produced, delivery times may vary depending on workload. Quality takes time!",
         product_manufacturing_note: "Custom Production – Every piece is unique",
@@ -413,7 +422,7 @@ window.translations = {
         contact_gdpr: "I agree to the processing of my data according to the privacy policy.",
 
         // Legal / Price Hints
-        price_hint: "incl. VAT",
+        price_hint: "Total price (no VAT charged acc. to § 19 UStG)",
         shipping_hint: "plus <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">shipping</a>",
         shipping_info: "Shipping: 4.90€ (insured)",
         cookie_title: "Privacy & Cookies",
@@ -519,6 +528,9 @@ window.translations = {
 
         // Wishlist Section
         wishlist_title: "My Wishlist",
+        wishlist_empty: "Your wishlist is empty.",
+        product_wishlist_btn: "Add to wishlist",
+        products_title: "Our Products",
 
         // Review Modal
         review_modal_title: "Rate Product",
@@ -540,7 +552,7 @@ window.translations = {
         chat_reply_pricing: "💰 Pricing",
         chat_reply_materials: "🎨 Materials",
         chat_reply_contact: "📞 Contact",
-        chat_reply_lieferzeit_response: "Our standard shipping time is 3-5 business days. Express shipping is available on request! 🚚",
+        chat_reply_lieferzeit_response: "Our standard shipping time is 8-12 business days. Express shipping is available on request! 🚚",
         chat_reply_preise_response: "Our prices vary depending on the product and quantity. Take a look at our product page or contact us for an individual offer! 💰",
         chat_reply_materialien_response: "We use high-quality materials such as PLA, PETG, ABS and TPU. Each material has its own properties - feel free to ask us! 🎨",
         chat_reply_kontakt_response: "You can reach us by email at druckbau@gmail.com or use our contact form. We answer within 24 hours! 📞",
@@ -819,27 +831,16 @@ function initTranslations() {
 
         // --- PRODUCT RENDERING FALLBACK (for file:// browsing) ---
         const fallbackProducts = [
-            { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
-            { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-
-            { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
+            { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
+            { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+            { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
             { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
         ];
 
         const fallbackColors = [
-            { name: 'Cyan-Blau (PLA)', value: 'blue' },
-            { name: 'Weiss (PLA)', value: 'white' },
             { name: 'Schwarz (PLA)', value: 'black' },
-            { name: 'Grün (PLA)', value: 'green' },
-            { name: 'Grün (PETG)', value: 'petg-green' },
-            { name: 'Orange (PLA)', value: 'orange' },
             { name: 'Grau (PLA)', value: 'grey' },
-            { name: 'Braun (PLA)', value: 'brown' },
-            { name: 'Transparent Blau (PLA)', value: 'trans-blue' },
-            { name: 'Transparent Grün (PLA)', value: 'trans-green' },
-            { name: 'Transparent Gelb (PLA)', value: 'trans-yellow' },
-            { name: 'Transparent Rot (PLA)', value: 'trans-red' },
-            { name: 'Eigene (Wunschfarbe)', value: 'custom' }
+            { name: 'Weiß (PLA)', value: 'white' }
         ];
 
         // Initialize default coupons for fallback if not found
@@ -867,7 +868,9 @@ function initTranslations() {
                     return `
                         <div class="product-card" data-product-id="${p.id}" style="position: relative;">
                             <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlistFallback('${p.id}', this)" title="${t('product_wishlist_btn')}" style="position:absolute; top:10px; right:10px; z-index:5;">
-                                <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="${isInWishlist ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                </svg>
                             </button>
                             <h3>${name}</h3>
                             <span class="price">${t('product_indiv')}</span>
@@ -898,7 +901,9 @@ function initTranslations() {
                 return `
                     <div class="product-card" data-product-id="${p.id}" style="position: relative;">
                         <button class="wishlist-btn ${isInWishlist ? 'active' : ''}" onclick="event.stopPropagation(); window.toggleWishlistFallback('${p.id}', this)" title="${t('product_wishlist_btn')}" style="position:absolute; top:10px; right:10px; z-index:5;">
-                            <i class="${isInWishlist ? 'fas' : 'far'} fa-heart"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="${isInWishlist ? 'currentColor' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
                         </button>
                         <img src="${p.images[0]}" alt="${name}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
                         <h3>${name}</h3>
@@ -913,18 +918,35 @@ function initTranslations() {
                         <div style="font-size: 0.75rem; color: var(--text-light); margin-bottom:10px;">${t('price_hint')} ${t('shipping_hint')}</div>
 
                         <div class="product-actions" style="display:flex; flex-direction:column; gap:8px;">
-                            <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
-                                <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
-                                <select class="qty-input color-fallback-select" style="flex:1; padding:0.4rem; font-size:0.8rem;">
-                                    ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
-                                </select>
-                            </div>
+                            ${p.id === 'a' ? `
+                                <div style="display:flex; flex-direction:column; gap:5px; margin-bottom:5px;">
+                                    <div style="display:flex; align-items:center; gap:5px;">
+                                        <span style="font-size:0.75rem; font-weight:600; min-width:70px;">Unterteil:</span>
+                                        <select class="qty-input color-base-select" style="flex:1; padding:0.3rem; font-size:0.8rem;">
+                                            ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div style="display:flex; align-items:center; gap:5px;">
+                                        <span style="font-size:0.75rem; font-weight:600; min-width:70px;">Keycaps:</span>
+                                        <select class="qty-input color-keycaps-select" style="flex:1; padding:0.3rem; font-size:0.8rem;">
+                                            ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
+                                    <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
+                                </div>
+                            ` : `
+                                <div class="product-controls" style="display:flex; gap:5px; align-items:center;">
+                                    <input type="number" value="1" min="1" class="qty-input" style="width:50px; padding:0.4rem; flex-shrink:0;">
+                                    <select class="qty-input color-fallback-select" style="flex:1; padding:0.4rem; font-size:0.8rem;">
+                                        ${fallbackColors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                                    </select>
+                                </div>
+                            `}
                             <div style="display:flex; gap:5px;">
-                                <button class="add-btn" onclick="event.stopPropagation(); window.addToCartFallback('${p.id}', false, this)" style="flex:2; padding:0.5rem; font-size:0.8rem; margin:0;">
+                                <button class="add-btn" onclick="event.stopPropagation(); window.addToCartFallback('${p.id}', false, this)" style="flex:1; padding:0.5rem; font-size:0.8rem; margin:0;">
                                     ${t('product_add_cart')}
-                                </button>
-                                <button class="rate-btn" onclick="event.stopPropagation(); window.openReviewModalFallback('${p.id}')" style="flex:1; padding:0.5rem; font-size:0.8rem; margin:0; border:1px solid #ddd; background:white; color:#333;">
-                                    ${t('product_rate')}
                                 </button>
                             </div>
                         </div>
@@ -1077,9 +1099,19 @@ function initTranslations() {
             } else if (btnElement) {
                 const card = btnElement.closest('.product-card');
                 const qtyIn = card.querySelector('input[type="number"]');
+                const baseSel = card.querySelector('.color-base-select');
+                const keycapsSel = card.querySelector('.color-keycaps-select');
                 const colorSel = card.querySelector('.color-fallback-select');
+                
                 if (qtyIn) qty = parseInt(qtyIn.value) || 1;
-                if (colorSel) colorName = colorSel.options[colorSel.selectedIndex].text;
+                
+                if (baseSel && keycapsSel) {
+                    const baseName = baseSel.options[baseSel.selectedIndex].text;
+                    const keycapsName = keycapsSel.options[keycapsSel.selectedIndex].text;
+                    colorName = `Unterteil: ${baseName}, Keycaps: ${keycapsName}`;
+                } else if (colorSel) {
+                    colorName = colorSel.options[colorSel.selectedIndex].text;
+                }
             }
 
             const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
@@ -1108,7 +1140,7 @@ function initTranslations() {
         };
 
         window.renderWishlist = function() {
-            const container = document.getElementById('wishlist-grid');
+            const container = document.getElementById('wishlist-items');
             if (!container) return;
             const wishlist = JSON.parse(localStorage.getItem('druckbau_wishlist') || '[]');
             if (wishlist.length === 0) {
@@ -1145,6 +1177,8 @@ function initTranslations() {
             if (!modal) return;
             modal.style.display = 'flex';
             modal.dataset.productId = productId;
+            const hiddenId = document.getElementById('review-product-id');
+            if (hiddenId) hiddenId.value = productId;
             
             // Setup stars
             const starsContainer = modal.querySelector('.star-rating-input');
@@ -1168,10 +1202,7 @@ function initTranslations() {
             // Handle form submit
             const form = document.getElementById('review-form');
             if (form) {
-                form.onsubmit = (e) => {
-                    e.preventDefault();
-                    window.submitReviewFallback();
-                };
+                // Do not override onsubmit here to prevent conflicts with script.js which causes infinite loops or double submits.
             }
         };
 
@@ -1639,16 +1670,7 @@ function initTranslations() {
                                 }));
                             }
 
-                            // 4. Stats
-                            const stats = JSON.parse(localStorage.getItem('druckbau_stats')) || { views: {}, purchases: {}, revenue: {}, youtube_clicks: 0 };
-                            const statsBody = document.querySelector('#stats-table tbody');
-                            if (statsBody) {
-                                statsBody.innerHTML = fallbackProducts.map(p => {
-                                    const s = stats.purchases?.[p.id] || 0;
-                                    const r = stats.revenue?.[p.id] || 0;
-                                    return `<tr><td>${t(p.nameKey)}</td><td>${s}</td><td style="color:var(--primary-blue); font-weight:bold;">${r.toFixed(2)} €</td></tr>`;
-                                }).join('') + `<tr><td style="font-weight:bold;">YouTube Klicks</td><td>${stats.youtube_clicks || 0}</td><td>-</td></tr>`;
-                            }
+
                         };
 
                         // Helper for news saving in fallback
@@ -2177,26 +2199,16 @@ async function saveReviewToDB(productId, name, text, rating) {
 // js/store.js
 
 const products = [
-    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['logo.jpg'] },
-    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hund_1.jpg', 'hund_2.jpg', 'hund_3.jpg', 'hund_4.jpg', 'hund_5.jpg'] },
-    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['logo.jpg'] },
+    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
+    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
     { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
 ];
 
 const colors = [
-    { name: 'Cyan-Blau (PLA)', value: 'blue' },
-    { name: 'Weiss (PLA)', value: 'white' },
     { name: 'Schwarz (PLA)', value: 'black' },
-    { name: 'Grün (PLA)', value: 'green' },
-    { name: 'Grün (PETG)', value: 'petg-green' },
-    { name: 'Orange (PLA)', value: 'orange' },
     { name: 'Grau (PLA)', value: 'grey' },
-    { name: 'Braun (PLA)', value: 'brown' },
-    { name: 'Transparent Blau (PLA)', value: 'trans-blue' },
-    { name: 'Transparent Grün (PLA)', value: 'trans-green' },
-    { name: 'Transparent Gelb (PLA)', value: 'trans-yellow' },
-    { name: 'Transparent Rot (PLA)', value: 'trans-red' },
-    { name: 'Eigene (Wunschfarbe)', value: 'custom' }
+    { name: 'Weiß (PLA)', value: 'white' }
 ];
 
 const SHIPPING_COST = 4.90;
@@ -2304,40 +2316,15 @@ function renderProducts() {
     grid.innerHTML = products.map(product => {
         const isWishlisted = state.wishlist.includes(product.id);
 
-        let avgRating = 0;
-        let reviewCount = 0;
-        let starsDisplay = '☆☆☆☆☆';
-
-        avgRating = getAverageRating(product.id);
-        const reviews = loadReviews()[product.id] || [];
-        reviewCount = reviews.length;
-        starsDisplay = renderStars(avgRating);
-
-        const ratingHtml = `
-            <div class="product-rating-summary" style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:0.8rem;">
-                <div style="display:flex; gap:0.5rem; width:100%;">
-                    <button type="button" class="rate-btn" data-id="${product.id}" data-name="${escapeHtml(product.name || t(product.nameKey))}" 
-                        style="flex:1; background:var(--primary-blue); border:1px solid var(--primary-blue); color:white; padding:5px; border-radius:4px; font-size:0.85rem; cursor:pointer; transition: opacity 0.2s;">
-                        ${t('product_rate')}
-                    </button>
-                    <button type="button" class="view-reviews-btn" data-id="${product.id}" data-name="${escapeHtml(product.name || t(product.nameKey))}" 
-                        style="flex:1; background:white; border:1px solid var(--primary-blue); color:var(--primary-blue); padding:5px; border-radius:4px; font-size:0.85rem; cursor:pointer; transition: background 0.2s;">
-                        ${t('product_view_reviews')} (${reviewCount})
-                    </button>
-                </div>
-            </div>
-        `;
-
         if (product.isCustom) {
             return `
             <div class="product-card" data-product-id="${product.id}" style="position: relative;">
                 <button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="${isWishlisted ? '#ff4757' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="${isWishlisted ? '#ff4757' : 'currentColor'}">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                     </svg>
                 </button>
                 <h3>${t(product.nameKey)}</h3>
-                ${ratingHtml}
                 <span class="price">${t('product_indiv')}</span>
                 
                 <div class="product-options">
@@ -2373,7 +2360,7 @@ function renderProducts() {
         }
 
         return `
-        <div class="product-card" data-product-id="${product.id}" style="position: relative;"><button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg></button>
+        <div class="product-card" data-product-id="${product.id}" style="position: relative;"><button type="button" class="wishlist-btn ${isWishlisted ? 'active' : ''}" data-id="${product.id}" title="${t('product_wishlist_btn')}"><svg xmlns="http://www.w3.org/2000/svg" fill="${isWishlisted ? '#ff4757' : 'none'}" viewBox="0 0 24 24" stroke-width="1.5" stroke="${isWishlisted ? '#ff4757' : 'currentColor'}"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" /></svg></button>
             <div class="product-gallery">
                 <div class="main-image-container">
                     <div id="tint-layer-${product.id}" class="tint-layer"></div><div class="zoom-icon"><svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg></div>
@@ -2389,7 +2376,6 @@ function renderProducts() {
 
                 <div class="product-info">
                 <h3>${t(product.nameKey)}</h3>
-                ${ratingHtml}
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
                 <div class="manufacturing-note" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success-color); margin-bottom: 0.8rem; font-weight: 500;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -2397,23 +2383,46 @@ function renderProducts() {
                 </div>
                 <div class="price">${product.price.toFixed(2)} € <span style="font-size: 0.75rem; font-weight: normal; color: var(--text-light); display: block;">${t('price_hint')} ${t('shipping_hint')}</span></div>
                 
-                <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
-                    <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;">
-                    <select id="color-${product.id}" class="qty-input" style="flex:1; padding:0.5rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
-                        ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
-                    </select>
-                    <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
-                        ${t('product_add_cart')}
-                    </button>
-                </div>
-
-                <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none; margin-top:10px;">
-                    <label style="color: var(--primary-blue); font-size:0.8rem;">${t('product_custom_color_label')}</label>
-                    <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input" style="padding:0.4rem;">
-                    <div class="warning-msg" style="font-size:0.7rem; margin-top:5px;">
-                        <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
+                ${product.id === 'a' ? `
+                    <div class="klicker-color-options" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <label style="font-size:0.85rem; font-weight:600; min-width:80px; color:var(--text-dark);">Unterteil:</label>
+                            <select id="color-base-${product.id}" class="qty-input color-base-select" style="flex:1; padding:0.4rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
+                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <label style="font-size:0.85rem; font-weight:600; min-width:80px; color:var(--text-dark);">Keycaps:</label>
+                            <select id="color-keycaps-${product.id}" class="qty-input color-keycaps-select" style="flex:1; padding:0.4rem; font-size:0.85rem;">
+                                ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                            </select>
+                        </div>
                     </div>
-                </div>
+                    <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;" title="${t('product_quantity')}">
+                        <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
+                            ${t('product_add_cart')}
+                        </button>
+                    </div>
+                ` : `
+                    <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
+                        <input type="number" id="qty-${product.id}" value="1" min="1" class="qty-input" style="width:55px; padding:0.5rem; flex-shrink:0; font-size:0.9rem;" title="${t('product_quantity')}">
+                        <select id="color-${product.id}" class="qty-input" style="flex:1; padding:0.5rem; font-size:0.85rem;" onchange="window.updateColorPreview('${product.id}', this.value)">
+                            ${colors.map(c => `<option value="${c.value}">${c.name}</option>`).join('')}
+                        </select>
+                        <button type="button" class="add-btn add-to-cart-btn" data-id="${product.id}" style="flex:1.2; padding:0.6rem 0.8rem; font-size:0.85rem; width:auto; border-radius:4px; margin:0;">
+                            ${t('product_add_cart')}
+                        </button>
+                    </div>
+
+                    <div id="custom-color-wrapper-${product.id}" class="option-group" style="display: none; margin-top:10px;">
+                        <label style="color: var(--primary-blue); font-size:0.8rem;">${t('product_custom_color_label')}</label>
+                        <input type="text" id="custom-color-input-${product.id}" placeholder="${t('product_custom_color_placeholder')}" class="qty-input" style="padding:0.4rem;">
+                        <div class="warning-msg" style="font-size:0.7rem; margin-top:5px;">
+                            <strong>${t('product_custom_color_warning_ref')}</strong> ${t('product_custom_color_warning_text')}
+                        </div>
+                    </div>
+                `}
                 <div id="cart-animation-${product.id}" style="position: absolute; right: 20px; bottom: 80px; pointer-events: none;"></div>
             </div>
         </div>
@@ -2507,18 +2516,31 @@ function addToCart(productId) {
         return;
     }
 
-    const colorSelect = document.getElementById(`color-${productId}`);
-    const colorValue = colorSelect ? colorSelect.value : 'pla';
-    const colorName = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : 'Standard';
+    const baseSelect = document.getElementById(`color-base-${productId}`);
+    const keycapSelect = document.getElementById(`color-keycaps-${productId}`);
 
+    let colorValue = '';
+    let colorName = '';
     let customColor = null;
-    if (colorValue === 'custom') {
-        const customInput = document.getElementById(`custom-color-input-${productId}`);
-        if (customInput && customInput.value.trim() !== '') {
-            customColor = customInput.value.trim();
-        } else {
-            alert("Bitte geben Sie Ihre Wunschfarbe ein.");
-            return;
+
+    if (baseSelect && keycapSelect) {
+        const baseColor = baseSelect.options[baseSelect.selectedIndex].text;
+        const keycapColor = keycapSelect.options[keycapSelect.selectedIndex].text;
+        colorName = `Unterteil: ${baseColor}, Keycaps: ${keycapColor}`;
+        colorValue = `base:${baseSelect.value}_keycaps:${keycapSelect.value}`;
+    } else {
+        const colorSelect = document.getElementById(`color-${productId}`);
+        colorValue = colorSelect ? colorSelect.value : 'black';
+        colorName = colorSelect ? colorSelect.options[colorSelect.selectedIndex].text : 'Standard';
+
+        if (colorValue === 'custom') {
+            const customInput = document.getElementById(`custom-color-input-${productId}`);
+            if (customInput && customInput.value.trim() !== '') {
+                customColor = customInput.value.trim();
+            } else {
+                alert("Bitte geben Sie Ihre Wunschfarbe ein.");
+                return;
+            }
         }
     }
 
@@ -3310,7 +3332,7 @@ function closeReviewModal() {
     if (modal) modal.classList.remove('show');
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+function initReviews() {
     const modal = document.getElementById('review-modal');
     if (modal) {
         modal.addEventListener('click', (e) => {
@@ -3323,7 +3345,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (form) {
         form.addEventListener('submit', submitReview);
     }
-});
+}
 
 async function submitReview(e) {
     e.preventDefault();
@@ -3442,7 +3464,7 @@ function appendMessage(text, sender) {
 function getBotResponse(text) {
     const t = text.toLowerCase();
     if (t.includes('lieferung') || t.includes('versand') || t.includes('dauer')) {
-        return "Unsere Lieferzeit beträgt in der Regel 3-5 Werktage nach Zahlungseingang.";
+        return "Unsere Lieferzeit beträgt in der Regel 8-12 Werktage nach Zahlungseingang.";
     } else if (t.includes('kosten') || t.includes('preis') || t.includes('euro')) {
         return "Die Standardversandkosten betragen 4,90€. Spezifische Produktpreise findest du im Katalog.";
     } else {
@@ -3451,6 +3473,14 @@ function getBotResponse(text) {
 }
 
 function setupLightbox() {
+    const lightboxImg = document.getElementById('lightbox-img');
+    if (lightboxImg) {
+        lightboxImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightboxImg.classList.toggle('zoomed');
+        });
+    }
+
     window.openLightbox = (imgList, startIndex = 0) => {
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
@@ -3459,6 +3489,7 @@ function setupLightbox() {
         currentGallery = Array.isArray(imgList) ? imgList : [imgList];
         currentImgIndex = startIndex;
 
+        if (lightboxImg) lightboxImg.classList.remove('zoomed');
         updateLightboxImage();
         lightbox.classList.add('show');
         lightbox.style.display = 'flex';
@@ -3467,6 +3498,8 @@ function setupLightbox() {
 
     window.closeLightbox = () => {
         const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        if (lightboxImg) lightboxImg.classList.remove('zoomed');
         if (lightbox) {
             lightbox.classList.remove('show');
             lightbox.style.display = 'none';
@@ -3496,6 +3529,7 @@ function setupLightbox() {
     function updateLightboxImage() {
         const lightboxImg = document.getElementById('lightbox-img');
         if (lightboxImg) {
+            lightboxImg.classList.remove('zoomed');
             lightboxImg.src = currentGallery[currentImgIndex];
         }
         
@@ -3758,8 +3792,7 @@ function initNewsletterSystem() {
 // --- js/admin.js ---
 // js/admin.js
 
-let ordersChart = null;
-let revenueChart = null;
+
 
 function initAdminSystem() {
     const adminTrigger = document.getElementById('admin-trigger');
@@ -3816,12 +3849,7 @@ function initAdminSystem() {
         });
     }
 
-    const chartRange = document.getElementById('admin-chart-range');
-    if (chartRange) {
-        chartRange.addEventListener('change', () => {
-            renderOrdersChart();
-        });
-    }
+
 
     // Global listeners for tables (using delegation)
     document.body.addEventListener('click', async (e) => {
@@ -3982,42 +4010,9 @@ async function loadAdminData() {
     }
 
     renderAdminCoupons();
-    renderOrdersChart();
-    renderStatsTable();
 }
 
-async function renderStatsTable() {
-    const dbStats = await loadAnalyticsFromDB();
-    const stats = JSON.parse(localStorage.getItem('druckbau_stats') || '{"views":{},"purchases":{},"revenue":{},"youtube_clicks":0}');
-    
-    if (dbStats && dbStats.length > 0) {
-        dbStats.forEach(s => {
-            if (s.item_id === 'youtube') stats.youtube_clicks = s.views;
-            else {
-                stats.purchases[s.item_id] = s.purchases;
-                stats.revenue[s.item_id] = parseFloat(s.revenue) || 0;
-                stats.views[s.item_id] = s.views;
-            }
-        });
-    }
 
-    const statsBody = document.querySelector('#stats-table tbody');
-    if (statsBody) {
-        // We'd need the products list here, for now use a simplified approach
-        const itemIds = Object.keys(stats.views);
-        if (itemIds.length === 0) {
-            statsBody.innerHTML = '<tr><td colspan="3" style="padding:1rem; text-align:center;">Noch keine Daten vorhanden.</td></tr>';
-        } else {
-            statsBody.innerHTML = itemIds.map(id => `
-                <tr style="border-bottom: 1px solid var(--border-color);">
-                    <td style="padding: 0.8rem;">${id}</td>
-                    <td style="padding: 0.8rem;">${stats.purchases[id] || 0}</td>
-                    <td style="padding: 0.8rem; font-weight:bold;">${(stats.revenue[id] || 0).toFixed(2)} €</td>
-                </tr>
-            `).join('');
-        }
-    }
-}
 
 async function renderAdminCoupons() {
     const coupons = await loadCouponsFromDB() || [];
@@ -4070,50 +4065,7 @@ async function renderAdminCoupons() {
     });
 }
 
-function renderOrdersChart() {
-    const ctx = document.getElementById('admin-orders-chart');
-    if (!ctx || !window.Chart) return;
 
-    if (ordersChart) ordersChart.destroy();
-
-    const orders = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
-    const range = document.getElementById('admin-chart-range')?.value || '1w';
-    
-    // Group orders by date
-    const grouped = {};
-    orders.forEach(o => {
-        const d = o.date.split(',')[0];
-        grouped[d] = (grouped[d] || 0) + 1;
-    });
-
-    const labels = Object.keys(grouped).sort();
-    const data = labels.map(l => grouped[l]);
-
-    ordersChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Bestellungen',
-                data: data,
-                borderColor: '#2563eb',
-                backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                tension: 0.4,
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
-            },
-            scales: {
-                y: { beginAtZero: true, ticks: { precision: 0 } }
-            }
-        }
-    });
-}
 
 function triggerAdminRefresh() {
     loadAdminData();
@@ -4195,6 +4147,7 @@ async function init() {
     setupCookieBanner();
     setupGlobalEventListeners();
     initNewsletterSystem();
+    initReviews();
     
     await initCoupons();
     await loadPublicNews();
@@ -4251,7 +4204,6 @@ async function loadPublicNews() {
         const latestInfo = newsList[0];
         const content = latestInfo.content || latestInfo.text;
         if (content) {
-            newsSection.style.display = 'block';
             newsText.innerHTML = content.replace(/\n/g, '<br>');
             if (newsDate) {
                 const date = latestInfo.created_at || latestInfo.date;
@@ -4259,30 +4211,65 @@ async function loadPublicNews() {
             }
         }
     } else {
-        newsSection.style.display = 'none';
+        newsText.innerHTML = 'Aktuell gibt es keine Neuigkeiten.';
+        if (newsDate) {
+            newsDate.textContent = '';
+        }
     }
+}
+
+function loadGoogleAnalytics() {
+    if (window.gaLoaded) return;
+    window.gaLoaded = true;
+    const scriptUrl = "https://www.googletagmanager.com/gtag/js?id=G-X13X2JLG7Y";
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = scriptUrl;
+    document.head.appendChild(script);
+
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', 'G-X13X2JLG7Y', { 'anonymize_ip': true });
 }
 
 function setupCookieBanner() {
     const banner = document.getElementById('cookie-banner');
     const acceptBtn = document.getElementById('cookie-accept');
+    const declineBtn = document.getElementById('cookie-decline');
     
-    if (!banner || !acceptBtn) return;
-
     const consent = localStorage.getItem('druckbau_cookie_consent');
-    if (!consent) {
+    if (consent === 'accepted') {
+        loadGoogleAnalytics();
+    } else if (!consent && banner) {
         setTimeout(() => {
             banner.style.display = 'block';
         }, 1000);
     }
 
-    acceptBtn.addEventListener('click', () => {
-        localStorage.setItem('druckbau_cookie_consent', 'accepted');
-        banner.style.animation = 'slideUp 0.5s ease reverse forwards';
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('druckbau_cookie_consent', 'accepted');
+            loadGoogleAnalytics();
+            closeBanner(banner);
+        });
+    }
+
+    if (declineBtn) {
+        declineBtn.addEventListener('click', () => {
+            localStorage.setItem('druckbau_cookie_consent', 'declined');
+            closeBanner(banner);
+        });
+    }
+
+    function closeBanner(b) {
+        if (!b) return;
+        b.style.animation = 'slideUp 0.5s ease reverse forwards';
         setTimeout(() => {
-            banner.style.display = 'none';
+            b.style.display = 'none';
         }, 500);
-    });
+    }
 }
 
 function setupGlobalEventListeners() {

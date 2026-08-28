@@ -87,16 +87,50 @@ function appendMessage(text, sender) {
 
 function getBotResponse(text) {
     const t = text.toLowerCase();
-    if (t.includes('lieferung') || t.includes('versand') || t.includes('dauer')) {
-        return "Unsere Lieferzeit beträgt in der Regel 3-5 Werktage nach Zahlungseingang.";
-    } else if (t.includes('kosten') || t.includes('preis') || t.includes('euro')) {
-        return "Die Standardversandkosten betragen 4,90€. Spezifische Produktpreise findest du im Katalog.";
-    } else {
-        return "Vielen Dank für deine Nachricht. Unser Support-Team meldet sich bald bei dir.";
+
+    if (t.includes('discord') || t.includes('hilfe') || t.includes('community') || t.includes('server')) {
+        return '💬 Für noch mehr direkte Hilfe und schnellen Austausch treten Sie gerne unserem <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold; text-decoration:underline;">Discord-Server</a> bei! Unser Team und die Community stehen dort rund um die Uhr bereit.';
     }
+    if (t.includes('lieferzeit') || t.includes('dauer') || t.includes('wann') || t.includes('versandzeit') || t.includes('lieferung') || t.includes('tage') || t.includes('werktage')) {
+        return '⏱️ Unsere Standard-Lieferzeit beträgt in der Regel <strong>8–12 Werktage</strong> nach Zahlungseingang. Da jedes Stück individuell gedruckt wird, sichern wir so beste Qualität.';
+    }
+    if (t.includes('versand') || t.includes('porto') || t.includes('kostenlos') || t.includes('frei')) {
+        return '🚚 Der Versand innerhalb Deutschlands kostet pauschal <strong>4,90 €</strong>. Ab einem Bestellwert von <strong>50,00 €</strong> liefern wir <strong>versandkostenfrei</strong>!';
+    }
+    if (t.includes('preis') || t.includes('kosten') || t.includes('rabatt') || t.includes('gutschein') || t.includes('code') || t.includes('angebot')) {
+        return '💰 Unsere Produktpreise finden Sie im Katalog. Mit dem Code <code>NEUKUNDE10</code> erhalten Sie 10% Rabatt im Warenkorb! Alle Preise sind Gesamtpreise gem. § 19 UStG.';
+    }
+    if (t.includes('material') || t.includes('pla') || t.includes('petg') || t.includes('tpu') || t.includes('farbe') || t.includes('farben')) {
+        return '🎨 Wir drucken standardmäßig in <strong>Schwarz, Grau und Weiß</strong>.<br>• <strong>PLA:</strong> Biologisch abbaubar & geruchsneutral.<br>• <strong>PETG:</strong> Hitzebeständig bis 80°C & stabil für den Außenbereich.';
+    }
+    if (t.includes('sonderanfertigung') || t.includes('custom') || t.includes('eigenes') || t.includes('datei') || t.includes('upload') || t.includes('stl') || t.includes('auftrag')) {
+        return '⚙️ Sie möchten ein eigenes 3D-Modell drucken lassen? Wählen Sie im Katalog das Produkt <strong>"Auftragsarbeit"</strong> aus und laden Sie Ihre Wünsche/Dateien hoch, oder schreiben Sie uns an <code>druckbau@gmail.com</code>!';
+    }
+    if (t.includes('klicker') || t.includes('fidget') || t.includes('keycap') || t.includes('tastenkappe') || t.includes('unterteil')) {
+        return '⌨️ Beim <strong>Fidget Klicker</strong> können Sie die Farbe des Unterteils und der <strong>Keycaps</strong> (Tastenkappen) frei aus Schwarz, Grau und Weiß wählen!';
+    }
+    if (t.includes('widerruf') || t.includes('rückgabe') || t.includes('stornieren') || t.includes('umtausch')) {
+        return '🛡️ Für Standardartikel gilt das gesetzliche 14-tägige Widerrufsrecht. Bei Kundenanfertigungen (Custom Orders) ist der Widerruf gem. § 312g Abs. 2 Nr. 1 BGB ausgeschlossen.';
+    }
+    if (t.includes('zahlung') || t.includes('bezahlen') || t.includes('paypal') || t.includes('überweisung')) {
+        return '💳 Sie können per <strong>PayPal</strong> oder <strong>Vorkasse per Banküberweisung</strong> bezahlen.';
+    }
+    if (t.includes('kontakt') || t.includes('email') || t.includes('e-mail')) {
+        return '✉️ Sie erreichen uns per E-Mail unter <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a> oder direkt über unseren <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold;">Discord-Server</a>!';
+    }
+
+    return '💡 Vielen Dank für Ihre Nachricht! Schauen Sie gerne auch in unsere FAQ oder treten Sie für noch mehr direkte Hilfe unserem <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold; text-decoration:underline;">Discord-Server</a> bei!';
 }
 
 export function setupLightbox() {
+    const lightboxImg = document.getElementById('lightbox-img');
+    if (lightboxImg) {
+        lightboxImg.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightboxImg.classList.toggle('zoomed');
+        });
+    }
+
     window.openLightbox = (imgList, startIndex = 0) => {
         const lightbox = document.getElementById('lightbox');
         const lightboxImg = document.getElementById('lightbox-img');
@@ -105,6 +139,7 @@ export function setupLightbox() {
         currentGallery = Array.isArray(imgList) ? imgList : [imgList];
         currentImgIndex = startIndex;
 
+        if (lightboxImg) lightboxImg.classList.remove('zoomed');
         updateLightboxImage();
         lightbox.classList.add('show');
         lightbox.style.display = 'flex';
@@ -113,6 +148,8 @@ export function setupLightbox() {
 
     window.closeLightbox = () => {
         const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        if (lightboxImg) lightboxImg.classList.remove('zoomed');
         if (lightbox) {
             lightbox.classList.remove('show');
             lightbox.style.display = 'none';
@@ -142,6 +179,7 @@ export function setupLightbox() {
     function updateLightboxImage() {
         const lightboxImg = document.getElementById('lightbox-img');
         if (lightboxImg) {
+            lightboxImg.classList.remove('zoomed');
             lightboxImg.src = currentGallery[currentImgIndex];
         }
         
