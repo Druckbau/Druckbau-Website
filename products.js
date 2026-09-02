@@ -18,17 +18,15 @@ export function renderProducts() {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                     </svg>
                 </button>
+                <div class="product-category">Individuell</div>
                 <h3>${t(product.nameKey)}</h3>
+                <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">${t('product_custom_intro')}</p>
                 <span class="price">${t('product_indiv')}</span>
                 
                 <div class="product-options">
                     <div class="option-group">
-                        <label>${t('product_order_custom_from')}</label>
-                        <input type="text" id="custom-from-${product.id}" placeholder="${t('product_custom_from_placeholder')}" class="qty-input">
-                    </div>
-                    <div class="option-group">
-                        <label>${t('product_order_custom_to')}</label>
-                        <input type="text" id="custom-to-${product.id}" placeholder="${t('product_custom_to_placeholder')}" class="qty-input">
+                        <label>${t('product_order_custom_dimensions')}</label>
+                        <input type="text" id="custom-dimensions-${product.id}" placeholder="${t('product_custom_dimensions_placeholder')}" class="qty-input">
                     </div>
                     <div class="option-group">
                         <label>${t('product_order_custom_desc')}</label>
@@ -41,12 +39,8 @@ export function renderProducts() {
                         </button>
                     </div>
 
-                    <div class="option-group" style="margin-top:10px;">
-                        <input type="file" id="custom-files-${product.id}" multiple class="qty-input file-input-trigger" data-id="${product.id}" style="padding: 5px; font-size: 0.75rem;">
-                        <ul id="file-list-${product.id}" class="selected-files-list"></ul>
-                        <div class="file-warning-box" style="margin-top:5px; padding:5px; font-size:0.7rem;">
-                            <span>${t('product_order_custom_files_warning')}</span>
-                        </div>
+                    <div class="file-warning-box" style="margin-top:10px; padding:10px; font-size:0.8rem; background:#fff3cd; border:1px solid #f0c36d; border-radius:6px; color:#664d03;">
+                        <span>${t('product_order_custom_files_warning')}</span>
                     </div>
                 </div>
             </div>
@@ -69,6 +63,7 @@ export function renderProducts() {
             </div>
 
                 <div class="product-info">
+                <div class="product-category">${product.category || 'Individuell'}</div>
                 <h3>${t(product.nameKey)}</h3>
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
                 <div class="manufacturing-note" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success-color); margin-bottom: 0.8rem; font-weight: 500;">

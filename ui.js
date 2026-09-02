@@ -320,7 +320,7 @@ export async function sendEmail(event) {
 
     // 1. Open native email client synchronously first
     const body = `Hallo Druckbau Team,\n\nIch habe eine Anfrage:\nReferenz: ${inquiryId}\n\nKundendaten:\nName: ${name}\nE-Mail: ${email}\n\nNachricht:\n${message}\n\nVielen Dank!`;
-    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=${encodeURIComponent(prioritySubject)}&body=${encodeURIComponent(body)}`;
+    const mailtoLink = `mailto:kontakt.druckbau@gmail.com?subject=${encodeURIComponent(prioritySubject)}&body=${encodeURIComponent(body)}`;
     
     const tempLink = document.createElement('a');
     tempLink.href = mailtoLink;
@@ -332,27 +332,7 @@ export async function sendEmail(event) {
     // 2. Log inquiry in database/local storage
     logOrder(name, email, inquiryId, message, null, 0, []);
 
-    // 3. Send via EmailJS in the background
-    const templateParams = {
-        order_id: inquiryId,
-        customer_name: name,
-        customer_email: email,
-        customer_address: "Online-Kontaktformular",
-        order_details: message,
-        total_price: "-"
-    };
-
-    try {
-        if (typeof emailjs !== 'undefined') {
-            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
-            console.log("EmailJS: Kontaktanfrage gesendet.");
-        } else {
-            console.warn("EmailJS ist nicht geladen.");
-        }
-    } catch (emailErr) {
-        console.error("Fehler beim E-Mail-Versand (EmailJS):", emailErr);
-    }
-
+    // 3. Mailto-Flow bleibt aktiv; EmailJS wird nicht mehr verwendet.
     showSuccess("Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die Nachricht ab!");
     const form = document.querySelector('.contact-form');
     if (form) form.reset();

@@ -12,11 +12,12 @@
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <script src="legal-data.js"></script>
     <style>
         :root {
             --legal-bg: #f8fafc;
@@ -149,23 +150,24 @@
 
             <h2>Angaben gemäß § 5 TMG / EU Digital Services Act (DSA)</h2>
             <p>
-                <strong>Druckbau - 3D Druck Manufaktur</strong><br>
-                Inhaber: [Vorname] [Nachname]<br>
-                [Musterstraße 12]<br>
-                [12345 Musterstadt, Deutschland]
+                <strong><span data-legal="company-name">Druckbau Manufaktur</span></strong><br>
+                Inhaber: <span data-legal="owner-name">Philipp Muster</span><br>
+                <span data-legal="street">Musterstraße 12</span><br>
+                <span data-legal="city-line">12345 Musterstadt, Deutschland</span>
             </p>
 
             <h2>Kontakt & Zentrale Kontaktstelle</h2>
             <p>
-                Telefon: [01234 / 567890]<br>
-                E-Mail: <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a><br>
-                Website: <a href="https://druckbau.de">https://druckbau.de</a>
+                Telefon: <span data-legal="phone">+49 1234 567890</span><br>
+                E-Mail: <a href="mailto:kontakt.druckbau@gmail.com" data-legal-mailto="email">kontakt.druckbau@gmail.com</a><br>
+                Bestell-E-Mail: <a href="mailto:bestellungen.druckbau@gmail.com" data-legal-mailto="order-email">bestellungen.druckbau@gmail.com</a><br>
+                Website: <a href="https://druckbau.de" data-legal-link="website">https://druckbau.de</a>
             </p>
 
             <h2>Umsatzsteuer-Information</h2>
             <p>
                 Gemäß § 19 UStG wird keine Umsatzsteuer berechnet und ausgewiesen (Kleinunternehmerregelung).<br>
-                <em>(Falls USt-IdNr. vorhanden: USt-IdNr. gemäß § 27a UStG: [DE000000000])</em>
+                <span id="vat-id-block" data-legal="vat-id">USt-IdNr. gemäß § 27a UStG: [eintragen, falls vorhanden]</span>
             </p>
 
             <h2>Produktsicherheit & EU-Herstellerangaben (GPSR - EU 2023/988)</h2>
@@ -183,17 +185,12 @@
 
             <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
             <p>
-                [Vorname] [Nachname]<br>
-                [Musterstraße 12]<br>
-                [12345 Musterstadt]
+                <span data-legal="owner-name">Philipp Muster</span><br>
+                <span data-legal="street">Musterstraße 12</span><br>
+                <span data-legal="city-line">12345 Musterstadt, Deutschland</span>
             </p>
 
-            <h2>EU-Streitschlichtung & Verbraucherstreitbeilegung</h2>
-            <p>
-                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
-                <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.<br>
-                Unsere E-Mail-Adresse finden Sie oben im Impressum.
-            </p>
+            <h2>Verbraucherstreitbeilegung</h2>
             <p>
                 Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
             </p>

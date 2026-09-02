@@ -12,11 +12,12 @@
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <script src="legal-data.js"></script>
     <style>
         :root {
             --legal-bg: #f8fafc;
@@ -159,8 +160,8 @@
             </p>
             <p>
                 Um Ihr Widerrufsrecht auszuüben, müssen Sie uns:<br>
-                <strong>Druckbau Manufaktur</strong><br>
-                E-Mail: <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a><br>
+                <strong><span data-legal="company-name">Druckbau Manufaktur</span></strong><br>
+                E-Mail: <a href="mailto:kontakt.druckbau@gmail.com" data-legal-mailto="email">kontakt.druckbau@gmail.com</a><br>
                 mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.
             </p>
 
@@ -182,8 +183,8 @@
             
             <div class="form-box">
                 An:<br>
-                <strong>Druckbau Manufaktur</strong><br>
-                E-Mail: <code>druckbau@gmail.com</code><br><br>
+                <strong><span data-legal="company-name">Druckbau Manufaktur</span></strong><br>
+                E-Mail: <a href="mailto:kontakt.druckbau@gmail.com" data-legal-mailto="email">kontakt.druckbau@gmail.com</a><br><br>
                 Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*)/die Erbringung der folgenden Dienstleistung (*):<br><br>
                 Bestellt am (*): ________________ / Erhalten am (*): ________________<br><br>
                 Name des/der Verbraucher(s): ____________________________________<br><br>

@@ -12,11 +12,12 @@
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <script src="legal-data.js"></script>
     <style>
         :root {
             --legal-bg: #f8fafc;
@@ -144,8 +145,9 @@
             <h2>2. Verantwortlicher für die Datenverarbeitung</h2>
             <p>
                 Verantwortlich gemäß Art. 4 Abs. 7 EU-Datenschutz-Grundverordnung (DSGVO) ist:<br>
-                <strong>Druckbau Manufaktur</strong><br>
-                E-Mail: <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a>
+                <strong><span data-legal="company-name">Druckbau Manufaktur</span></strong><br>
+                Inhaber: <span data-legal="owner-name">Philipp Muster</span><br>
+                E-Mail: <a href="mailto:kontakt.druckbau@gmail.com" data-legal-mailto="email">kontakt.druckbau@gmail.com</a>
             </p>
 
             <h2>3. Datenerfassung & Lokale Speicherung (LocalStorage)</h2>
@@ -156,20 +158,44 @@
                 <li><code>druckbau_cart</code>: Speichert Produkte in Ihrem Warenkorb.</li>
                 <li><code>druckbau_wishlist</code>: Speichert Ihre persönliche Wunschliste.</li>
                 <li><code>druckbau_theme</code>: Speichert Ihre Einstellung für den Dark- / Light-Mode.</li>
-                <li><code>druckbau_cookie_consent</code>: Speichert Ihre Cookie-Auswahl.</li>
             </ul>
 
             <h2>4. Kontaktaufnahme & Anfragen</h2>
             <p>
-                Wenn Sie uns per E-Mail oder Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert (Art. 6 Abs. 1 lit. b DSGVO). Zur sicheren Formularverarbeitung wird bei Bedarf EmailJS / Supabase eingesetzt.
+                Wenn Sie uns per E-Mail oder Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert (Art. 6 Abs. 1 lit. b DSGVO). Die Bestell- und Kontaktmails werden über Google Mail (Google Ireland Limited, Gordon House, Barrow Street, Dublin 4, Irland) empfangen und verarbeitet. Für diese Verarbeitung gilt das EU-US Data Privacy Framework. Die Verarbeitung erfolgt ausschließlich zur Bestellabwicklung bzw. Bearbeitung Ihrer Anfrage. Eine separate Speicherung in einer Datenbank findet nicht statt; die E-Mails werden gemäß gesetzlicher Aufbewahrungspflichten (z. B. § 147 AO, 10 Jahre bei Rechnungen) mit gespeichert. Für die technische Formularverarbeitung nutzen wir das native Mailto-Verfahren des Browsers und Google Mail; es findet keine zusätzliche E-Mail-API wie EmailJS statt. Eine Datenübermittlung in Drittstaaten erfolgt über die von Google bereitgestellte E-Mail-Infrastruktur; ein geeigneter Datenschutzrahmen besteht nach europäischem Recht und dem EU-US DPF.
             </p>
 
-            <h2>5. SSL- bzw. TLS-Verschlüsselung</h2>
+            <h2>5. Keine Analyse- und Marketing-Cookies</h2>
+            <p>
+                Auf dieser Website werden keine Analyse- oder Marketing-Cookies eingesetzt. Es wird insbesondere kein Google Analytics geladen und kein Nutzungsverhalten zu Werbe- oder Analysezwecken verfolgt.
+            </p>
+
+            <h2>6. Hosting / Server-Logfiles</h2>
+            <p>
+                Beim Aufruf der Website werden aus technischen Gründen automatisch Daten verarbeitet, insbesondere IP-Adresse, Datum und Uhrzeit, aufgerufene Seiten, Browsertyp, Betriebssystem und Herkunftsseiten. Diese Informationen dienen der Sicherstellung der Funktionalität, der Sicherheit und der Fehlersuche. Die Verarbeitung beruht auf Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse). Anbieter der technischen Infrastruktur ist je nach aktueller Hosting-Konfiguration der Website-Hoster; die genauen Serverstandorte sind in der jeweiligen Hosting-Umgebung zu dokumentieren. Die gespeicherten Logdaten werden in der Regel nur für einen begrenzten Zeitraum aufbewahrt und anschließend gelöscht oder anonymisiert.
+            </p>
+
+            <h2>7. E-Mail- und Bestellabwicklung</h2>
+            <p>
+                Bestell- und Kontaktanfragen werden an <a href="mailto:bestellungen.druckbau@gmail.com">bestellungen.druckbau@gmail.com</a> bzw. <a href="mailto:kontakt.druckbau@gmail.com">kontakt.druckbau@gmail.com</a> gesendet. Ihre Daten (Name, Adresse, E-Mail) werden ausschließlich zur Bestellabwicklung und Bearbeitung der Anfrage verarbeitet und über E-Mail an uns übermittelt. Eine separate Speicherung in einer eigenen Datenbank erfolgt nicht. E-Mails mit Bestelldaten werden gemäß gesetzlicher Aufbewahrungspflichten grundsätzlich aufbewahrt, insbesondere Rechnungen und zugehörige Bestelldaten gemäß § 147 AO für 10 Jahre.
+            </p>
+
+            <h2>8. Speicherdauer</h2>
+            <p>
+                Die Verarbeitung von Kontakt-, Bestell- und Kundeninformationen erfolgt nur so lange, wie es für die Erfüllung des Vertrags beziehungsweise zur Beantwortung von Anfragen erforderlich ist. Rechnungen und andere dokumentarische Nachweise werden nach gesetzlichen Vorgaben gespeichert, insbesondere § 147 AO (10 Jahre). Anfragen zur Löschung können jederzeit gestellt werden, soweit keine gesetzliche Aufbewahrungspflicht entgegensteht. Bitte senden Sie Löschanfragen an <a href="mailto:kontakt.druckbau@gmail.com">kontakt.druckbau@gmail.com</a>. Wir bearbeiten Löschanfragen innerhalb eines Monats gemäß Art. 12 Abs. 3 DSGVO.
+            </p>
+
+            <h2>9. Technische Speicherung</h2>
+            <p>
+                Für Warenkorb, Wunschliste, Sprache und Darstellungseinstellungen nutzt die Website die lokale Speicherung (<strong>LocalStorage</strong>) Ihres Browsers. Diese Daten verlassen grundsätzlich nicht Ihr Gerät und sind keine Cookies. Ein Cookie-Banner für Analyse- oder Marketingzwecke ist daher nicht erforderlich.
+            </p>
+
+            <h2>10. SSL- bzw. TLS-Verschlüsselung</h2>
             <p>
                 Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie daran, dass die Adresszeile des Browsers von „http://“ auf „https://“ wechselt.
             </p>
 
-            <h2>6. Ihre Rechte gemäß DSGVO</h2>
+            <h2>11. Ihre Rechte gemäß DSGVO</h2>
             <p>Sie haben im Rahmen der geltenden gesetzlichen Bestimmungen jederzeit das Recht auf:</p>
             <ul>
                 <li><strong>Auskunft (Art. 15 DSGVO):</strong> Auskunft über Ihre von uns verarbeiteten personenbezogenen Daten.</li>

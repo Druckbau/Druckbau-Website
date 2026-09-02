@@ -92,29 +92,19 @@ export function addCustomToCart(productId) {
     const product = products.find(p => p.id === productId);
     if (!product || !product.isCustom) return;
 
-    const fromInput = document.getElementById(`custom-from-${productId}`);
-    const toInput = document.getElementById(`custom-to-${productId}`);
     const descInput = document.getElementById(`custom-desc-${productId}`);
-    const fileInput = document.getElementById(`custom-files-${productId}`);
+    const dimensionsInput = document.getElementById(`custom-dimensions-${productId}`);
 
-    const from = fromInput ? fromInput.value.trim() : '';
-    const to = toInput ? toInput.value.trim() : '';
     const desc = descInput ? descInput.value.trim() : '';
+    const dimensions = dimensionsInput ? dimensionsInput.value.trim() : '';
     const qtyInput = document.getElementById(`custom-qty-${productId}`);
     let qty = qtyInput ? parseInt(qtyInput.value) : 1;
 
     if (isNaN(qty) || qty < 1) qty = 1;
 
-    if (!from || !to || !desc) {
-        alert("Bitte füllen Sie alle Felder (Von, Für, Info) aus.");
+    if (!desc || !dimensions) {
+        alert("Bitte füllen Sie Beschreibung und Maße aus.");
         return;
-    }
-
-    const fileNames = [];
-    if (fileInput && fileInput.files.length > 0) {
-        for (let i = 0; i < fileInput.files.length; i++) {
-            fileNames.push(fileInput.files[i].name);
-        }
     }
 
     state.cart.push({
@@ -123,19 +113,12 @@ export function addCustomToCart(productId) {
         price: 0,
         qty: qty,
         isCustom: true,
-        customFrom: from,
-        customTo: to,
         customDesc: desc,
-        files: fileNames
+        customDimensions: dimensions
     });
 
-    if (fromInput) fromInput.value = '';
-    if (toInput) toInput.value = '';
     if (descInput) descInput.value = '';
-    if (fileInput) fileInput.value = '';
-
-    const list = document.getElementById(`file-list-${productId}`);
-    if (list) list.innerHTML = '';
+    if (dimensionsInput) dimensionsInput.value = '';
 
     saveCartToStorage();
     updateCartIcon();
@@ -249,10 +232,8 @@ export function renderCart() {
                 <div class="cart-item-details">
                     <h4>[${t('nav_more')}] ${name}</h4>
                     <div class="cart-item-info">
-                        ${t('product_order_custom_from')}: ${escapeHtml(item.customFrom)}<br>
-                        ${t('product_order_custom_to')}: ${escapeHtml(item.customTo)}<br>
                         ${t('product_order_custom_desc')}: ${escapeHtml(item.customDesc)}<br>
-                        ${item.files && item.files.length > 0 ? `${t('product_order_custom_files_warning')}: ${item.files.join(', ')}` : ''}
+                        ${t('product_order_custom_dimensions')}: ${escapeHtml(item.customDimensions || '')}
                     </div>
                 </div>
                 <div>

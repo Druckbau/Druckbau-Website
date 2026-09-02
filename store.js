@@ -2,10 +2,10 @@
 import { loadCouponsFromDB } from './db.js';
 
 export const products = [
-    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
-    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
-    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
-    { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
+    { id: 'a', nameKey: 'catalog_fidget_name', category: 'Spiel & Spaß', price: 3.99, images: ['klicker.png'] },
+    { id: 'b', nameKey: 'catalog_poop_name', category: 'Tiere', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+    { id: 'e', nameKey: 'catalog_pen_name', category: 'Büroartikel', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
+    { id: 'd', nameKey: 'catalog_custom_name', category: 'Individuell', price: 0, isCustom: true }
 ];
 
 export const colors = [

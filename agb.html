@@ -12,11 +12,12 @@
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <script src="legal-data.js"></script>
     <style>
         :root {
             --legal-bg: #f8fafc;
@@ -139,8 +140,8 @@
             <h2>1. Geltungsbereich & Anbieter</h2>
             <p>
                 Für alle Bestellungen über unseren Online-Shop gelten die nachfolgenden AGB. Vertragspartner ist:
-                <br><strong>Druckbau Manufaktur</strong><br>
-                Inhaber: [Vorname] [Nachname], E-Mail: <code>druckbau@gmail.com</code>.
+                <br><strong><span data-legal="company-name">Druckbau Manufaktur</span></strong><br>
+                Inhaber: <span data-legal="owner-name">Philipp Muster</span>, E-Mail: <a href="mailto:kontakt.druckbau@gmail.com" data-legal-mailto="email">kontakt.druckbau@gmail.com</a>.
             </p>
 
             <h2>2. Vertragsschluss & Bestellablauf</h2>
@@ -175,7 +176,7 @@
 
             <h2>8. EU-Streitschlichtung & Schlussbestimmungen</h2>
             <p>
-                Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer">https://ec.europa.eu/consumers/odr/</a>.
+                Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.
             </p>
 
             <div class="footer-note">

@@ -52,23 +52,27 @@ window.translations = {
         product_add_cart: "In den Warenkorb",
         product_rate: "Bewerten",
         product_view_reviews: "Ansehen",
-        product_order_custom_from: "Von Wem (Schenkender/Auftraggeber):",
-        product_order_custom_to: "Für Wen (Empfänger/Widmung):",
+        product_order_custom_from: "Von wem / Auftraggeber:",
+        product_order_custom_to: "Info / Beschreibung:",
         chat_header: "Druckbau Support",
-        chat_welcome: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen?",
+        chat_welcome: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen? 💬 Für noch mehr Hilfe & direkten Austausch treten Sie gerne auch unserem <a href=\"https://discord.gg/6PPEYN9YKp\" target=\"_blank\" style=\"color:var(--primary-blue); font-weight:bold; text-decoration:underline;\">Discord-Server</a> bei!",
+        chat_discord_notice: "Für noch mehr Hilfe & Austausch besuchen Sie unseren Discord-Server.",
         chat_placeholder: "Nachricht eingeben...",
         chat_reply_shipping: "⏱️ Lieferzeit",
         chat_reply_pricing: "💰 Preise",
         chat_reply_materials: "🎨 Materialien",
         chat_reply_contact: "📞 Kontakt",
-        product_order_custom_desc: "Welcher Auftrag (Beschreibung/Idee):",
+        product_order_custom_desc: "Beschreibung / Idee:",
         product_order_custom_files: "Dateien hinzufügen (Bilder/Modelle):",
         product_order_custom_files_tip: "(Tipp: Halten Sie Strg oder Command (⌘) gedrückt, um mehrere Dateien auszuwählen)",
-        product_order_custom_files_warning: "Bitte hängen Sie Ihre Dateien später manuell an die Bestell-E-Mail an, da ein automatischer Upload nicht möglich ist.",
+        product_order_custom_files_warning: "Wichtig: Fotos oder 3D-Modelle bitte am Ende der Bestell-E-Mail manuell als Anhang hinzufügen.",
         product_indiv: "Individuell",
+        product_custom_intro: "Beschreiben Sie hier Ihren individuellen 3D-Druck. Ich prüfe Ihre Idee persönlich und mache Ihnen anschließend einen Preisvorschlag.",
         product_custom_from_placeholder: "z.B. Ihr Name",
-        product_custom_to_placeholder: "z.B. Name des Beschenkten",
-        product_custom_desc_placeholder: "Beschreiben Sie Ihre Idee oder was aufgedruckt werden soll...",
+        product_custom_to_placeholder: "z.B. Anlass, Idee, Wunschtermin oder kurze Info",
+        product_custom_desc_placeholder: "Beschreiben Sie Ihre Idee, das gewünschte Design und alle wichtigen Details...",
+        product_order_custom_dimensions: "Maße / Abmessungen:",
+        product_custom_dimensions_placeholder: "z.B. 12 x 8 x 5 cm oder 10 cm Höhe",
         product_custom_color_label: "Ihre Wunschfarbe:",
         product_custom_color_placeholder: "Welche Farbe möchten Sie?",
         product_custom_color_warning_ref: "Hinweis:",
@@ -117,7 +121,7 @@ window.translations = {
         shipping_hint: "zzgl. <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">Versandkosten</a>",
         shipping_info: "Versandkosten: 4.90€ (versichert)",
         cookie_title: "Datenschutz & Cookies",
-        cookie_text: "Wir nutzen Cookies und lokale Speicherung, um Ihr Einkaufserlebnis zu verbessern und unsere Dienste (Supabase, EmailJS) sicher bereitzustellen. Durch die Nutzung der Seite stimmen Sie dem zu.",
+        cookie_text: "Wir nutzen Cookies und lokale Speicherung, um Ihr Einkaufserlebnis zu verbessern und die Funktionen unseres Shops sicher bereitzustellen. Durch die Nutzung der Seite stimmen Sie dem zu.",
         cookie_accept: "Akzeptieren",
         cookie_settings: "Datenschutzerklärung",
 
@@ -278,15 +282,17 @@ window.translations = {
         chat_header: "Druckbau Support",
         chat_subtitle: "Wir helfen Ihnen gerne!",
         chat_placeholder: "Nachricht eingeben...",
-        chat_bot_greeting: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen?",
+        chat_bot_greeting: "Hallo! 👋 Ich bin Ihr Druckbau-Assistent. Wie kann ich Ihnen helfen? 💬 Für noch mehr Hilfe & direkten Austausch treten Sie gerne auch unserem <a href=\"https://discord.gg/6PPEYN9YKp\" target=\"_blank\" style=\"color:var(--primary-blue); font-weight:bold; text-decoration:underline;\">Discord-Server</a> bei!",
         chat_reply_shipping: "⏱️ Lieferzeit",
-        chat_reply_pricing: "💰 Preise",
-        chat_reply_materials: "🎨 Materialien",
-        chat_reply_contact: "📞 Kontakt",
+        chat_reply_benutzerdefiniert: "🛠️ Individuelle Anfrage",
         chat_reply_lieferzeit_response: "Unsere Standard-Lieferzeit beträgt 8-12 Werktage. Express-Versand ist auf Anfrage möglich! 🚚",
         chat_reply_preise_response: "Unsere Preise variieren je nach Produkt und Menge. Schauen Sie sich unsere Produktseite an oder kontaktieren Sie uns für ein individuelles Angebot! 💰",
         chat_reply_materialien_response: "Wir verwenden hochwertige Materialien wie PLA, PETG, ABS und TPU. Jedes Material hat seine eigenen Eigenschaften - fragen Sie uns gerne! 🎨",
-        chat_reply_kontakt_response: "Sie erreichen uns per E-Mail unter druckbau@gmail.com oder nutzen Sie unser Kontaktformular. Wir antworten innerhalb von 24 Stunden! 📞",
+        chat_reply_kontakt_response: "Sie erreichen uns per E‑Mail unter kontakt.druckbau@gmail.com oder nutzen Sie unser Kontaktformular. Wir antworten innerhalb von 24 Stunden! 📞",
+        chat_reply_faq_response: "Hier finden Sie häufig gestellte Fragen. Besuchen Sie unseren FAQ‑Bereich für detaillierte Informationen.",
+        chat_reply_benutzerdefiniert_response: "Für spezielle Anfragen können Sie uns direkt kontaktieren. Wir helfen Ihnen gerne weiter!",
+        chat_reply_discord_response: "Treten Sie unserem Discord-Server bei, um direkten Support und Community-Austausch zu erhalten.",
+        chat_reply_sonderanfertigung_response: "Für Sonderanfertigungen können Sie uns Ihre individuellen Anforderungen schildern – wir erstellen ein persönliches Angebot.",
         chat_default_response: "Vielen Dank für Ihre Anfrage! Wir melden uns in Kürze. 👋",
 
         // Legal Footer Extra
@@ -298,6 +304,7 @@ window.translations = {
         nav_reviews: "Bewertungen",
         checkout_agb_checkbox: "Ich habe die <a href='agb.html' target='_blank'>AGB</a> gelesen und stimme diesen zu.",
         checkout_revocation_checkbox: "Ich habe die <a href='widerruf.html' target='_blank'>Widerrufsbelehrung</a> zur Kenntnis genommen.",
+        checkout_social_media_checkbox: "Ich erlaube, dass meine Bestellung in einem unserer Social‑Media‑Videos gezeigt wird (nur Vorname, keine Adresse). <a href='instagram.html' target='_blank'>Erklärung</a>",
         alert_error_agb: "Bitte akzeptieren Sie die AGB und die Widerrufsbelehrung, um fortzufahren.",
         notif_title: "🔔 Benachrichtigungen aktivieren?",
         notif_allow: "Erlauben",
@@ -366,8 +373,8 @@ window.translations = {
         product_add_cart: "Add to Cart",
         product_rate: "Rate",
         product_view_reviews: "View",
-        product_order_custom_from: "From Whom (Sender/Client):",
-        product_order_custom_to: "For Whom (Recipient/Dedication):",
+        product_order_custom_from: "From / Client:",
+        product_order_custom_to: "Info / Description:",
         chat_header: "Druckbau Support",
         chat_welcome: "Hello! 👋 I am your Druckbau assistant. How can I help you?",
         chat_placeholder: "Type a message...",
@@ -375,14 +382,17 @@ window.translations = {
         chat_reply_pricing: "💰 Pricing",
         chat_reply_materials: "🎨 Materials",
         chat_reply_contact: "📞 Contact",
-        product_order_custom_desc: "Which Order (Description/Idea):",
+        product_order_custom_desc: "Description / Idea:",
         product_order_custom_files: "Add files (Images/Models):",
         product_order_custom_files_tip: "(Tip: Hold Ctrl or Command (⌘) to select multiple files)",
-        product_order_custom_files_warning: "Please attach your files manually to the order email later, as an automatic upload is not possible.",
+        product_order_custom_files_warning: "Important: Please manually attach photos or 3D models to the end of the order email.",
         product_indiv: "Individual",
+        product_custom_intro: "Describe your individual 3D print here. I will review your idea personally and then send you a price proposal.",
         product_custom_from_placeholder: "e.g. Your Name",
-        product_custom_to_placeholder: "e.g. Recipient's Name",
-        product_custom_desc_placeholder: "Describe your idea or what should be printed...",
+        product_custom_to_placeholder: "e.g. Occasion, idea, preferred timing or short note",
+        product_custom_desc_placeholder: "Describe your idea, desired design and all important details...",
+        product_order_custom_dimensions: "Dimensions:",
+        product_custom_dimensions_placeholder: "e.g. 12 x 8 x 5 cm or 10 cm height",
         product_custom_color_label: "Your Custom Color:",
         product_custom_color_placeholder: "What color would you like?",
         product_custom_color_warning_ref: "Note:",
@@ -426,7 +436,7 @@ window.translations = {
         shipping_hint: "plus <a href=\"versand.html\" target=\"_blank\" style=\"color: inherit; text-decoration: underline;\">shipping</a>",
         shipping_info: "Shipping: 4.90€ (insured)",
         cookie_title: "Privacy & Cookies",
-        cookie_text: "We use cookies and local storage to improve your shopping experience and provide our services (Supabase, EmailJS) securely. By using the site, you agree to this.",
+        cookie_text: "We use cookies and local storage to improve your shopping experience and provide the shop features securely. By using the site, you agree to this.",
         cookie_accept: "Accept",
         cookie_settings: "Privacy Policy",
 
@@ -555,7 +565,7 @@ window.translations = {
         chat_reply_lieferzeit_response: "Our standard shipping time is 8-12 business days. Express shipping is available on request! 🚚",
         chat_reply_preise_response: "Our prices vary depending on the product and quantity. Take a look at our product page or contact us for an individual offer! 💰",
         chat_reply_materialien_response: "We use high-quality materials such as PLA, PETG, ABS and TPU. Each material has its own properties - feel free to ask us! 🎨",
-        chat_reply_kontakt_response: "You can reach us by email at druckbau@gmail.com or use our contact form. We answer within 24 hours! 📞",
+        chat_reply_kontakt_response: "You can reach us by email at kontakt.druckbau@gmail.com or use our contact form. We answer within 24 hours! 📞",
         chat_default_response: "Thank you for your inquiry! We will get back to you shortly. 👋",
         notif_title: "🔔 Enable Notifications?",
         notif_allow: "Allow",
@@ -782,44 +792,38 @@ function initTranslations() {
                 messages.scrollTop = messages.scrollHeight;
 
                 try {
-                    // API Key für Gemini einfügen (hier muss der echte Key eingesetzt werden)
                     const GEMINI_API_KEY = "AQ.Ab8RN6LKu1NzOdN9lOMvYnqX5pQMw1PmxIQH1x4n0J1po7lPhw";
-                    
-                    if (GEMINI_API_KEY === "DEIN_GEMINI_API_KEY") {
-                        botDiv.innerHTML = `
-                            <div class="chat-avatar">🤖</div>
-                            <div class="chat-bubble">Bitte fügen Sie Ihren Gemini API Key in translations.js (Zeile ~763) ein, um die KI zu aktivieren.</div>
-                        `;
-                        return;
-                    }
-
-                    const prompt = "Du bist der Support-Bot für die 3D-Druck Website Druckbau. Beantworte die folgende Frage des Nutzers kurz, freundlich und hilfreich: " + text;
-                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            contents: [{ parts: [{ text: prompt }] }]
-                        })
-                    });
-                    
-                    const data = await response.json();
-                    if (data.candidates && data.candidates[0].content.parts[0].text) {
-                        const aiText = data.candidates[0].content.parts[0].text;
-                        botDiv.innerHTML = `
-                            <div class="chat-avatar">🤖</div>
-                            <div class="chat-bubble">${aiText}</div>
-                        `;
-                    } else {
-                        throw new Error("Invalid response");
+                    if (GEMINI_API_KEY && !GEMINI_API_KEY.startsWith("DEIN")) {
+                        const prompt = "Du bist der Support-Bot für die 3D-Druck Website Druckbau. Beantworte die folgende Frage des Nutzers kurz, freundlich und hilfreich: " + text;
+                        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                contents: [{ parts: [{ text: prompt }] }]
+                            })
+                        });
+                        const data = await response.json();
+                        if (data.candidates && data.candidates[0].content.parts[0].text) {
+                            const aiText = data.candidates[0].content.parts[0].text;
+                            botDiv.innerHTML = `
+                                <div class="chat-avatar">🤖</div>
+                                <div class="chat-bubble">${aiText}</div>
+                            `;
+                            messages.scrollTop = messages.scrollHeight;
+                            return;
+                        }
                     }
                 } catch (error) {
-                    botDiv.innerHTML = `
-                        <div class="chat-avatar">🤖</div>
-                        <div class="chat-bubble">Entschuldigung, die KI ist momentan nicht erreichbar.</div>
-                    `;
+                    // Fallback to local smart bot matcher below
                 }
+
+                const localAnswer = typeof getBotResponse === 'function' ? getBotResponse(text) : "Vielen Dank für Ihre Frage! Schauen Sie gerne in unsere FAQ oder treten Sie unserem Discord-Server bei!";
+                botDiv.innerHTML = `
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble">${localAnswer}</div>
+                `;
                 messages.scrollTop = messages.scrollHeight;
-            }, 600);
+            }, 500);
         };
 
         if (chatSendBtn) chatSendBtn.addEventListener('click', handleSendMessage);
@@ -831,10 +835,10 @@ function initTranslations() {
 
         // --- PRODUCT RENDERING FALLBACK (for file:// browsing) ---
         const fallbackProducts = [
-            { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
-            { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
-            { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
-            { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
+            { id: 'a', nameKey: 'catalog_fidget_name', category: 'Spiel & Spaß', price: 3.99, images: ['klicker.png'] },
+            { id: 'b', nameKey: 'catalog_poop_name', category: 'Tiere', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+            { id: 'e', nameKey: 'catalog_pen_name', category: 'Büroartikel', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
+            { id: 'd', nameKey: 'catalog_custom_name', category: 'Individuell', price: 0, isCustom: true }
         ];
 
         const fallbackColors = [
@@ -872,21 +876,22 @@ function initTranslations() {
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                 </svg>
                             </button>
+                            <div class="product-category">Individuell</div>
                             <h3>${name}</h3>
+                            <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">${t('product_custom_intro')}</p>
                             <span class="price">${t('product_indiv')}</span>
                             
                             <div class="product-options">
                                 <div class="option-group">
-                                    <label>${t('product_order_custom_from')}</label>
-                                    <input type="text" id="custom-from-${p.id}" placeholder="${t('product_custom_from_placeholder')}" class="qty-input">
-                                </div>
-                                <div class="option-group">
-                                    <label>${t('product_order_custom_to')}</label>
-                                    <input type="text" id="custom-to-${p.id}" placeholder="${t('product_custom_to_placeholder')}" class="qty-input">
+                                    <label>${t('product_order_custom_dimensions')}</label>
+                                    <input type="text" id="custom-dimensions-${p.id}" placeholder="${t('product_custom_dimensions_placeholder')}" class="qty-input">
                                 </div>
                                 <div class="option-group">
                                     <label>${t('product_order_custom_desc')}</label>
                                     <textarea id="custom-desc-${p.id}" placeholder="${t('product_custom_desc_placeholder')}" class="qty-input" style="min-height: 60px;"></textarea>
+                                </div>
+                                <div class="file-warning-box" style="margin-top:10px; padding:10px; font-size:0.8rem; background:#fff3cd; border:1px solid #f0c36d; border-radius:6px; color:#664d03;">
+                                    <span>${t('product_order_custom_files_warning')}</span>
                                 </div>
                                 <div class="product-controls" style="display:flex; gap:8px; align-items:center; margin-top:12px;">
                                     <input type="number" id="custom-qty-${p.id}" value="1" min="1" class="qty-input" style="width:60px; padding:0.5rem; flex-shrink:0;" title="${t('product_quantity')}">
@@ -1096,6 +1101,30 @@ function initTranslations() {
             if (isCustom) {
                 const qtyIn = document.getElementById(`custom-qty-${productId}`);
                 if (qtyIn) qty = parseInt(qtyIn.value) || 1;
+                const dimensions = document.getElementById(`custom-dimensions-${productId}`)?.value.trim() || '';
+                const description = document.getElementById(`custom-desc-${productId}`)?.value.trim() || '';
+
+                if (!dimensions || !description) {
+                    alert('Bitte füllen Sie Beschreibung und Maße aus.');
+                    return;
+                }
+
+                const cart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+                cart.push({
+                    id: product.id,
+                    name: t(product.nameKey),
+                    price: 0,
+                    qty: qty,
+                    colorName: 'Individueller Auftrag',
+                    isCustom: true,
+                    customDimensions: dimensions,
+                    customDesc: description
+                });
+                localStorage.setItem('druckbau_cart', JSON.stringify(cart));
+                fallbackShowNotification(`"${t(product.nameKey)}" wurde zum Warenkorb hinzugefügt!`, 'success');
+                window.renderCart();
+                showSection('cart');
+                return;
             } else if (btnElement) {
                 const card = btnElement.closest('.product-card');
                 const qtyIn = card.querySelector('input[type="number"]');
@@ -2199,10 +2228,10 @@ async function saveReviewToDB(productId, name, text, rating) {
 // js/store.js
 
 const products = [
-    { id: 'a', nameKey: 'catalog_fidget_name', price: 3.99, images: ['klicker.png'] },
-    { id: 'b', nameKey: 'catalog_poop_name', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
-    { id: 'e', nameKey: 'catalog_pen_name', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
-    { id: 'd', nameKey: 'catalog_custom_name', price: 0, isCustom: true }
+    { id: 'a', nameKey: 'catalog_fidget_name', category: 'Spiel & Spaß', price: 3.99, images: ['klicker.png'] },
+    { id: 'b', nameKey: 'catalog_poop_name', category: 'Tiere', price: 14.99, descKey: 'catalog_poop_desc', images: ['hundekotbeutelspender.png'] },
+    { id: 'e', nameKey: 'catalog_pen_name', category: 'Büroartikel', price: 6.99, descKey: 'catalog_pen_desc', images: ['stifthalter.png'] },
+    { id: 'd', nameKey: 'catalog_custom_name', category: 'Individuell', price: 0, isCustom: true }
 ];
 
 const colors = [
@@ -2324,17 +2353,15 @@ function renderProducts() {
                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                     </svg>
                 </button>
+                <div class="product-category">Individuell</div>
                 <h3>${t(product.nameKey)}</h3>
+                <p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem;">${t('product_custom_intro')}</p>
                 <span class="price">${t('product_indiv')}</span>
                 
                 <div class="product-options">
                     <div class="option-group">
-                        <label>${t('product_order_custom_from')}</label>
-                        <input type="text" id="custom-from-${product.id}" placeholder="${t('product_custom_from_placeholder')}" class="qty-input">
-                    </div>
-                    <div class="option-group">
-                        <label>${t('product_order_custom_to')}</label>
-                        <input type="text" id="custom-to-${product.id}" placeholder="${t('product_custom_to_placeholder')}" class="qty-input">
+                        <label>${t('product_order_custom_dimensions')}</label>
+                        <input type="text" id="custom-dimensions-${product.id}" placeholder="${t('product_custom_dimensions_placeholder')}" class="qty-input">
                     </div>
                     <div class="option-group">
                         <label>${t('product_order_custom_desc')}</label>
@@ -2347,12 +2374,8 @@ function renderProducts() {
                         </button>
                     </div>
 
-                    <div class="option-group" style="margin-top:10px;">
-                        <input type="file" id="custom-files-${product.id}" multiple class="qty-input file-input-trigger" data-id="${product.id}" style="padding: 5px; font-size: 0.75rem;">
-                        <ul id="file-list-${product.id}" class="selected-files-list"></ul>
-                        <div class="file-warning-box" style="margin-top:5px; padding:5px; font-size:0.7rem;">
-                            <span>${t('product_order_custom_files_warning')}</span>
-                        </div>
+                    <div class="file-warning-box" style="margin-top:10px; padding:10px; font-size:0.8rem; background:#fff3cd; border:1px solid #f0c36d; border-radius:6px; color:#664d03;">
+                        <span>${t('product_order_custom_files_warning')}</span>
                     </div>
                 </div>
             </div>
@@ -2375,6 +2398,7 @@ function renderProducts() {
             </div>
 
                 <div class="product-info">
+                <div class="product-category">${product.category || 'Individuell'}</div>
                 <h3>${t(product.nameKey)}</h3>
                 ${product.descKey ? `<p style="color: var(--text-light); font-size: 0.9rem; margin-bottom: 0.5rem;">${t(product.descKey)}</p>` : ''}
                 <div class="manufacturing-note" style="display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: var(--success-color); margin-bottom: 0.8rem; font-weight: 500;">
@@ -2590,29 +2614,19 @@ function addCustomToCart(productId) {
     const product = products.find(p => p.id === productId);
     if (!product || !product.isCustom) return;
 
-    const fromInput = document.getElementById(`custom-from-${productId}`);
-    const toInput = document.getElementById(`custom-to-${productId}`);
     const descInput = document.getElementById(`custom-desc-${productId}`);
-    const fileInput = document.getElementById(`custom-files-${productId}`);
+    const dimensionsInput = document.getElementById(`custom-dimensions-${productId}`);
 
-    const from = fromInput ? fromInput.value.trim() : '';
-    const to = toInput ? toInput.value.trim() : '';
     const desc = descInput ? descInput.value.trim() : '';
+    const dimensions = dimensionsInput ? dimensionsInput.value.trim() : '';
     const qtyInput = document.getElementById(`custom-qty-${productId}`);
     let qty = qtyInput ? parseInt(qtyInput.value) : 1;
 
     if (isNaN(qty) || qty < 1) qty = 1;
 
-    if (!from || !to || !desc) {
-        alert("Bitte füllen Sie alle Felder (Von, Für, Info) aus.");
+    if (!desc || !dimensions) {
+        alert("Bitte füllen Sie Beschreibung und Maße aus.");
         return;
-    }
-
-    const fileNames = [];
-    if (fileInput && fileInput.files.length > 0) {
-        for (let i = 0; i < fileInput.files.length; i++) {
-            fileNames.push(fileInput.files[i].name);
-        }
     }
 
     state.cart.push({
@@ -2621,19 +2635,12 @@ function addCustomToCart(productId) {
         price: 0,
         qty: qty,
         isCustom: true,
-        customFrom: from,
-        customTo: to,
         customDesc: desc,
-        files: fileNames
+        customDimensions: dimensions
     });
 
-    if (fromInput) fromInput.value = '';
-    if (toInput) toInput.value = '';
     if (descInput) descInput.value = '';
-    if (fileInput) fileInput.value = '';
-
-    const list = document.getElementById(`file-list-${productId}`);
-    if (list) list.innerHTML = '';
+    if (dimensionsInput) dimensionsInput.value = '';
 
     saveCartToStorage();
     updateCartIcon();
@@ -2747,10 +2754,8 @@ function renderCart() {
                 <div class="cart-item-details">
                     <h4>[${t('nav_more')}] ${name}</h4>
                     <div class="cart-item-info">
-                        ${t('product_order_custom_from')}: ${escapeHtml(item.customFrom)}<br>
-                        ${t('product_order_custom_to')}: ${escapeHtml(item.customTo)}<br>
                         ${t('product_order_custom_desc')}: ${escapeHtml(item.customDesc)}<br>
-                        ${item.files && item.files.length > 0 ? `${t('product_order_custom_files_warning')}: ${item.files.join(', ')}` : ''}
+                        ${t('product_order_custom_dimensions')}: ${escapeHtml(item.customDimensions || '')}
                     </div>
                 </div>
                 <div>
@@ -2956,16 +2961,36 @@ function addToCartFromWishlist(productId) {
 // --- js/checkout.js ---
 // js/checkout.js
 
+// Send SMS via Twilio REST API
+async function sendSmsNotification(name, email, orderId, total, orderDetails, socialConsent) {
+    const body = `Neue Bestellung ${orderId}\nKunde: ${name} (${email})\nGesamt: ${total.toFixed(2)}€\nSocial Media Einwilligung: ${socialConsent ? 'Ja' : 'Nein'}\nDetails:\n${orderDetails}`;
+    const url = `https://api.twilio.com/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`;
+    const params = new URLSearchParams({
+        To: TWILIO_TO_NUMBER,
+        From: TWILIO_FROM_NUMBER,
+        Body: body,
+    });
+    const auth = btoa(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`);
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Basic ${auth}`,
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: params,
+    });
+    if (!response.ok) {
+        const errText = await response.text();
+        throw new Error(`Twilio SMS failed: ${response.status} ${errText}`);
+    }
+    return response.json();
+}
+
 let currentCheckoutStep = 1;
 
 function checkout() {
     console.log("Checkout initiated. Cart items:", state.cart.length);
-    if (state.cart.length === 0) {
-        console.warn("Checkout aborted: Cart is empty.");
-        showWarning(t('cart_empty'));
-        return;
-    }
-
+    // Suppressed empty cart warning as per user request; proceed even if cart is empty.
     currentCheckoutStep = 1;
 
     // Clear previous errors
@@ -3096,21 +3121,31 @@ function renderCheckoutSummary() {
     const summary = document.getElementById('checkout-summary');
     if (!summary) return;
 
+    const cartItems = state.cart.length > 0
+        ? state.cart
+        : JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+
     const name = document.getElementById('checkout-name')?.value || '';
     const email = document.getElementById('checkout-email')?.value || '';
     const address = document.getElementById('checkout-address')?.value || '';
     const zip = document.getElementById('checkout-zip')?.value || '';
     const city = document.getElementById('checkout-city')?.value || '';
+    const socialConsent = document.getElementById('checkout-social-media')?.checked || false;
 
-    let itemsHtml = state.cart.map(item => {
+    let itemsHtml = cartItems.map(item => {
         if (item.isCustom) {
-            return `<li>[${t('nav_more')}] ${item.name} (${item.customDesc})</li>`;
+            const detailParts = [
+                item.customDesc ? `Beschreibung: ${item.customDesc}` : null,
+                item.customDimensions ? `Maße: ${item.customDimensions}` : null
+            ].filter(Boolean);
+
+            return `<li>[${t('nav_more')}] ${item.name}${detailParts.length ? ` — ${detailParts.join(' | ')}` : ''}</li>`;
         } else {
             return `<li>${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€</li>`;
         }
     }).join('');
 
-    const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+    const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.qty), 0);
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
 
@@ -3135,13 +3170,18 @@ function renderCheckoutSummary() {
             <strong>Zahlungsart:</strong><br>
             ${paymentLabel}
         </div>
-        <div>
+        <div style="margin-bottom: 1rem; border-bottom: 1px solid #ddd; padding-bottom: 0.5rem;">
             <strong>${orderPreviewHeader}</strong>
+            <div style="margin: 0.5rem 0 0.25rem; font-weight: 600;">Bestellinhalt:</div>
             <ul style="padding-left: 1.2rem; margin: 0.5rem 0;">${itemsHtml}</ul>
             <div style="border-top: 1px solid #ddd; margin-top: 0.5rem; padding-top: 0.5rem;">
                 ${discount > 0 ? `${discountLabel} -${discount.toFixed(2)}€<br>` : ''}
                 ${shippingLabel} ${SHIPPING_COST.toFixed(2)}€ (${t('price_hint')})<br>
             </div>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <strong>Social Media Einwilligung:</strong><br>
+            ${socialConsent ? `Ja – Bestellinhalt darf gezeigt werden, nur Vorname und keine Adresse` : 'Nein'}
         </div>
     `;
 
@@ -3150,35 +3190,45 @@ function renderCheckoutSummary() {
 async function submitCheckout() {
     const finalBtn = document.getElementById('final-checkout-btn');
     const orderId = finalBtn?.dataset.orderId || generateOrderId();
-    
-    // Get all necessary data
-    const name = document.getElementById('checkout-name')?.value || '';
-    const email = document.getElementById('checkout-email')?.value || '';
-    const address = document.getElementById('checkout-address')?.value || '';
-    const zip = document.getElementById('checkout-zip')?.value || '';
-    const city = document.getElementById('checkout-city')?.value || '';
-    
-    const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+    const persistedCart = JSON.parse(localStorage.getItem('druckbau_cart') || '[]');
+    const cartSnapshot = state.cart.length > 0 ? state.cart : persistedCart;
+
+    const name = document.getElementById('checkout-name')?.value || '',
+          email = document.getElementById('checkout-email')?.value || '',
+          address = document.getElementById('checkout-address')?.value || '',
+          zip = document.getElementById('checkout-zip')?.value || '',
+          city = document.getElementById('checkout-city')?.value || '';
+
+    const subtotal = cartSnapshot.reduce((sum, item) => sum + (item.price * item.qty), 0);
     const discount = calculateDiscount(subtotal);
     const total = subtotal - discount + SHIPPING_COST;
+    const socialConsent = document.getElementById('checkout-social-media')?.checked || false;
 
     // Construct order details
-    let orderDetails = state.cart.map(item => {
+    let orderDetails = cartSnapshot.map(item => {
         if (item.isCustom) {
-            return `- [AUFTRAG] ${item.name} (Von: ${item.customFrom}, Zu: ${item.customTo}, Info: ${item.customDesc})`;
+            const itemDetails = [
+                `Beschreibung: ${item.customDesc || 'nicht angegeben'}`,
+                `Maße: ${item.customDimensions || 'nicht angegeben'}`,
+                'Fotos/Modelle werden am Ende manuell an diese E-Mail angehängt'
+            ].filter(Boolean);
+
+            return `- [AUFTRAG] ${item.name} (${itemDetails.join(' | ')})`;
         } else {
             return `- ${item.qty}x ${item.name} (${item.colorName}) - ${(item.price * item.qty).toFixed(2)}€`;
         }
     }).join('\n');
     
     if (discount > 0) orderDetails += `\nRabatt: -${discount.toFixed(2)}€`;
-    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€`;
+    orderDetails += `\nVersand: ${SHIPPING_COST.toFixed(2)}€\nGesamt: ${total.toFixed(2)}€\nSocial Media Einwilligung: ${socialConsent ? 'Ja (Bestellinhalt darf gezeigt werden; nur Vorname, keine Adresse)' : 'Nein'}`;
 
     // 1. Open native email client synchronously first (to preserve user gesture click context)
     const currentLang = document.documentElement.lang === 'en' ? 'Englisch' : 'Deutsch';
-    let mailtoBody = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nSprache des Nutzers: ${currentLang}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellung:\n${orderDetails}\n\nVielen Dank!`;
+    let mailtoBody = `Hallo Druckbau Team,\n\nIch möchte folgende Bestellung aufgeben:\nBestellnummer: ${orderId}\n\nSprache des Nutzers: ${currentLang}\n\nKundendaten:\nName: ${name}\nAdresse: ${address}\nOrt: ${zip} ${city}\nE-Mail: ${email}\n\nBestellübersicht:\n${orderDetails}\n`;
 
-    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=Bestellung ${orderId}&body=${encodeURIComponent(mailtoBody)}`;
+    mailtoBody += `\n\nVielen Dank!`;
+    const mailtoLink = `mailto:bestellungen.druckbau@gmail.com?subject=Bestellung ${orderId}\u0026body=${encodeURIComponent(mailtoBody)}`;
     const tempLink = document.createElement('a');
     tempLink.href = mailtoLink;
     tempLink.style.display = 'none';
@@ -3206,39 +3256,28 @@ async function submitCheckout() {
         order_data: { 
             cart: state.cart,
             address, zip, city,
-            payment_method: 'email'
+            payment_method: 'email',
+            social_media_consent: socialConsent
         }
     };
 
     // 4. Background database save
     try {
         await saveOrderToDB(orderData);
+    // 4b. Send SMS notification via Twilio
+    try {
+        await sendSmsNotification(name, email, orderId, total, orderDetails, socialConsent);
+    } catch (smsErr) {
+        console.warn('SMS send failed:', smsErr);
+    }
     } catch (dbErr) {
         console.warn("DB save failed (background):", dbErr);
     }
 
     logOrder(name, email, orderId, "E-Mail Bestellung", null, total, state.cart);
 
-    // 5. Send Email via EmailJS in the background
-    const templateParams = {
-        order_id: orderId,
-        customer_name: name,
-        customer_email: email,
-        customer_address: `${address}, ${zip} ${city}`,
-        order_details: orderDetails,
-        total_price: `${total.toFixed(2)}€`
-    };
-
-    try {
-        if (typeof emailjs !== 'undefined') {
-            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
-            console.log("EmailJS: Bestätigung gesendet.");
-        } else {
-            console.warn("EmailJS ist nicht geladen.");
-        }
-    } catch (emailErr) {
-        console.error("Fehler beim E-Mail-Versand:", emailErr);
-    }
+    // 5. Bestellmail wird über das Standard-Mailprogramm des Browsers geöffnet;
+    // EmailJS wird hier nicht mehr verwendet.
 
     // 6. Cleanup UI
     setTimeout(() => {
@@ -3463,13 +3502,39 @@ function appendMessage(text, sender) {
 
 function getBotResponse(text) {
     const t = text.toLowerCase();
-    if (t.includes('lieferung') || t.includes('versand') || t.includes('dauer')) {
-        return "Unsere Lieferzeit beträgt in der Regel 8-12 Werktage nach Zahlungseingang.";
-    } else if (t.includes('kosten') || t.includes('preis') || t.includes('euro')) {
-        return "Die Standardversandkosten betragen 4,90€. Spezifische Produktpreise findest du im Katalog.";
-    } else {
-        return "Vielen Dank für deine Nachricht. Unser Support-Team meldet sich bald bei dir.";
+
+    if (t.includes('discord') || t.includes('hilfe') || t.includes('community') || t.includes('server')) {
+        return '💬 Für noch mehr direkte Hilfe und schnellen Austausch treten Sie gerne unserem <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold; text-decoration:underline;">Discord-Server</a> bei! Unser Team und die Community stehen dort rund um die Uhr bereit.';
     }
+    if (t.includes('lieferzeit') || t.includes('dauer') || t.includes('wann') || t.includes('versandzeit') || t.includes('lieferung') || t.includes('tage') || t.includes('werktage')) {
+        return '⏱️ Unsere Standard-Lieferzeit beträgt in der Regel <strong>8–12 Werktage</strong> nach Zahlungseingang. Da jedes Stück individuell gedruckt wird, sichern wir so beste Qualität.';
+    }
+    if (t.includes('versand') || t.includes('porto') || t.includes('kostenlos') || t.includes('frei')) {
+        return '🚚 Der Versand innerhalb Deutschlands kostet pauschal <strong>4,90 €</strong>. Ab einem Bestellwert von <strong>50,00 €</strong> liefern wir <strong>versandkostenfrei</strong>!';
+    }
+    if (t.includes('preis') || t.includes('kosten') || t.includes('rabatt') || t.includes('gutschein') || t.includes('code') || t.includes('angebot')) {
+        return '💰 Unsere Produktpreise finden Sie im Katalog. Mit dem Code <code>NEUKUNDE10</code> erhalten Sie 10% Rabatt im Warenkorb! Alle Preise sind Gesamtpreise gem. § 19 UStG.';
+    }
+    if (t.includes('material') || t.includes('pla') || t.includes('petg') || t.includes('tpu') || t.includes('farbe') || t.includes('farben')) {
+        return '🎨 Wir drucken standardmäßig in <strong>Schwarz, Grau und Weiß</strong>.<br>• <strong>PLA:</strong> Biologisch abbaubar & geruchsneutral.<br>• <strong>PETG:</strong> Hitzebeständig bis 80°C & stabil für den Außenbereich.';
+    }
+    if (t.includes('sonderanfertigung') || t.includes('custom') || t.includes('eigenes') || t.includes('datei') || t.includes('upload') || t.includes('stl') || t.includes('auftrag')) {
+        return '⚙️ Sie möchten ein eigenes 3D-Modell drucken lassen? Wählen Sie im Katalog das Produkt <strong>"Auftragsarbeit"</strong> aus und laden Sie Ihre Wünsche/Dateien hoch, oder schreiben Sie uns an <code>druckbau@gmail.com</code>!';
+    }
+    if (t.includes('klicker') || t.includes('fidget') || t.includes('keycap') || t.includes('tastenkappe') || t.includes('unterteil')) {
+        return '⌨️ Beim <strong>Fidget Klicker</strong> können Sie die Farbe des Unterteils und der <strong>Keycaps</strong> (Tastenkappen) frei aus Schwarz, Grau und Weiß wählen!';
+    }
+    if (t.includes('widerruf') || t.includes('rückgabe') || t.includes('stornieren') || t.includes('umtausch')) {
+        return '🛡️ Für Standardartikel gilt das gesetzliche 14-tägige Widerrufsrecht. Bei Kundenanfertigungen (Custom Orders) ist der Widerruf gem. § 312g Abs. 2 Nr. 1 BGB ausgeschlossen.';
+    }
+    if (t.includes('zahlung') || t.includes('bezahlen') || t.includes('paypal') || t.includes('überweisung')) {
+        return '💳 Sie können per <strong>PayPal</strong> oder <strong>Vorkasse per Banküberweisung</strong> bezahlen.';
+    }
+    if (t.includes('kontakt') || t.includes('email') || t.includes('e-mail')) {
+        return '✉️ Sie erreichen uns per E-Mail unter <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a> oder direkt über unseren <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold;">Discord-Server</a>!';
+    }
+
+    return '💡 Vielen Dank für Ihre Nachricht! Schauen Sie gerne auch in unsere FAQ oder treten Sie für noch mehr direkte Hilfe unserem <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold; text-decoration:underline;">Discord-Server</a> bei!';
 }
 
 function setupLightbox() {
@@ -3670,7 +3735,7 @@ async function sendEmail(event) {
 
     // 1. Open native email client synchronously first
     const body = `Hallo Druckbau Team,\n\nIch habe eine Anfrage:\nReferenz: ${inquiryId}\n\nKundendaten:\nName: ${name}\nE-Mail: ${email}\n\nNachricht:\n${message}\n\nVielen Dank!`;
-    const mailtoLink = `mailto:druckbau.info@gmail.com?subject=${encodeURIComponent(prioritySubject)}&body=${encodeURIComponent(body)}`;
+    const mailtoLink = `mailto:kontakt.druckbau@gmail.com?subject=${encodeURIComponent(prioritySubject)}&body=${encodeURIComponent(body)}`;
     
     const tempLink = document.createElement('a');
     tempLink.href = mailtoLink;
@@ -3682,27 +3747,7 @@ async function sendEmail(event) {
     // 2. Log inquiry in database/local storage
     logOrder(name, email, inquiryId, message, null, 0, []);
 
-    // 3. Send via EmailJS in the background
-    const templateParams = {
-        order_id: inquiryId,
-        customer_name: name,
-        customer_email: email,
-        customer_address: "Online-Kontaktformular",
-        order_details: message,
-        total_price: "-"
-    };
-
-    try {
-        if (typeof emailjs !== 'undefined') {
-            await emailjs.send("service_mlst2ql", "template_sj2lgvo", templateParams);
-            console.log("EmailJS: Kontaktanfrage gesendet.");
-        } else {
-            console.warn("EmailJS ist nicht geladen.");
-        }
-    } catch (emailErr) {
-        console.error("Fehler beim E-Mail-Versand (EmailJS):", emailErr);
-    }
-
+    // 3. Mailto-Flow bleibt aktiv; EmailJS wird nicht mehr verwendet.
     showSuccess("Ihr E-Mail-Programm wurde geöffnet. Bitte senden Sie die Nachricht ab!");
     const form = document.querySelector('.contact-form');
     if (form) form.reset();
@@ -4134,17 +4179,11 @@ function logOrder(name, email, orderId, message, couponInfo = null, totalPrice =
 
 async function init() {
     initTranslations();
-    initDB();
-    
-    if (typeof emailjs !== 'undefined') {
-        emailjs.init("0proWevyCc_hMFYs1"); 
-    }
 
     setupNavigation();
     setupThemeToggle();
     setupChat();
     setupLightbox();
-    setupCookieBanner();
     setupGlobalEventListeners();
     initNewsletterSystem();
     initReviews();
@@ -4184,9 +4223,6 @@ async function init() {
         setupFAQ();
     });
     
-    setTimeout(() => {
-        syncLocalStorageToDB();
-    }, 2000);
 }
 
 async function loadPublicNews() {
@@ -4195,10 +4231,7 @@ async function loadPublicNews() {
     const newsDate = document.getElementById('news-date');
     if (!newsSection || !newsText) return;
 
-    let newsList = await loadNewsFromDB();
-    if (!newsList || newsList.length === 0) {
-        newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
-    }
+    const newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
 
     if (newsList && newsList.length > 0) {
         const latestInfo = newsList[0];
@@ -4215,60 +4248,6 @@ async function loadPublicNews() {
         if (newsDate) {
             newsDate.textContent = '';
         }
-    }
-}
-
-function loadGoogleAnalytics() {
-    if (window.gaLoaded) return;
-    window.gaLoaded = true;
-    const scriptUrl = "https://www.googletagmanager.com/gtag/js?id=G-X13X2JLG7Y";
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = scriptUrl;
-    document.head.appendChild(script);
-
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', 'G-X13X2JLG7Y', { 'anonymize_ip': true });
-}
-
-function setupCookieBanner() {
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtn = document.getElementById('cookie-accept');
-    const declineBtn = document.getElementById('cookie-decline');
-    
-    const consent = localStorage.getItem('druckbau_cookie_consent');
-    if (consent === 'accepted') {
-        loadGoogleAnalytics();
-    } else if (!consent && banner) {
-        setTimeout(() => {
-            banner.style.display = 'block';
-        }, 1000);
-    }
-
-    if (acceptBtn) {
-        acceptBtn.addEventListener('click', () => {
-            localStorage.setItem('druckbau_cookie_consent', 'accepted');
-            loadGoogleAnalytics();
-            closeBanner(banner);
-        });
-    }
-
-    if (declineBtn) {
-        declineBtn.addEventListener('click', () => {
-            localStorage.setItem('druckbau_cookie_consent', 'declined');
-            closeBanner(banner);
-        });
-    }
-
-    function closeBanner(b) {
-        if (!b) return;
-        b.style.animation = 'slideUp 0.5s ease reverse forwards';
-        setTimeout(() => {
-            b.style.display = 'none';
-        }, 500);
     }
 }
 
@@ -4423,12 +4402,8 @@ async function handleStatusCheck() {
     resultDiv.style.display = 'block';
 
     try {
-        const dbOrders = await loadOrdersFromDB();
-        let order = dbOrders ? dbOrders.find(o => o.order_id === orderId) : null;
-        if (!order) {
-            const locals = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
-            order = locals.find(o => o.orderId === orderId);
-        }
+        const locals = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+        const order = locals.find(o => o.orderId === orderId);
 
         if (order) {
             badge.innerText = order.status || 'Eingegangen';

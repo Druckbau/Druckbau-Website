@@ -7,6 +7,8 @@
     <title>Druckbau - 3D Druck Service</title>
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <!-- Social Media Tags -->
+    <meta name="description" content="Druckbau - Individuelle 3D-Druck-Aufträge, persönlicher Service, hochwertige Materialien und kostenlose persönliche Beratung für Ihre Ideen.">
+    <meta name="keywords" content="3D Druck, individuelle Geschenke, Fidget Klicker, Hundekotbeutelspender, Stifthalter, 3D Druck Berlin, 3D Druck Made in Germany">
     <meta property="og:title" content="Druckbau - Premium 3D Druck Service">
     <meta property="og:description"
         content="Ihr Partner für professionellen 3D Druck. Individuelle Anfertigungen, hochwertige Materialien und schnelle Lieferung.">
@@ -18,14 +20,10 @@
     <meta name="twitter:title" content="Druckbau - 3D Druck Service">
     <meta name="twitter:description" content="Professioneller 3D Druck Service für Ihre Ideen.">
     <meta name="twitter:image" content="https://druckbau.de/logo.jpg">
-    <!-- Premium Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- Security Headers -->
     <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://ajax.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://api.emailjs.com https://ezwmsguucjzqovypmggk.supabase.co; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
+        content="default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://ajax.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; upgrade-insecure-requests; frame-ancestors 'none';">
     <meta name="referrer" content="no-referrer-when-downgrade">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="DENY">
@@ -105,20 +103,26 @@
         <section id="home" class="active" style="display: flex;">
             <div class="hero-content">
                 <div class="hero-badge">
-                    <span>✨ Professioneller 3D-Druck Service</span>
+                    <span>✨ Persönliche 3D-Druck-Beratung gratis</span>
                 </div>
                 <h1 class="hero-title" data-i18n="home_title">Willkommen bei <span class="gradient-text">Druckbau</span></h1>
-                <p class="hero-subtitle" data-i18n="home_subtitle">Ihr Partner für professionellen 3D-Druck</p>
+                <p class="hero-subtitle" data-i18n="home_subtitle">Ihre Idee, sauber umgesetzt – mit persönlicher Betreuung.</p>
                 <p class="hero-description" data-i18n="home_hero_desc">
                     Von individuellen Prototypen bis hin zu Serienproduktionen – wir bringen Ihre Ideen in die dritte
-                    Dimension.
+                    Dimension und helfen Ihnen mit verständlicher, unkomplizierter Beratung von der ersten Idee bis zur fertigen Bestellung.
                 </p>
 
                 <div class="hero-buttons">
                     <a href="#" class="hero-btn primary nav-link" data-target="products"
                         data-i18n="nav_products">Produkte ansehen →</a>
                     <a href="#" class="hero-btn secondary nav-link" data-target="contact"
-                        data-i18n="nav_contact">Kontakt aufnehmen</a>
+                        data-i18n="nav_contact">Kostenlose Beratung anfragen</a>
+                </div>
+
+                <div class="consulting-strip">
+                    <span>💬 Gratis persönliche Beratung</span>
+                    <span>📞 telefonisch, Discord oder E-Mail</span>
+                    <span>✅ 100% handgefertigt in Deutschland</span>
                 </div>
                 
                 <!-- USP Bar -->
@@ -791,7 +795,7 @@
             </div>
             <div class="footer-col">
                 <h3 data-i18n="footer_contact">Kontakt</h3>
-                <p>E-Mail: <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a></p>
+                <p>E-Mail: <a href="mailto:kontakt.druckbau@gmail.com">kontakt.druckbau@gmail.com</a></p>
                 <div class="social-icons">
                     <!-- Platzhalter für Social Media Icons -->
                 </div>
@@ -800,7 +804,7 @@
         <div class="footer-bottom">
             <p style="font-size:0.75rem; opacity:0.8; margin-bottom:0.5rem; line-height:1.4;">
                 * Alle Preise sind Gesamtpreise in Euro (€). Gemäß § 19 UStG wird keine Umsatzsteuer berechnet. Zzgl. Versandkosten.<br>
-                Produktsicherheit & EU-Herstellerangaben gem. Verordnung (EU) 2023/988 (GPSR): Druckbau Manufaktur, E-Mail: druckbau@gmail.com
+                Produktsicherheit & EU-Herstellerangaben gem. Verordnung (EU) 2023/988 (GPSR): Druckbau Manufaktur, E-Mail: kontakt.druckbau@gmail.com
             </p>
             <p class="copyright">&copy; 2026 Druckbau. Alle Rechte vorbehalten.</p>
         </div>
@@ -1031,27 +1035,20 @@
                         Ich habe die <a href="widerruf.html" target="_blank">Widerrufsbelehrung</a> zur Kenntnis genommen.
                     </label>
                 </div>
+                <div class="form-group gdpr-group" style="text-align: left; margin-bottom: 1rem; display: flex; align-items: flex-start;">
+                    <input type="checkbox" id="checkout-social-media" style="width: auto; margin-right: 0.5rem; margin-top: 4px;">
+                    <label for="checkout-social-media" style="display: inline; font-size: 0.85rem; line-height: 1.4;">
+                        Ja, ich stimme zu, dass mein Bestellinhalt in einem unserer Social‑Media‑Videos gezeigt werden darf. Dabei nennen wir nur meinen Vornamen und keine weiteren personenbezogenen Daten. <a href="./instagram.html" target="_blank">Erklärung</a>
+                    </label>
+                </div>
 
                 <div class="checkout-actions" style="display: flex; gap: 1rem;">
                     <button class="contact-btn back-step-btn" style="flex: 1; background: var(--text-light);"
                         data-i18n="checkout_back">Zurück</button>
                     <button class="contact-btn" style="flex: 2; display: flex; align-items: center; justify-content: center; text-align: center; border: none; cursor: pointer;" id="final-checkout-btn"
-                        data-i18n="checkout_submit">Bestellung abschließen</button>
+                        data-i18n="checkout_submit">Zahlungspflichtig bestellen</button>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Cookie Banner -->
-    <div id="cookie-banner" class="cookie-banner">
-        <div class="cookie-content">
-            <h3 data-i18n="cookie_title">Datenschutz & Cookies</h3>
-            <p data-i18n="cookie_text">Wir nutzen Cookies (inkl. Google Analytics), um unser Angebot zu verbessern. Du kannst zustimmen oder ablehnen.</p>
-        </div>
-        <div class="cookie-actions">
-            <button id="cookie-accept" class="cookie-btn cookie-accept" data-i18n="cookie_accept">Zustimmen</button>
-            <button id="cookie-decline" class="cookie-btn cookie-decline" style="background: transparent; border: 1px solid var(--primary-blue); color: var(--primary-blue); margin-right: 10px;" data-i18n="cookie_decline">Ablehnen</button>
-            <a href="datenschutz.html" class="cookie-btn cookie-settings" data-i18n="cookie_settings">Datenschutzerklärung</a>
         </div>
     </div>
 
@@ -1059,10 +1056,7 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Scripts -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"
-        integrity="sha384-SALc35EccAf6RzGw4iNsyj7kTPr33K7RoGzYu+7heZhT8s0GZouafRiCg1qy44AS"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="legal-data.js"></script>
     <script src="bundled.js"></script>
     <!-- Lightbox --> 
     <div id="lightbox" class="modal-overlay" onclick="closeLightbox()"> 

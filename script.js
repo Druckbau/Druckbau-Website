@@ -5,23 +5,16 @@ import { renderCart, updateCartIcon, updateWishlistIcon, addToCart, addCustomToC
 import { checkout, closeCheckoutModal, submitCheckout, nextCheckoutStep, prevCheckoutStep } from './js/checkout.js';
 import { setupThemeToggle, setupChat, setupLightbox, setupFAQ, setupNavigation, sendEmail, initNewsletterSystem } from './js/ui.js';
 import { initAdminSystem, triggerAdminRefresh, loadAdminData, exportOrdersToCSV, trackProductView, trackProductPurchase, trackYouTubeClick } from './js/admin.js';
-import { initDB, loadNewsFromDB, syncLocalStorageToDB, loadOrdersFromDB } from './js/db.js';
 import { openReviewModal, openReviewListModal, closeReviewModal, submitReview, initReviews } from './js/reviews.js';
 import { initTranslations } from './translations.js';
 
 async function init() {
     initTranslations();
-    initDB();
-    
-    if (typeof emailjs !== 'undefined') {
-        emailjs.init("0proWevyCc_hMFYs1"); 
-    }
 
     setupNavigation();
     setupThemeToggle();
     setupChat();
     setupLightbox();
-    setupCookieBanner();
     setupGlobalEventListeners();
     initNewsletterSystem();
     initReviews();
@@ -61,9 +54,6 @@ async function init() {
         setupFAQ();
     });
     
-    setTimeout(() => {
-        syncLocalStorageToDB();
-    }, 2000);
 }
 
 async function loadPublicNews() {
@@ -72,10 +62,7 @@ async function loadPublicNews() {
     const newsDate = document.getElementById('news-date');
     if (!newsSection || !newsText) return;
 
-    let newsList = await loadNewsFromDB();
-    if (!newsList || newsList.length === 0) {
-        newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
-    }
+    const newsList = JSON.parse(localStorage.getItem('druckbau_news_list') || '[]');
 
     if (newsList && newsList.length > 0) {
         const latestInfo = newsList[0];
@@ -92,60 +79,6 @@ async function loadPublicNews() {
         if (newsDate) {
             newsDate.textContent = '';
         }
-    }
-}
-
-function loadGoogleAnalytics() {
-    if (window.gaLoaded) return;
-    window.gaLoaded = true;
-    const scriptUrl = "https://www.googletagmanager.com/gtag/js?id=G-X13X2JLG7Y";
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = scriptUrl;
-    document.head.appendChild(script);
-
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    window.gtag = gtag;
-    gtag('js', new Date());
-    gtag('config', 'G-X13X2JLG7Y', { 'anonymize_ip': true });
-}
-
-function setupCookieBanner() {
-    const banner = document.getElementById('cookie-banner');
-    const acceptBtn = document.getElementById('cookie-accept');
-    const declineBtn = document.getElementById('cookie-decline');
-    
-    const consent = localStorage.getItem('druckbau_cookie_consent');
-    if (consent === 'accepted') {
-        loadGoogleAnalytics();
-    } else if (!consent && banner) {
-        setTimeout(() => {
-            banner.style.display = 'block';
-        }, 1000);
-    }
-
-    if (acceptBtn) {
-        acceptBtn.addEventListener('click', () => {
-            localStorage.setItem('druckbau_cookie_consent', 'accepted');
-            loadGoogleAnalytics();
-            closeBanner(banner);
-        });
-    }
-
-    if (declineBtn) {
-        declineBtn.addEventListener('click', () => {
-            localStorage.setItem('druckbau_cookie_consent', 'declined');
-            closeBanner(banner);
-        });
-    }
-
-    function closeBanner(b) {
-        if (!b) return;
-        b.style.animation = 'slideUp 0.5s ease reverse forwards';
-        setTimeout(() => {
-            b.style.display = 'none';
-        }, 500);
     }
 }
 
@@ -300,12 +233,8 @@ async function handleStatusCheck() {
     resultDiv.style.display = 'block';
 
     try {
-        const dbOrders = await loadOrdersFromDB();
-        let order = dbOrders ? dbOrders.find(o => o.order_id === orderId) : null;
-        if (!order) {
-            const locals = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
-            order = locals.find(o => o.orderId === orderId);
-        }
+        const locals = JSON.parse(localStorage.getItem('druckbau_orders') || '[]');
+        const order = locals.find(o => o.orderId === orderId);
 
         if (order) {
             badge.innerText = order.status || 'Eingegangen';
