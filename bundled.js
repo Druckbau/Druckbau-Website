@@ -27,7 +27,7 @@ window.translations = {
         workshop_subtitle: "Echte Handarbeit aus der Region",
         usp_shipping: "Kostenloser Versand ab 50€",
         usp_made_in: "Made in Germany",
-        usp_quality: "100% Zufriedenheit",
+        usp_quality: "Persönliche Betreuung",
         workshop_text1: "Hinter Druckbau steckt echte Begeisterung für Technik. Was als Hobby begann, ist heute eine kleine Manufaktur für individuelle 3D-Druck-Lösungen.",
         workshop_text2: "In meiner Werkstatt setze ich auf einen einzelnen, hochpräzisen Drucker. Da jedes Stück individuell für Sie gefertigt wird und keine Massenware ist, kann die Lieferzeit je nach Auslastung variieren. Qualität braucht eben seine Zeit!",
         product_manufacturing_note: "Individualfertigung – Jedes Teil ein Einzelstück",
@@ -348,7 +348,7 @@ window.translations = {
         workshop_subtitle: "True craftsmanship from the region",
         usp_shipping: "Free shipping from 50€",
         usp_made_in: "Made in Germany",
-        usp_quality: "100% Satisfaction",
+        usp_quality: "Personal support",
         workshop_text1: "Druckbau is born from a true passion for technology. What started as a hobby has grown into a small manufactory for individual 3D printing solutions.",
         workshop_text2: "In my workshop, I rely on a single, high-precision printer. Since every piece is custom-made for you and not mass-produced, delivery times may vary depending on workload. Quality takes time!",
         product_manufacturing_note: "Custom Production – Every piece is unique",
@@ -3519,7 +3519,7 @@ function getBotResponse(text) {
         return '🎨 Wir drucken standardmäßig in <strong>Schwarz, Grau und Weiß</strong>.<br>• <strong>PLA:</strong> Biologisch abbaubar & geruchsneutral.<br>• <strong>PETG:</strong> Hitzebeständig bis 80°C & stabil für den Außenbereich.';
     }
     if (t.includes('sonderanfertigung') || t.includes('custom') || t.includes('eigenes') || t.includes('datei') || t.includes('upload') || t.includes('stl') || t.includes('auftrag')) {
-        return '⚙️ Sie möchten ein eigenes 3D-Modell drucken lassen? Wählen Sie im Katalog das Produkt <strong>"Auftragsarbeit"</strong> aus und laden Sie Ihre Wünsche/Dateien hoch, oder schreiben Sie uns an <code>druckbau@gmail.com</code>!';
+        return '⚙️ Sie möchten ein eigenes 3D-Modell drucken lassen? Wählen Sie im Katalog das Produkt <strong>"Auftragsarbeit"</strong> aus und beschreiben Sie Ihre Wünsche, oder schreiben Sie uns an <code>kontakt.druckbau@gmail.com</code>!';
     }
     if (t.includes('klicker') || t.includes('fidget') || t.includes('keycap') || t.includes('tastenkappe') || t.includes('unterteil')) {
         return '⌨️ Beim <strong>Fidget Klicker</strong> können Sie die Farbe des Unterteils und der <strong>Keycaps</strong> (Tastenkappen) frei aus Schwarz, Grau und Weiß wählen!';
@@ -3531,7 +3531,7 @@ function getBotResponse(text) {
         return '💳 Sie können per <strong>PayPal</strong> oder <strong>Vorkasse per Banküberweisung</strong> bezahlen.';
     }
     if (t.includes('kontakt') || t.includes('email') || t.includes('e-mail')) {
-        return '✉️ Sie erreichen uns per E-Mail unter <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a> oder direkt über unseren <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold;">Discord-Server</a>!';
+        return '✉️ Sie erreichen uns per E-Mail unter <a href="mailto:kontakt.druckbau@gmail.com">kontakt.druckbau@gmail.com</a> oder direkt über unseren <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold;">Discord-Server</a>!';
     }
 
     return '💡 Vielen Dank für Ihre Nachricht! Schauen Sie gerne auch in unsere FAQ oder treten Sie für noch mehr direkte Hilfe unserem <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold; text-decoration:underline;">Discord-Server</a> bei!';

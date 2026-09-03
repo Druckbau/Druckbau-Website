@@ -1,4 +1,4 @@
-Contact: mailto:druckbau@gmail.com
+Contact: mailto:kontakt.druckbau@gmail.com
 Expires: 2027-01-31T23:59:59z
 Preferred-Languages: de, en
 Canonical: https://druckbau.de/.well-known/security.txt

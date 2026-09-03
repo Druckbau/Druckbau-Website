@@ -104,7 +104,7 @@ function getBotResponse(text) {
         return '🎨 Wir drucken standardmäßig in <strong>Schwarz, Grau und Weiß</strong>.<br>• <strong>PLA:</strong> Biologisch abbaubar & geruchsneutral.<br>• <strong>PETG:</strong> Hitzebeständig bis 80°C & stabil für den Außenbereich.';
     }
     if (t.includes('sonderanfertigung') || t.includes('custom') || t.includes('eigenes') || t.includes('datei') || t.includes('upload') || t.includes('stl') || t.includes('auftrag')) {
-        return '⚙️ Sie möchten ein eigenes 3D-Modell drucken lassen? Wählen Sie im Katalog das Produkt <strong>"Auftragsarbeit"</strong> aus und laden Sie Ihre Wünsche/Dateien hoch, oder schreiben Sie uns an <code>druckbau@gmail.com</code>!';
+        return '⚙️ Sie möchten ein eigenes 3D-Modell drucken lassen? Wählen Sie im Katalog das Produkt <strong>"Auftragsarbeit"</strong> aus und beschreiben Sie Ihre Wünsche, oder schreiben Sie uns an <code>kontakt.druckbau@gmail.com</code>!';
     }
     if (t.includes('klicker') || t.includes('fidget') || t.includes('keycap') || t.includes('tastenkappe') || t.includes('unterteil')) {
         return '⌨️ Beim <strong>Fidget Klicker</strong> können Sie die Farbe des Unterteils und der <strong>Keycaps</strong> (Tastenkappen) frei aus Schwarz, Grau und Weiß wählen!';
@@ -116,7 +116,7 @@ function getBotResponse(text) {
         return '💳 Sie können per <strong>PayPal</strong> oder <strong>Vorkasse per Banküberweisung</strong> bezahlen.';
     }
     if (t.includes('kontakt') || t.includes('email') || t.includes('e-mail')) {
-        return '✉️ Sie erreichen uns per E-Mail unter <a href="mailto:druckbau@gmail.com">druckbau@gmail.com</a> oder direkt über unseren <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold;">Discord-Server</a>!';
+        return '✉️ Sie erreichen uns per E-Mail unter <a href="mailto:kontakt.druckbau@gmail.com">kontakt.druckbau@gmail.com</a> oder direkt über unseren <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold;">Discord-Server</a>!';
     }
 
     return '💡 Vielen Dank für Ihre Nachricht! Schauen Sie gerne auch in unsere FAQ oder treten Sie für noch mehr direkte Hilfe unserem <a href="https://discord.gg/6PPEYN9YKp" target="_blank" style="color:var(--primary-blue); font-weight:bold; text-decoration:underline;">Discord-Server</a> bei!';

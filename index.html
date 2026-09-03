@@ -54,8 +54,6 @@
                     <li><a href="#" class="nav-link" data-target="faq" data-i18n="nav_faq">FAQ</a></li>
                     <li><a href="#" class="nav-link" data-target="comparison"
                             data-i18n="nav_comparison">Material-Vergleich</a></li>
-                    <li id="admin-nav-item" style="display: none;"><a href="#" class="nav-link" data-target="admin"
-                            style="color: #d9534f; font-weight: bold;">Admin</a></li>
                 </ul>
             </li>
             <li class="cart-icon-container" data-target="cart">
@@ -393,7 +391,31 @@
                 data-i18n="products_title">Unsere
                 Produkte</h2>
             <div class="products-grid" id="products-grid">
-                <!-- Javascript populates this -->
+                <noscript>
+                    <article class="product-card">
+                        <h3>Fidget Klicker</h3>
+                        <p>Handlicher Fidget Klicker aus PLA, in mehreren Farben erhältlich.</p>
+                        <p><strong>3,99 €</strong></p>
+                    </article>
+                    <article class="product-card">
+                        <h3>Hundekotbeutelspender</h3>
+                        <p>Praktischer 3D-gedruckter Hundekotbeutelspender für unterwegs.</p>
+                        <p><strong>14,99 €</strong></p>
+                    </article>
+                    <article class="product-card">
+                        <h3>Stifthalter</h3>
+                        <p>Kompakter Stifthalter aus dem 3D-Drucker für Schreibtisch und Büro.</p>
+                        <p><strong>6,99 €</strong></p>
+                    </article>
+                    <article class="product-card">
+                        <h3>Individuelle Auftragsarbeit</h3>
+                        <p>Beschreiben Sie Ihre Idee, Maße und Anforderungen. Anschließend erhalten Sie einen persönlichen Preisvorschlag.</p>
+                    </article>
+                </noscript>
+            </div>
+            <div class="products-seo-copy">
+                <h3>3D-Druck nach Maß</h3>
+                <p>Druckbau fertigt individuelle 3D-Drucke, Prototypen, Ersatzteile und praktische Alltagsprodukte. Für Sonderanfertigungen senden Sie Ihre Beschreibung und Maße; danach erhalten Sie einen persönlichen Preisvorschlag.</p>
             </div>
         </section>
 
@@ -441,8 +463,8 @@
         <!-- Guarantee Section -->
         <section id="guarantee" class="guarantee-section">
             <div class="guarantee-icon">✓</div>
-            <div class="guarantee-title">100% Zufriedenheitsgarantie</div>
-            <div class="guarantee-text">Kostenloser Nachdruck bei Druckfehlern</div>
+            <div class="guarantee-title">Unser Qualitätsversprechen</div>
+            <div class="guarantee-text">Bei Druckfehlern prüfen wir den Fall persönlich und finden eine faire Lösung.</div>
         </section>
 
 
@@ -610,11 +632,11 @@
             </div>
         </section>
 
-        <!-- News & Admin Section -->
         <!-- News Section -->
         <section id="news" class="news-section"
             style="display: none; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;">
             <h2 class="section-title" data-i18n="news_title">Neuigkeiten & Status</h2>
+            <p style="text-align: center; color: var(--text-light);">Ihre Bestellung können Sie mit der Bestellnummer prüfen. Bei Versand erhalten Sie die Tracking-Informationen per E-Mail.</p>
 
             <div id="public-news-banner" class="news-banner">
                 <p id="news-text" data-i18n="news_loading">Lade Neuigkeiten...</p>
@@ -622,101 +644,6 @@
             </div>
         </section>
 
-        <!-- Admin Section (Hidden by default) -->
-        <section id="admin" class="admin-section"
-            style="display: none; padding: 4rem 2rem; max-width: 1200px; margin: 0 auto;">
-            <h2 class="section-title" style="color: #d9534f;">Admin Dashboard</h2>
-
-            <div id="admin-panel" style="border: 1px solid var(--primary-blue); padding: 1.5rem; border-radius: 8px;">
-                <div class="admin-group">
-                    <h4>Neuen Status erstellen</h4>
-                    <textarea id="admin-news-input"
-                        style="width: 100%; min-height: 100px; padding: 0.5rem; margin-bottom: 0.5rem;"
-                        placeholder="Was gibt es Neues?"></textarea>
-                    <button id="save-news-btn" class="contact-btn">Status speichern</button>
-                    <button id="delete-news-btn"
-                        style="color: #999; border: 1px solid #999; background: none; padding: 5px 10px; cursor: pointer; border-radius: 4px; margin-left: 0.5rem; font-size: 0.85rem;">Verlauf
-                        löschen</button>
-                </div>
-
-                <div class="admin-group" style="margin-top: 2rem;">
-                    <h4>Neuigkeiten Verlauf</h4>
-                    <div id="admin-news-history"
-                        style="max-height: 200px; overflow-y: auto; border: 1px solid #eee; padding: 0.5rem; margin-top: 1rem; border-radius: 4px;">
-                        <!-- News history items inserted here -->
-                    </div>
-                </div>
-
-
-
-                <div class="admin-group" style="margin-top: 2rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                        <h4 style="margin: 0;">Newsletter Abonnenten</h4>
-                        <button id="admin-send-newsletter" class="contact-btn" style="padding: 0.5rem 1rem; font-size: 0.85rem; background: var(--primary-blue);">Newsletter senden</button>
-                    </div>
-                    <div class="table-container" style="overflow-x: auto; margin-top: 1rem;">
-                        <table id="newsletter-table" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: var(--bg-light); text-align: left;">
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Datum</th>
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">E-Mail</th>
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Aktion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Emails inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-
-
-                <div class="admin-group" style="margin-top: 2rem;">
-                    <h4>Gutschein-Verwaltung</h4>
-                    <div style="overflow-x: auto; margin-top: 1rem;">
-                        <table id="admin-coupons-table" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr style="background: var(--bg-light); text-align: left;">
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Code</th>
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Typ</th>
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Wert</th>
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Ablauf</th>
-                                    <th style="padding: 0.5rem; font-size: 0.85rem;">Aktion</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Coupons inserted here -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style="margin-top: 1rem; padding: 1rem; border: 1px solid #eee; border-radius: 4px;">
-                        <h5>Neuen Gutschein hinzufügen</h5>
-                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <input type="text" id="admin-coupon-code" placeholder="CODE" class="qty-input"
-                                style="flex: 1; min-width: 100px;">
-                            <select id="admin-coupon-type" class="qty-input" style="flex: 1; min-width: 100px;">
-                                <option value="percentage">Prozent (%)</option>
-                                <option value="fixed">Festbetrag (€)</option>
-                            </select>
-                            <input type="number" id="admin-coupon-value" placeholder="Wert" class="qty-input"
-                                style="flex: 1; min-width: 80px;">
-                            <input type="text" id="admin-coupon-expiry" placeholder="TT.MM.JJJJ" class="qty-input"
-                                style="flex: 1; min-width: 120px;">
-                            <button id="add-coupon-btn" class="contact-btn"
-                                style="padding: 0.5rem 1rem;">Hinzufügen</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="admin-group" style="margin-top: 2rem;">
-                    <h4>Sonderangebot erstellen</h4>
-                    <button class="contact-btn seasonal-offer-btn">Neues Angebot erstellen</button>
-                </div>
-
-            </div>
-        </section>
         <!-- Social Media Feed Section -->
         <section id="social-feed" class="social-section" style="padding: 4rem 2rem; background: var(--bg-light);">
             <h2 class="section-title" data-i18n="social_title">Folgen Sie uns</h2>
@@ -766,10 +693,8 @@
                 <a href="versand.html" class="footer-link" data-i18n="footer_shipping">Versand & Zahlung</a>
                 <a href="impressum.html" class="footer-link" data-i18n="footer_impressum">Impressum</a>
                 <a href="datenschutz.html" class="footer-link" data-i18n="footer_privacy">Datenschutz</a>
+                <a href="barrierefreiheit.html" class="footer-link">Barrierefreiheit</a>
                 <a href="widerruf.html" class="footer-link" data-i18n="footer_returns">Widerrufsbelehrung</a>
-                <a href="javascript:void(0);" id="admin-trigger" class="footer-link"
-                    style="color: var(--text-light); border-top: 1px solid rgba(255,255,255,0.1); padding-top: 5px; margin-top: 5px;">Admin
-                    Login</a>
             </div>
             <div class="footer-col">
                 <h3 data-i18n="footer_newsletter">Newsletter</h3>

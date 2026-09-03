@@ -28,7 +28,7 @@ window.addEventListener('DOMContentLoaded', () => {
     'order-email': legal.orderEmail || 'bestellungen.druckbau@gmail.com',
     'website': legal.website || 'https://druckbau.de',
     'vat-id': legal.vatId ? `USt-IdNr. gemäß § 27a UStG: ${legal.vatId}` : 'Keine USt-IdNr. vorhanden (Kleinunternehmer gemäß § 19 UStG).',
-    'lucid': legal.lucidNumber ? `LUCID-Registrierungsnummer: ${legal.lucidNumber}` : 'LUCID-Registrierungsnummer: [eintragen, sobald registriert]',
+    'lucid': legal.lucidNumber || '[bitte vor dem Livegang eintragen]',
     'google-privacy': legal.googlePrivacyLink || 'https://policies.google.com/privacy?hl=de',
     'contact-label': legal.contactLabel || 'zentrale Kontaktstelle',
     'company-registration': legal.registrationText || 'Kein Handelsregistereintrag – Einzelunternehmen / Kleingewerbe nach § 19 UStG.'
